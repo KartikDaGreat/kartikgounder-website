@@ -1,195 +1,301 @@
-import { GraduationCap, Trophy, Award, Users } from "lucide-react"
+import { Award, GraduationCap, ShieldCheck, Trophy, Users } from "lucide-react"
 
-interface TimelineEntry {
-  type: "education" | "achievement" | "leadership" | "community"
+type AcademicItem = {
   title: string
-  subtitle?: string
-  organization: string
+  school: string
   period: string
-  description?: string
-  highlights?: string[]
   gpa?: string
+  focus?: string
+  year?: number
 }
 
-const timelineEntries: TimelineEntry[] = [
+type LeadershipItem = {
+  title: string
+  org: string
+  period: string
+  highlights: string[]
+  year?: number
+}
+
+type AccoladeItem = {
+  title: string
+  org: string
+  period: string
+  detail?: string
+  year?: number
+}
+
+const academics: AcademicItem[] = [
   {
-    type: "education",
-    title: "Master of Science in Computer Science",
-    organization: "Columbia Engineering",
-    period: "August 2025 - December 2026",
-    description: "Focus on AI, Machine Learning, and Healthcare Applications",
+    title: "Master of Science · Computer Science",
+    school: "Columbia Engineering",
+    period: "Aug 2025 – Dec 2026",
+    focus: "AI, Machine Learning, Healthcare Applications",
   },
   {
-    type: "education",
-    title: "Bachelor of Technology - BTech, Computer Science",
-    organization: "Vellore Institute of Technology (VIT), Vellore",
-    period: "May 2021 - May 2025",
+    title: "B.Tech · Computer Science",
+    school: "Vellore Institute of Technology",
+    period: "May 2021 – May 2025",
     gpa: "9.6/10",
   },
   {
-    type: "leadership",
-    title: "Member Secretary on the Student Council",
-    organization: "Vellore Institute of Technology",
-    period: "September 2023 - August 2024",
-    highlights: [
-      "Organized and managed multiple hackathons and overnight events, overseeing 15+ simultaneous activities during Yantra",
-      "Represented the perspective of 12,000+ students in Academic Council meetings",
-      "Served as treasurer for events, managing budgets efficiently",
-    ],
+    title: "High School · Computer Science",
+    school: "Suguna PIP School",
+    period: "Aug 2019 – Apr 2021",
   },
   {
-    type: "leadership",
-    title: "Technical Board Member",
-    organization: "IEEE Computer Society",
-    period: "August 2023 - May 2024",
-    highlights: [
-      "Mentored students in developing innovative projects and technical initiatives",
-      "Led weekly workshops across diverse technical domains (AI, IoT, Web, and ML)",
-      "Developed a Traffic Speed Detection System and Automated Speeding Ticket Framework for NHAI",
-    ],
-  },
-  {
-    type: "achievement",
-    title: "Semi-finalist - Accenture Innovation Challenge",
-    organization: "Accenture",
-    period: "2023",
-    description: "Top placement out of 50,000 participating teams",
-  },
-  {
-    type: "achievement",
-    title: "Winners - Game Of Codes Hackathon",
-    organization: "IEEE-CS",
-    period: "2023",
-    description: "First place out of 30+ teams",
-  },
-  {
-    type: "achievement",
-    title: "Third Place - Cryptic Hunt Hackathon",
-    organization: "ACM-VIT",
-    period: "2022",
-    description: "Third place out of 17 teams",
-  },
-  {
-    type: "community",
-    title: "Blood Donation Camp Organizer",
-    organization: "VIT",
-    period: "2022 - 2024",
-    description: "Hosted and arranged blood donation camps at VIT",
-  },
-  {
-    type: "community",
-    title: "Operation HOPE Volunteer",
-    organization: "Operation HOPE",
-    period: "2019 - 2024",
-    description: "Helped spread financial literacy through initiatives and programs",
-  },
-  {
-    type: "leadership",
-    title: "Guest Speaker",
-    organization: "KV Institute of Management and Information Studies",
-    period: "June 2019 - May 2020",
-    highlights: [
-      "Conducted 12 sessions regarding up-and-coming Tech Niches around the world",
-      "Organized workshops for AI and ML development in the field of business",
-      "Developed an outreach program with Hackathons and Co-op Programs",
-    ],
-  },
-  {
-    type: "education",
-    title: "High School, Computer Science",
-    organization: "Suguna PIP School",
-    period: "August 2019 - April 2021",
-  },
-  {
-    type: "education",
     title: "Middle School",
-    organization: "SSVM Institutions",
-    period: "August 2017 - May 2019",
+    school: "SSVM Institutions",
+    period: "Aug 2017 – May 2019",
   },
 ]
 
-const getIcon = (type: TimelineEntry["type"]) => {
-  switch (type) {
-    case "education":
-      return GraduationCap
-    case "achievement":
-      return Trophy
-    case "leadership":
-      return Award
-    case "community":
-      return Users
-  }
+const leadership: LeadershipItem[] = [
+  {
+    title: "Member Secretary, Student Council",
+    org: "VIT",
+    period: "Sep 2023 – Aug 2024",
+    highlights: [
+      "Ran 15+ concurrent events during Yantra and campus hackathons",
+      "Represented 12,000+ students in Academic Council meetings",
+      "Managed event budgets and treasury for council programs",
+    ],
+  },
+  {
+    title: "Technical Board Member",
+    org: "IEEE Computer Society",
+    period: "Aug 2023 – May 2024",
+    highlights: [
+      "Mentored project teams across AI, IoT, web, and ML tracks",
+      "Led weekly technical workshops and build sessions",
+      "Built speed-detection system and ticketing framework for NHAI",
+    ],
+  },
+  {
+    title: "Guest Speaker",
+    org: "KV Institute of Management",
+    period: "Jun 2019 – May 2020",
+    highlights: [
+      "Delivered 12 sessions on emerging tech niches",
+      "Designed AI/ML workshops tailored for business cohorts",
+      "Launched outreach with hackathons and co-op programs",
+    ],
+  },
+]
+
+const accolades: AccoladeItem[] = [
+  {
+    title: "Semi-finalist · Innovation Challenge",
+    org: "Accenture",
+    period: "2023",
+    detail: "Selected from 50,000+ teams",
+  },
+  {
+    title: "Winners · Game Of Codes",
+    org: "IEEE-CS",
+    period: "2023",
+    detail: "1st place among 30+ teams",
+  },
+  {
+    title: "Third Place · Cryptic Hunt",
+    org: "ACM-VIT",
+    period: "2022",
+  },
+  {
+    title: "Blood Donation Camp Organizer",
+    org: "VIT",
+    period: "2022 – 2024",
+    detail: "Planned recurring campus drives",
+  },
+  {
+    title: "Operation HOPE Volunteer",
+    org: "Operation HOPE",
+    period: "2019 – 2024",
+    detail: "Financial literacy outreach",
+  },
+]
+const extractYear = (period: string): number => {
+  const match = period.match(/(20\d{2}|19\d{2})/g)
+  if (!match || match.length === 0) return 0
+  // use the last year in the range (e.g., 2025–2026 => 2026)
+  return Number(match[match.length - 1])
 }
 
-const getTypeLabel = (type: TimelineEntry["type"]) => {
-  switch (type) {
-    case "education":
-      return "Education"
-    case "achievement":
-      return "Achievement"
-    case "leadership":
-      return "Leadership"
-    case "community":
-      return "Community"
-  }
-}
+const academicsByYear = academics.map((a) => ({ ...a, year: extractYear(a.period) }))
+const leadershipByYear = leadership.map((l) => ({ ...l, year: extractYear(l.period) }))
+const accoladesByYear = accolades.map((a) => ({ ...a, year: extractYear(a.period) }))
+
+const allYears = Array.from(
+  new Set([...academicsByYear, ...leadershipByYear, ...accoladesByYear].map((item) => item.year || 0)),
+)
+  .filter((y) => y > 0)
+  .sort((a, b) => b - a)
 
 export function AcademicsSection() {
   return (
-    <section className="max-w-4xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <section className="max-w-5xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <h1 className="text-3xl md:text-4xl font-bold mb-2">Academics</h1>
-      <p className="text-muted-foreground mb-12">Education, achievements, leadership, and community involvement</p>
+      <p className="text-muted-foreground mb-12">Academic track on the left, leadership and accolades on the right</p>
 
-      <div className="relative">
-        {/* Timeline line */}
-        <div className="absolute left-4 md:left-6 top-0 bottom-0 w-0.5 bg-border" />
-
+      {/* Mobile layout */}
+      <div className="md:hidden space-y-10">
+        <div>
+          <SectionHeader icon={GraduationCap} label="Academics" />
+          <div className="mt-4 space-y-4">
+            {academics.map((item, idx) => (
+              <AcademicCard key={idx} item={item} />
+            ))}
+          </div>
+        </div>
         <div className="space-y-8">
-          {timelineEntries.map((entry, index) => {
-            const Icon = getIcon(entry.type)
-            return (
-              <article key={index} className="relative pl-12 md:pl-16">
-                {/* Timeline dot with icon */}
-                <div className="absolute left-0 md:left-2 top-0 w-8 h-8 rounded-full bg-secondary border-2 border-border flex items-center justify-center">
-                  <Icon className="w-4 h-4 text-primary" />
-                </div>
-
-                {/* Content card */}
-                <div className="p-4 rounded-lg border border-border hover:border-primary/50 transition-colors">
-                  {/* Type badge */}
-                  <span className="inline-block px-2 py-0.5 text-xs font-mono bg-primary/10 text-primary rounded mb-2">
-                    {getTypeLabel(entry.type)}
-                  </span>
-
-                  <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-1 mb-1">
-                    <h3 className="text-lg font-medium">{entry.title}</h3>
-                    <span className="text-sm text-muted-foreground font-mono">{entry.period}</span>
-                  </div>
-
-                  <p className="text-sm text-primary mb-2">{entry.organization}</p>
-
-                  {entry.gpa && <p className="text-sm text-muted-foreground mb-2">GPA: {entry.gpa}</p>}
-
-                  {entry.description && (
-                    <p className="text-sm text-muted-foreground leading-relaxed">{entry.description}</p>
-                  )}
-
-                  {entry.highlights && entry.highlights.length > 0 && (
-                    <ul className="mt-3 space-y-2">
-                      {entry.highlights.map((highlight, i) => (
-                        <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-                          <span className="w-1 h-1 rounded-full bg-muted-foreground mt-2 flex-shrink-0" />
-                          {highlight}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </article>
-            )
-          })}
+          <div>
+            <SectionHeader icon={ShieldCheck} label="Leadership" />
+            <div className="mt-4 space-y-4">
+              {leadership.map((item, idx) => (
+                <LeadershipCard key={idx} item={item} />
+              ))}
+            </div>
+          </div>
+          <div>
+            <SectionHeader icon={Trophy} label="Awards & Community" />
+            <div className="mt-4 space-y-4">
+              {accolades.map((item, idx) => (
+                <AccoladeCard key={idx} item={item} />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Desktop layout grouped by year, timeline style */}
+      <div className="hidden md:block space-y-10">
+        {allYears.map((year) => {
+          const yearAcademics = academicsByYear.filter((a) => a.year === year)
+          const yearLeadership = leadershipByYear.filter((l) => l.year === year)
+          const yearAccolades = accoladesByYear.filter((a) => a.year === year)
+
+          return (
+            <div key={year} className="grid grid-cols-[1fr_auto_1.25fr] gap-0">
+              <div className="pr-8">
+                <SectionHeader icon={GraduationCap} label="Academics" align="right" subtle />
+                <p className="text-sm text-muted-foreground text-right">{year} · Coursework & GPA</p>
+                <div className="mt-4 space-y-4">
+                  {yearAcademics.length ? yearAcademics.map((item, idx) => <AcademicCard key={idx} item={item} alignRight />) : <EmptySlot label="No academics" align="right" />}
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center w-16">
+                <div className="w-0.5 flex-1 bg-border" />
+                <div className="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold border border-primary/30">
+                  {year}
+                </div>
+                <div className="w-0.5 flex-1 bg-border" />
+              </div>
+
+              <div className="pl-8 py-1">
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <SectionHeader icon={ShieldCheck} label="Leadership" subtle />
+                    <p className="text-sm text-muted-foreground">Roles, impact, events</p>
+                    <div className="mt-3 space-y-4">
+                      {yearLeadership.length ? yearLeadership.map((item, idx) => <LeadershipCard key={idx} item={item} />) : <EmptySlot label="No leadership" />}
+                    </div>
+                  </div>
+                  <div>
+                    <SectionHeader icon={Trophy} label="Awards & Community" subtle />
+                    <p className="text-sm text-muted-foreground">Hackathons, awards, service</p>
+                    <div className="mt-3 space-y-4">
+                      {yearAccolades.length ? yearAccolades.map((item, idx) => <AccoladeCard key={idx} item={item} />) : <EmptySlot label="No awards" />}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </section>
+  )
+}
+
+function EmptySlot({ label, align }: { label: string; align?: "left" | "right" }) {
+  return (
+    <div className={`text-sm text-muted-foreground/70 border border-dashed border-border rounded-lg p-3 ${align === "right" ? "text-right" : ""}`}>
+      {label}
+    </div>
+  )
+}
+
+function SectionHeader({
+  icon: Icon,
+  label,
+  align,
+  subtle,
+}: {
+  icon: typeof GraduationCap
+  label: string
+  align?: "left" | "right"
+  subtle?: boolean
+}) {
+  return (
+    <div className={`flex items-center gap-2 ${align === "right" ? "justify-end" : ""}`}>
+      <Icon className={`w-5 h-5 ${subtle ? "text-primary" : "text-primary"}`} />
+      <h2 className="text-xl font-semibold text-foreground">{label}</h2>
+    </div>
+  )
+}
+
+function AcademicCard({ item, alignRight }: { item: AcademicItem; alignRight?: boolean }) {
+  return (
+    <article
+      className={`p-4 rounded-lg border border-border bg-card hover:border-primary/50 transition-colors ${alignRight ? "text-right" : ""}`}
+    >
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-mono bg-primary/10 text-primary rounded mb-2">
+        <GraduationCap className="w-3.5 h-3.5" />
+        Academics
+      </span>
+      <h3 className="font-medium text-foreground leading-tight">{item.title}</h3>
+      <p className="text-sm text-primary mt-1">{item.school}</p>
+      <p className="text-xs text-muted-foreground font-mono mt-1">{item.period}</p>
+      {item.gpa && <p className="text-sm text-muted-foreground mt-2">GPA: {item.gpa}</p>}
+      {item.focus && <p className="text-sm text-muted-foreground mt-2 leading-relaxed">{item.focus}</p>}
+    </article>
+  )
+}
+
+function LeadershipCard({ item }: { item: LeadershipItem }) {
+  return (
+    <article className="p-4 rounded-lg border border-border bg-card hover:border-primary/50 transition-colors">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-mono bg-secondary text-secondary-foreground rounded mb-2">
+        <ShieldCheck className="w-3.5 h-3.5" />
+        Leadership
+      </span>
+      <h3 className="font-medium text-foreground leading-tight">{item.title}</h3>
+      <p className="text-sm text-primary mt-1">{item.org}</p>
+      <p className="text-xs text-muted-foreground font-mono mt-1">{item.period}</p>
+      <ul className="mt-3 space-y-1.5">
+        {item.highlights.map((highlight, i) => (
+          <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+            <span className="w-1 h-1 rounded-full bg-muted-foreground mt-2 flex-shrink-0" />
+            {highlight}
+          </li>
+        ))}
+      </ul>
+    </article>
+  )
+}
+
+function AccoladeCard({ item }: { item: AccoladeItem }) {
+  return (
+    <article className="p-4 rounded-lg border border-border bg-card hover:border-primary/50 transition-colors">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-mono bg-primary/10 text-primary rounded mb-2">
+        {item.title.toLowerCase().includes("volunteer") ? <Users className="w-3.5 h-3.5" /> : <Award className="w-3.5 h-3.5" />}
+        {item.title.toLowerCase().includes("volunteer") ? "Community" : "Awards"}
+      </span>
+      <h3 className="font-medium text-foreground leading-tight">{item.title}</h3>
+      <p className="text-sm text-primary mt-1">{item.org}</p>
+      <p className="text-xs text-muted-foreground font-mono mt-1">{item.period}</p>
+      {item.detail && <p className="text-sm text-muted-foreground mt-2 leading-relaxed">{item.detail}</p>}
+    </article>
   )
 }

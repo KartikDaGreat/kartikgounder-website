@@ -17,11 +17,7 @@ const ContactSection = lazy(() => import("@/components/sections/contact").then((
 const TerminalSection = lazy(() =>
   import("@/components/sections/terminal").then((m) => ({ default: m.TerminalSection })),
 )
-const StorageSection = lazy(() =>
-  import("@/components/sections/storage").then((m) => ({ default: m.StorageSection })),
-)
-
-export type SectionId = "about" | "academics" | "research" | "experience" | "contact" | "terminal" | "storage"
+export type SectionId = "about" | "academics" | "research" | "experience" | "contact" | "terminal"
 
 function SectionLoader() {
   return (
@@ -60,8 +56,6 @@ export default function Home() {
         return <ContactSection />
       case "terminal":
         return <TerminalSection />
-      case "storage":
-        return <StorageSection />
       default:
         return <AboutSection />
     }

@@ -2,9 +2,9 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
-import { User, FlaskConical, GraduationCap, Briefcase, Mail, Terminal, Menu, X, HardDrive } from "lucide-react"
+import { User, FlaskConical, GraduationCap, Briefcase, Mail, Terminal, Menu, X } from "lucide-react"
 import type { SectionId } from "@/app/page"
 
 interface SidebarProps {
@@ -19,11 +19,50 @@ const navItems: { id: SectionId; label: string; icon: React.ElementType }[] = [
   { id: "experience", label: "Experience", icon: Briefcase },
   { id: "contact", label: "Contact", icon: Mail },
   { id: "terminal", label: "Terminal", icon: Terminal },
-  { id: "storage", label: "Storage", icon: HardDrive },
 ]
+
+type ArduinoStatus = {
+  connected: boolean
+  lastHeartbeat?: string
+  latencyMs?: number
+  logs?: string[]
+  error?: string
+}
 
 export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [arduinoStatus, setArduinoStatus] = useState<ArduinoStatus>({ connected: false, logs: [] })
+
+  useEffect(() => {
+    let cancelled = false
+
+    const fetchStatus = async () => {
+      try {
+        const r = await fetch("/api/arduino/status", { cache: "no-store" })
+        if (!r.ok) throw new Error(`HTTP ${r.status}`)
+        const data = (await r.json()) as ArduinoStatus
+        if (!cancelled) {
+          setArduinoStatus({ ...data, connected: Boolean(data.connected), logs: data.logs || [] })
+        }
+      } catch (err: any) {
+        if (!cancelled) {
+          setArduinoStatus((prev) => ({
+            ...prev,
+            connected: false,
+            error: err?.message || "Unable to reach Arduino",
+          }))
+        }
+      }
+    }
+
+    fetchStatus()
+    const intervalId = setInterval(fetchStatus, 5000)
+
+    return () => {
+      cancelled = true
+      clearInterval(intervalId)
+    }
+  }, [])
 
   return (
     <>
@@ -100,7 +139,52 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
           </ul>
 
           {/* Theme indicator at bottom */}
-          <div className="mt-auto pt-4 border-t border-sidebar-border">
+          <div className="mt-auto pt-4 border-t border-sidebar-border space-y-3">
+            <div className="px-3 py-2 rounded-md bg-sidebar-accent/40 border border-sidebar-border">
+              <div className="flex items-center justify-between text-xs font-medium">
+                <span className="text-muted-foreground">Arduino</span>
+                <span
+                  className={cn(
+                    "flex items-center gap-1 px-2 py-0.5 rounded-full",
+                    arduinoStatus.connected
+                      ? "bg-emerald-500/10 text-emerald-300 border border-emerald-400/40"
+                      : "bg-rose-500/10 text-rose-300 border border-rose-400/40",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "w-1.5 h-1.5 rounded-full animate-pulse",
+                      arduinoStatus.connected ? "bg-emerald-400" : "bg-rose-400",
+                    )}
+                  />
+                  {arduinoStatus.connected ? "Live" : "Offline"}
+                </span>
+              </div>
+              <div className="mt-2 text-[11px] text-muted-foreground leading-relaxed space-y-1">
+                <div className="flex items-center justify-between">
+                  <span>Last heartbeat</span>
+                  <span className="font-mono text-foreground">
+                    {arduinoStatus.lastHeartbeat ? new Date(arduinoStatus.lastHeartbeat).toLocaleTimeString() : "--"}
+                  </span>
+                </div>
+                {typeof arduinoStatus.latencyMs === "number" && (
+                  <div className="flex items-center justify-between">
+                    <span>Latency</span>
+                    <span className="font-mono text-foreground">{arduinoStatus.latencyMs} ms</span>
+                  </div>
+                )}
+                {arduinoStatus.error && <div className="text-rose-300/90">{arduinoStatus.error}</div>}
+              </div>
+              {arduinoStatus.logs && arduinoStatus.logs.length > 0 && (
+                <div className="mt-3 rounded bg-sidebar border border-sidebar-border/60 max-h-24 overflow-y-auto text-[11px] text-muted-foreground p-2 space-y-1">
+                  {arduinoStatus.logs.slice(0, 4).map((log, i) => (
+                    <div key={i} className="truncate" title={log}>
+                      {log}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             <div className="px-3 py-2 text-xs text-muted-foreground">
               <span className="whitespace-nowrap overflow-hidden">Theme changes on reload</span>
             </div>

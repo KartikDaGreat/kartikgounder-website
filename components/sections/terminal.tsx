@@ -78,6 +78,18 @@ const fetchFiles = async (): Promise<string | string[]> => {
   }
 }
 
+const resolveFilename = async (raw: string): Promise<string> => {
+  const input = stripQuotes(raw)
+  if (fileState.files.length === 0) {
+    const r = await fetchFiles()
+    if (typeof r === "string") return input
+  }
+  const exact = fileState.files.find((f) => f.name.toLowerCase() === input.toLowerCase())
+  if (exact) return exact.name
+  const partial = fileState.files.find((f) => f.name.toLowerCase().startsWith(input.toLowerCase()))
+  return partial ? partial.name : input
+}
+
 const deleteFile = async (filename: string): Promise<string> => {
   try {
     const r = await fetch("/api/storage/delete", {
@@ -118,19 +130,33 @@ const loginTerminal = async (password: string): Promise<string> => {
   }
 }
 
-const uploadFile = async (file: File): Promise<string> => {
-  try {
+const uploadFileWithProgress = (file: File, onProgress: (p: number) => void): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open("POST", "/api/storage/upload")
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100)
+        onProgress(percent)
+      }
+    }
+
+    xhr.onerror = () => reject(new Error("Network error during upload"))
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve(`Uploaded ${file.name}`)
+        } else {
+          reject(new Error(`HTTP ${xhr.status}`))
+        }
+      }
+    }
+
     const formData = new FormData()
     formData.append("file", file)
-    const r = await fetch("/api/storage/upload", {
-      method: "POST",
-      body: formData,
-    })
-    if (!r.ok) throw new Error(`HTTP ${r.status}`)
-    return `Uploaded ${file.name}`
-  } catch (err: any) {
-    return `Error uploading file: ${err?.message || "Unknown error"}`
-  }
+    xhr.send(formData)
+  })
 }
 
 const stripQuotes = (str: string): string => {
@@ -184,8 +210,7 @@ const executeCommand = (input: string): string | string[] | Promise<string | str
 
     if (lowerCmd === "rm" || lowerCmd === "delete") {
       if (!args[0]) return "Usage: rm <filename>"
-      const filename = stripQuotes(args.join(" "))
-      return (async () => deleteFile(filename))()
+      return (async () => deleteFile(await resolveFilename(args.join(" " ))))()
     }
 
     if (lowerCmd === "mv" || lowerCmd === "move") {
@@ -198,7 +223,7 @@ const executeCommand = (input: string): string | string[] | Promise<string | str
 
     if (lowerCmd === "download") {
       if (!args[0]) return "Usage: download <filename>"
-      return (async () => downloadFile(args.join(" " )))()
+      return (async () => downloadFile(await resolveFilename(args.join(" " ))))()
     }
   }
 
@@ -364,7 +389,7 @@ const executeCommand = (input: string): string | string[] | Promise<string | str
         "  ls/list             - List files",
         "  rm/delete <file>    - Delete file",
         "  mv/move <from> <to> - Move/rename file",
-        "  upload              - Upload file (use Storage section)",
+        "  upload              - Upload file",
         "  download <file>     - Download file",
         "  logout              - Logout",
       ]
@@ -499,7 +524,18 @@ export function TerminalSection() {
   const inputRef = useRef<HTMLInputElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [pendingUpload, setPendingUpload] = useState(false)
+  const [uploadingFile, setUploadingFile] = useState<string | null>(null)
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null)
   const terminalRef = useRef<HTMLDivElement>(null)
+
+  const updateLastHistoryOutput = useCallback((output: string | string[]) => {
+    setHistory((prev) => {
+      if (prev.length === 0) return prev
+      const next = [...prev]
+      next[next.length - 1] = { ...next[next.length - 1], output }
+      return next
+    })
+  }, [])
 
   useEffect(() => {
     if (terminalRef.current) {
@@ -581,8 +617,24 @@ export function TerminalSection() {
     }
 
     const file = files[0]
-    const msg = await uploadFile(file)
-    setHistory((prev) => [...prev, { input: `upload ${file.name}`, output: msg }])
+    setUploadingFile(file.name)
+    setUploadProgress(0)
+    setHistory((prev) => [...prev, { input: `upload ${file.name}`, output: `Uploading ${file.name} (0%)` }])
+
+    try {
+      const msg = await uploadFileWithProgress(file, (percent) => {
+        setUploadProgress(percent)
+        updateLastHistoryOutput(`Uploading ${file.name} (${percent}%)`)
+      })
+      setUploadProgress(100)
+      updateLastHistoryOutput(msg)
+    } catch (err: any) {
+      updateLastHistoryOutput(`Error uploading file: ${err?.message || "Unknown error"}`)
+    } finally {
+      setUploadingFile(null)
+      setUploadProgress(null)
+      e.target.value = ""
+    }
   }
 
   return (
@@ -639,6 +691,21 @@ export function TerminalSection() {
       </div>
 
       <p className="text-xs text-muted-foreground mt-4">Tip: Use arrow keys for command history</p>
+
+      {uploadProgress !== null && (
+        <div className="mt-3 text-xs text-muted-foreground">
+          <div className="flex items-center justify-between mb-1">
+            <span>{uploadingFile ? `Uploading ${uploadingFile}` : "Uploading..."}</span>
+            <span className="font-mono text-foreground">{uploadProgress}%</span>
+          </div>
+          <div className="w-full h-2 rounded bg-secondary overflow-hidden">
+            <div
+              className="h-full bg-primary transition-all duration-200"
+              style={{ width: `${uploadProgress}%` }}
+            />
+          </div>
+        </div>
+      )}
 
       <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
     </section>
