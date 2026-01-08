@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import { cn } from "@/lib/utils"
-import { User, FlaskConical, GraduationCap, Briefcase, Mail, Terminal, Menu, X } from "lucide-react"
+import { User, FlaskConical, GraduationCap, Briefcase, Mail, Terminal, Menu, X, HardDrive } from "lucide-react"
 import type { SectionId } from "@/app/page"
 
 interface SidebarProps {
@@ -19,6 +19,7 @@ const navItems: { id: SectionId; label: string; icon: React.ElementType }[] = [
   { id: "experience", label: "Experience", icon: Briefcase },
   { id: "contact", label: "Contact", icon: Mail },
   { id: "terminal", label: "Terminal", icon: Terminal },
+  { id: "storage", label: "Storage", icon: HardDrive },
 ]
 
 export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
