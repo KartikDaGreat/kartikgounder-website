@@ -16,13 +16,24 @@ export function StorageSection() {
   const [files, setFiles] = useState<PiFile[]>([])
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [error, setError] = useState<string>("")
 
   const load = async () => {
     try {
       setLoading(true)
+      setError("")
       const r = await fetch("/api/storage/files", { cache: "no-store" })
+      if (!r.ok) {
+        const errText = await r.text()
+        setError(`API error ${r.status}: ${errText}`)
+        setFiles([])
+        return
+      }
       const data = await r.json()
       setFiles(Array.isArray(data) ? data : [])
+    } catch (err: any) {
+      setError(`Fetch failed: ${err?.message || "unknown error"}`)
+      setFiles([])
     } finally {
       setLoading(false)
     }
@@ -73,7 +84,12 @@ export function StorageSection() {
           <div className="col-span-3">Modified</div>
           <div className="col-span-2 text-right">Size</div>
         </div>
-        {files.length === 0 && (
+        {error && (
+          <div className="px-4 py-4 text-sm text-destructive bg-destructive/10 rounded-lg">
+            Error: {error}
+          </div>
+        )}
+        {files.length === 0 && !error && (
           <div className="px-4 py-8 text-sm text-muted-foreground">No files yet. Upload one to get started.</div>
         )}
         {files.map((f) => (
