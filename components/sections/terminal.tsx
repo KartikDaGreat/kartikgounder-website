@@ -1,10 +1,15 @@
 "use client"
 
-import { useState, useRef, useEffect, useCallback, type KeyboardEvent } from "react"
+import { useState, useRef, useEffect, useCallback, type KeyboardEvent, type ChangeEvent } from "react"
 
 interface Command {
   input: string
   output: string | string[]
+}
+
+interface FileState {
+  authenticated: boolean
+  files: any[]
 }
 
 interface GameState {
@@ -26,6 +31,7 @@ interface GameState {
 }
 
 let gameState: GameState = { active: false, type: null }
+let fileState: FileState = { authenticated: false, files: [] }
 
 const HANGMAN_WORDS = [
   "python",
@@ -54,18 +60,151 @@ const drawHangman = (wrong: number): string[] => {
 }
 
 const getWordDisplay = (word: string, guessed: string[]): string => {
-  return word
+  return `Word: ${word
     .split("")
     .map((c) => (guessed.includes(c) ? c : "_"))
-    .join(" ")
+    .join(" ")}`
 }
 
-const executeCommand = (input: string): string | string[] => {
-  const [cmd, ...args] = input.trim().toLowerCase().split(" ")
+const fetchFiles = async (): Promise<string | string[]> => {
+  try {
+    const r = await fetch("/api/storage/files")
+    if (!r.ok) throw new Error(`HTTP ${r.status}`)
+    const files = await r.json()
+    fileState.files = files
+    return files.map((f: any) => `  ${f.name}  (${f.size} bytes)`)
+  } catch (err: any) {
+    return `Error fetching files: ${err?.message || "Unknown error"}`
+  }
+}
+
+const deleteFile = async (filename: string): Promise<string> => {
+  try {
+    const r = await fetch("/api/storage/delete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ filename }),
+    })
+    const data = await r.json().catch(() => ({}))
+    if (!r.ok) {
+      return data?.error ? `Error deleting file: ${data.error}` : `Error deleting file: HTTP ${r.status}`
+    }
+    return data.message || "File deleted"
+  } catch (err: any) {
+    return `Error deleting file: ${err?.message || "Unknown error"}`
+  }
+}
+
+const moveFile = async (_from: string, _to: string): Promise<string> => {
+  // Not implemented on upstream server
+  return "Move not implemented on storage server"
+}
+
+const loginTerminal = async (password: string): Promise<string> => {
+  try {
+    const r = await fetch("/api/terminal/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
+    })
+    if (r.ok) {
+      fileState.authenticated = true
+      return "✓ Authenticated! You can now use file commands: ls, upload, download, rm, mv"
+    }
+    const data = await r.json().catch(() => ({}))
+    return data?.error || `Login failed (HTTP ${r.status})`
+  } catch (err: any) {
+    return `Login failed: ${err?.message || "Unknown error"}`
+  }
+}
+
+const uploadFile = async (file: File): Promise<string> => {
+  try {
+    const formData = new FormData()
+    formData.append("file", file)
+    const r = await fetch("/api/storage/upload", {
+      method: "POST",
+      body: formData,
+    })
+    if (!r.ok) throw new Error(`HTTP ${r.status}`)
+    return `Uploaded ${file.name}`
+  } catch (err: any) {
+    return `Error uploading file: ${err?.message || "Unknown error"}`
+  }
+}
+
+const stripQuotes = (str: string): string => {
+  return str.replace(/^["']|["']$/g, "")
+}
+
+const downloadFile = async (filename: string): Promise<string> => {
+  filename = stripQuotes(filename)
+  if (typeof window === "undefined") return "Downloads are only available in the browser"
+  try {
+    const r = await fetch(`/api/storage/file?name=${encodeURIComponent(filename)}`)
+    if (!r.ok) throw new Error(`HTTP ${r.status}`)
+    const blob = await r.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+    return `Downloaded ${filename}`
+  } catch (err: any) {
+    return `Error downloading file: ${err?.message || "Unknown error"}`
+  }
+}
+
+const executeCommand = (input: string): string | string[] | Promise<string | string[]> => {
+  const [cmd, ...args] = input.trim().split(" ")
+  const lowerCmd = cmd.toLowerCase()
+
+  // Handle file management commands (require auth)
+  if (lowerCmd === "login") {
+    const password = args.join(" ")
+    if (!password) return "Usage: login <password>"
+    return loginTerminal(password)
+  }
+
+  if (lowerCmd === "logout") {
+    fileState.authenticated = false
+    return "Logged out"
+  }
+
+  if (fileState.authenticated) {
+    if (lowerCmd === "ls" || lowerCmd === "list") {
+      return (async () => {
+        const files = await fetchFiles()
+        return ["Files in storage:", ...(Array.isArray(files) ? files : [files])]
+      })()
+    }
+
+    if (lowerCmd === "rm" || lowerCmd === "delete") {
+      if (!args[0]) return "Usage: rm <filename>"
+      const filename = stripQuotes(args.join(" "))
+      return (async () => deleteFile(filename))()
+    }
+
+    if (lowerCmd === "mv" || lowerCmd === "move") {
+      return "Move is not implemented on the storage server"
+    }
+
+    if (lowerCmd === "upload") {
+      return "__UPLOAD__"
+    }
+
+    if (lowerCmd === "download") {
+      if (!args[0]) return "Usage: download <filename>"
+      return (async () => downloadFile(args.join(" " )))()
+    }
+  }
 
   // Handle active games
   if (gameState.active) {
-    if (cmd === "quit" || cmd === "exit" || cmd === "q") {
+    if (lowerCmd === "quit" || lowerCmd === "exit" || lowerCmd === "q") {
       const type = gameState.type
       gameState = { active: false, type: null }
       return `Exited ${type} game. Type 'game' to play again!`
@@ -73,7 +212,7 @@ const executeCommand = (input: string): string | string[] => {
 
     // Number guessing game
     if (gameState.type === "guess") {
-      const guess = Number.parseInt(cmd)
+      const guess = Number.parseInt(lowerCmd)
       if (isNaN(guess)) {
         return `Enter a number between 1 and ${gameState.guessMax}!`
       }
@@ -108,11 +247,11 @@ const executeCommand = (input: string): string | string[] => {
         scissors: "scissors",
       }
 
-      if (!choices.includes(cmd)) {
+      if (!choices.includes(lowerCmd)) {
         return "Enter: rock (r), paper (p), or scissors (s)"
       }
 
-      const playerChoice = choiceMap[cmd]
+      const playerChoice = choiceMap[lowerCmd]
       const cpuChoice = ["rock", "paper", "scissors"][Math.floor(Math.random() * 3)]
 
       let result: string
@@ -161,7 +300,7 @@ const executeCommand = (input: string): string | string[] => {
 
     // Hangman game
     if (gameState.type === "hangman") {
-      const letter = cmd[0]
+      const letter = lowerCmd[0]
       if (!letter || !/[a-z]/.test(letter)) {
         return "Enter a single letter (a-z)!"
       }
@@ -206,7 +345,7 @@ const executeCommand = (input: string): string | string[] => {
   }
 
   // Regular commands
-  switch (cmd) {
+  switch (lowerCmd) {
     case "help":
       return [
         "Available commands:",
@@ -216,9 +355,18 @@ const executeCommand = (input: string): string | string[] => {
         "  projects  - Recent projects",
         "  contact   - Contact info",
         "  game      - Play games!",
+        "  login     - Login to file manager (requires password)",
         "  clear     - Clear terminal",
         "  date      - Current date",
         "  ls        - List sections",
+        "",
+        "File Commands (after login):",
+        "  ls/list             - List files",
+        "  rm/delete <file>    - Delete file",
+        "  mv/move <from> <to> - Move/rename file",
+        "  upload              - Upload file (use Storage section)",
+        "  download <file>     - Download file",
+        "  logout              - Logout",
       ]
     case "about":
       return [
@@ -336,11 +484,21 @@ const executeCommand = (input: string): string | string[] => {
 
 export function TerminalSection() {
   const [history, setHistory] = useState<Command[]>([
-    { input: "", output: ["Welcome to Kartik's Terminal", "Type 'help' for commands or 'game' for games!", ""] },
+    {
+      input: "",
+      output: [
+        "Welcome to Kartik's Terminal",
+        "Type 'help' for commands or 'login' to access file manager",
+        "Type 'game' for games!",
+        "",
+      ],
+    },
   ])
   const [currentInput, setCurrentInput] = useState("")
   const [historyIndex, setHistoryIndex] = useState(-1)
   const inputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [pendingUpload, setPendingUpload] = useState(false)
   const terminalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -350,16 +508,40 @@ export function TerminalSection() {
   }, [history])
 
   useEffect(() => {
+    if (pendingUpload && fileInputRef.current) {
+      fileInputRef.current.value = ""
+      fileInputRef.current.click()
+      setPendingUpload(false)
+    }
+  }, [pendingUpload])
+
+  useEffect(() => {
     inputRef.current?.focus()
   }, [])
 
   const handleSubmit = useCallback(() => {
-    const output = executeCommand(currentInput)
+    const result = executeCommand(currentInput)
 
-    if (output === "__CLEAR__") {
-      setHistory([])
+    if (result instanceof Promise) {
+      result.then((output) => {
+        if (output === "__CLEAR__") {
+          setHistory([])
+        } else if (output === "__UPLOAD__") {
+          setHistory((prev) => [...prev, { input: currentInput, output: "Select a file to upload..." }])
+          setPendingUpload(true)
+        } else {
+          setHistory((prev) => [...prev, { input: currentInput, output }])
+        }
+      })
     } else {
-      setHistory((prev) => [...prev, { input: currentInput, output }])
+      if (result === "__CLEAR__") {
+        setHistory([])
+      } else if (result === "__UPLOAD__") {
+        setHistory((prev) => [...prev, { input: currentInput, output: "Select a file to upload..." }])
+        setPendingUpload(true)
+      } else {
+        setHistory((prev) => [...prev, { input: currentInput, output: result }])
+      }
     }
 
     setCurrentInput("")
@@ -389,6 +571,18 @@ export function TerminalSection() {
         setCurrentInput("")
       }
     }
+  }
+
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) {
+      setHistory((prev) => [...prev, { input: "upload", output: "No file selected" }])
+      return
+    }
+
+    const file = files[0]
+    const msg = await uploadFile(file)
+    setHistory((prev) => [...prev, { input: `upload ${file.name}`, output: msg }])
   }
 
   return (
@@ -445,6 +639,8 @@ export function TerminalSection() {
       </div>
 
       <p className="text-xs text-muted-foreground mt-4">Tip: Use arrow keys for command history</p>
+
+      <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
     </section>
   )
 }
