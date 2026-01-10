@@ -419,6 +419,7 @@ const executeCommand = (input: string): string | string[] | Promise<string | str
     case "contact":
       return [
         "Email:    kartikgounder@gmail.com",
+        "Email 2:  hello@kartikgounder.com",
         "GitHub:   github.com/KartikDaGreat",
         "LinkedIn: linkedin.com/in/kartik-gounder",
       ]

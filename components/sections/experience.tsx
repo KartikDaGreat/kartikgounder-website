@@ -1,4 +1,4 @@
-import { Github, FileText, Briefcase, Code2 } from "lucide-react"
+import { Briefcase, Code2 } from "lucide-react"
 
 interface Experience {
   title: string
@@ -55,7 +55,7 @@ const experiences: Experience[] = [
     period: "January 2024 - May 2024",
     year: 2024,
     location: "Bangalore, India",
-    type: "research",
+    type: "internship",
     highlights: [
       "Developed a custom CNN framework for on-device document classification",
       "Co-authored and published a research paper at ISEC-2025",
@@ -128,6 +128,14 @@ const projects: Project[] = [
     technologies: ["Firebase", "Mobile Dev"],
     github: "https://github.com/KartikDaGreat",
     year: 2023,
+    category: "swe",
+  },
+  {
+    title: "Personal Portfolio Website",
+    description: "Interactive portfolio with terminal emulator, file management, and dynamic theming.",
+    technologies: ["Next.js", "TypeScript", "Tailwind CSS"],
+    github: "https://github.com/KartikDaGreat/kartikgounder-website",
+    year: 2025,
     category: "swe",
   },
 ]
@@ -328,38 +336,14 @@ function ExperienceCard({ experience, alignRight }: { experience: Experience; al
 function ProjectCard({ project }: { project: Project }) {
   return (
     <article className="p-4 rounded-lg border border-border hover:border-primary/50 transition-colors bg-card">
-      <div className="flex items-start justify-between gap-2 mb-2">
-        <div>
-          <span
-            className={`inline-block px-2 py-0.5 text-xs font-mono rounded mb-2 ${project.category === "ml" ? "bg-primary/10 text-primary" : "bg-secondary text-secondary-foreground"}`}
-          >
-            {project.category === "ml" ? "ML/AI" : "SWE"}
-          </span>
-          <h3 className="font-medium">{project.title}</h3>
-          {project.period && <p className="text-xs text-muted-foreground font-mono">{project.period}</p>}
-        </div>
-        <div className="flex gap-1 flex-shrink-0">
-          {project.github && (
-            <a
-              href={project.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-1.5 rounded-md hover:bg-secondary transition-colors"
-            >
-              <Github className="w-3.5 h-3.5" />
-            </a>
-          )}
-          {project.paper && (
-            <a
-              href={project.paper}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-1.5 rounded-md hover:bg-secondary transition-colors"
-            >
-              <FileText className="w-3.5 h-3.5" />
-            </a>
-          )}
-        </div>
+      <div className="mb-2">
+        <span
+          className={`inline-block px-2 py-0.5 text-xs font-mono rounded mb-2 ${project.category === "ml" ? "bg-primary/10 text-primary" : "bg-secondary text-secondary-foreground"}`}
+        >
+          {project.category === "ml" ? "ML/AI" : "SWE"}
+        </span>
+        <h3 className="font-medium">{project.title}</h3>
+        {project.period && <p className="text-xs text-muted-foreground font-mono">{project.period}</p>}
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed mb-2">{project.description}</p>
       {project.accuracy && <p className="text-xs text-primary font-medium mb-2">{project.accuracy}</p>}

@@ -1,4 +1,5 @@
 import { ExternalLink, FileText, Award, ImageIcon } from "lucide-react"
+import Image from "next/image"
 
 interface Publication {
   title: string
@@ -8,6 +9,7 @@ interface Publication {
   link?: string
   type: "paper" | "patent"
   description?: string
+  image?: string
 }
 
 const publications: Publication[] = [
@@ -16,8 +18,9 @@ const publications: Publication[] = [
     venue: "ISEC 2025 (ACM)",
     year: "2025",
     authors: "K. Gounder et al.",
-    link: "#",
+    link: "https://dl.acm.org/doi/10.1145/3717383.3717387",
     type: "paper",
+    image: "/DeviceClassificationFramework.PNG",
     description:
       "Samsung PRISM collaboration - Custom CNN framework with 3.7M parameters optimized for on-device deployment",
   },
@@ -26,8 +29,9 @@ const publications: Publication[] = [
     venue: "BITMDM-2024 (Springer)",
     year: "2024",
     authors: "K. Gounder et al.",
-    link: "#",
+    link: "https://doi.org/10.1007/978-3-031-82706-8_23",
     type: "paper",
+    image: "/PsychologicalCounsellingFramework.PNG",
     description: "3-modal chatbot system achieving 87% patient satisfaction rate for mental health assessment",
   },
   {
@@ -35,8 +39,9 @@ const publications: Publication[] = [
     venue: "ICoICI-2024 (IEEE)",
     year: "2024",
     authors: "K. Gounder et al.",
-    link: "#",
+    link: "https://doi.org/10.1109/ICoICI62503.2024.10696508",
     type: "paper",
+    image: "/SkinCancerFramework.PNG",
     description: "Ensemble of ResNet, EfficientNet, and MobileNet achieving 96.33% accuracy in early detection",
   },
 ]
@@ -48,6 +53,7 @@ const patents: Publication[] = [
     year: "2024",
     authors: "K. Gounder",
     type: "patent",
+    image: "/SmartGlassPicture.png",
     description: "Novel approach for assistive wearables combining sensor fusion with visual distance estimation",
   },
   {
@@ -56,6 +62,7 @@ const patents: Publication[] = [
     year: "2024",
     authors: "K. Gounder",
     type: "patent",
+    image: "/KeyframeSelectionFramework.png",
     description: "Intelligent keyframe selection for vision assistance using multimodal context analysis",
   },
 ]
@@ -84,14 +91,23 @@ export function ResearchSection() {
               className="group relative overflow-hidden rounded-xl border border-border bg-card hover:border-primary/50 transition-all duration-300"
             >
               <div className="flex flex-col lg:flex-row">
-                {/* Image placeholder */}
-                <div className="lg:w-72 h-48 lg:h-auto flex-shrink-0 bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center border-b lg:border-b-0 lg:border-r border-border">
-                  <div className="text-center p-6">
-                    <div className="w-16 h-16 rounded-full bg-background/50 flex items-center justify-center mx-auto mb-3">
-                      <ImageIcon className="w-8 h-8 text-muted-foreground/50" />
+                {/* Image */}
+                <div className="lg:w-72 h-48 lg:h-56 flex-shrink-0 bg-secondary/20 flex items-center justify-center border-b lg:border-b-0 lg:border-r border-border relative overflow-hidden">
+                  {pub.image ? (
+                    <Image
+                      src={pub.image}
+                      alt={pub.title}
+                      fill
+                      className="object-contain p-4"
+                    />
+                  ) : (
+                    <div className="text-center p-6">
+                      <div className="w-16 h-16 rounded-full bg-background/50 flex items-center justify-center mx-auto mb-3">
+                        <ImageIcon className="w-8 h-8 text-muted-foreground/50" />
+                      </div>
+                      <span className="text-xs text-muted-foreground">Paper thumbnail</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">Paper thumbnail</span>
-                  </div>
+                  )}
                 </div>
 
                 {/* Content */}
@@ -150,14 +166,24 @@ export function ResearchSection() {
               key={index}
               className="group relative overflow-hidden rounded-xl border border-border bg-card hover:border-primary/50 transition-all duration-300"
             >
-              {/* Image placeholder */}
-              <div className="h-36 bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center border-b border-border">
-                <div className="text-center">
-                  <div className="w-12 h-12 rounded-full bg-background/50 flex items-center justify-center mx-auto mb-2">
-                    <ImageIcon className="w-6 h-6 text-muted-foreground/50" />
+              {/* Image */}
+              <div className="h-40 bg-secondary/20 flex items-center justify-center border-b border-border relative overflow-hidden">
+                {patent.image ? (
+                  <Image
+                    src={patent.image}
+                    alt={patent.title}
+                    width={400}
+                    height={160}
+                    className="object-contain"
+                  />
+                ) : (
+                  <div className="text-center">
+                    <div className="w-12 h-12 rounded-full bg-background/50 flex items-center justify-center mx-auto mb-2">
+                      <ImageIcon className="w-6 h-6 text-muted-foreground/50" />
+                    </div>
+                    <span className="text-xs text-muted-foreground">Patent diagram</span>
                   </div>
-                  <span className="text-xs text-muted-foreground">Patent diagram</span>
-                </div>
+                )}
               </div>
 
               {/* Content */}

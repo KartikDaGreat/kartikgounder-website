@@ -10,16 +10,28 @@ export function ContactSection() {
         {/* Email */}
         <div>
           <h2 className="text-lg font-semibold mb-4">Get in Touch</h2>
-          <a
-            href="mailto:kartikgounder@gmail.com"
-            className="inline-flex items-center gap-3 p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-card transition-all group"
-          >
-            <Mail className="w-5 h-5 text-primary" />
-            <div>
-              <p className="font-medium group-hover:text-primary transition-colors">kartikgounder@gmail.com</p>
-              <p className="text-sm text-muted-foreground">Open for opportunities and collaborations</p>
-            </div>
-          </a>
+          <div className="grid gap-3">
+            <a
+              href="mailto:kartikgounder@gmail.com"
+              className="inline-flex items-center gap-3 p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-card transition-all group"
+            >
+              <Mail className="w-5 h-5 text-primary" />
+              <div>
+                <p className="font-medium group-hover:text-primary transition-colors">kartikgounder@gmail.com</p>
+                <p className="text-sm text-muted-foreground">Personal inbox • quick replies</p>
+              </div>
+            </a>
+            <a
+              href="mailto:hello@kartikgounder.com"
+              className="inline-flex items-center gap-3 p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-card transition-all group"
+            >
+              <Mail className="w-5 h-5 text-primary" />
+              <div>
+                <p className="font-medium group-hover:text-primary transition-colors">hello@kartikgounder.com</p>
+                <p className="text-sm text-muted-foreground">Portfolio & collaborations inbox</p>
+              </div>
+            </a>
+          </div>
         </div>
 
         {/* Location */}
