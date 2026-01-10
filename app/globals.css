@@ -10,6 +10,25 @@
   --font-mono: var(--font-mono), "JetBrains Mono", monospace;
 }
 
+/* Smooth theme transitions: opt-in by adding 'theme-transition' class to :root */
+:root.theme-transition,
+:root.theme-transition * {
+  transition:
+    background-color 1500ms ease,
+    color 1500ms ease,
+    border-color 1500ms ease,
+    box-shadow 1500ms ease,
+    fill 1500ms ease,
+    stroke 1500ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root.theme-transition,
+  :root.theme-transition * {
+    transition: none;
+  }
+}
+
 /* Base Palette: Slate Dark (Default) */
 :root {
   --background: oklch(0.13 0.01 250);
