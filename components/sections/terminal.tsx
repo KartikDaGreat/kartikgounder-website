@@ -184,6 +184,27 @@ const downloadFile = async (filename: string): Promise<string> => {
   }
 }
 
+const getFileAutocomplete = (input: string): string[] => {
+  if (fileState.files.length === 0) return []
+  const parts = input.trim().split(" ")
+  const cmd = parts[0].toLowerCase()
+  
+  // Only autocomplete for these commands
+  const autocompleteCommands = ["download", "rm", "delete", "mv", "move"]
+  if (!autocompleteCommands.includes(cmd) || parts.length < 2) return []
+  
+  const prefix = parts[parts.length - 1].toLowerCase()
+  if (prefix.length === 0) return []
+  
+  // Find matching files
+  const matches = fileState.files
+    .filter((f: any) => f.name.toLowerCase().startsWith(prefix))
+    .map((f: any) => f.name)
+    .slice(0, 5) // Limit to 5 suggestions
+  
+  return matches
+}
+
 const executeCommand = (input: string): string | string[] | Promise<string | string[]> => {
   const [cmd, ...args] = input.trim().split(" ")
   const lowerCmd = cmd.toLowerCase()
@@ -392,6 +413,10 @@ const executeCommand = (input: string): string | string[] | Promise<string | str
         "  upload              - Upload file",
         "  download <file>     - Download file",
         "  logout              - Logout",
+        "",
+        "Tips:",
+        "  • Press Tab to autocomplete file names in download/rm/mv commands",
+        "  • Use arrow keys to navigate history or autocomplete suggestions",
       ]
     case "about":
       return [
@@ -522,6 +547,8 @@ export function TerminalSection() {
   ])
   const [currentInput, setCurrentInput] = useState("")
   const [historyIndex, setHistoryIndex] = useState(-1)
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [selectedSuggestion, setSelectedSuggestion] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [pendingUpload, setPendingUpload] = useState(false)
@@ -556,6 +583,12 @@ export function TerminalSection() {
     inputRef.current?.focus()
   }, [])
 
+  useEffect(() => {
+    if (terminalRef.current) {
+      terminalRef.current.scrollTop = terminalRef.current.scrollHeight
+    }
+  }, [suggestions])
+
   const handleSubmit = useCallback(() => {
     const result = executeCommand(currentInput)
 
@@ -586,9 +619,40 @@ export function TerminalSection() {
   }, [currentInput])
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleSubmit()
-    } else if (e.key === "ArrowUp") {
+    if (e.key === "Tab") {
+      e.preventDefault()
+      // Get autocomplete suggestions
+      const newSuggestions = getFileAutocomplete(currentInput)
+      setSuggestions(newSuggestions)
+      setSelectedSuggestion(0)
+      
+      if (newSuggestions.length > 0) {
+        // Autocomplete with the first suggestion
+        const parts = currentInput.trim().split(" ")
+        const newInput = [...parts.slice(0, -1), newSuggestions[0]].join(" ")
+        setCurrentInput(newInput)
+        setSuggestions([])
+      }
+    } else if (e.key === "ArrowUp" && suggestions.length > 0) {
+      e.preventDefault()
+      setSelectedSuggestion((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1))
+    } else if (e.key === "ArrowDown" && suggestions.length > 0) {
+      e.preventDefault()
+      setSelectedSuggestion((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0))
+    } else if (e.key === "Enter") {
+      if (suggestions.length > 0) {
+        e.preventDefault()
+        // Accept selected suggestion
+        const parts = currentInput.trim().split(" ")
+        const newInput = [...parts.slice(0, -1), suggestions[selectedSuggestion]].join(" ")
+        setCurrentInput(newInput)
+        setSuggestions([])
+      } else {
+        handleSubmit()
+      }
+    } else if (e.key === "Escape") {
+      setSuggestions([])
+    } else if (e.key === "ArrowUp" && suggestions.length === 0) {
       e.preventDefault()
       const commandHistory = history.filter((h) => h.input).map((h) => h.input)
       if (commandHistory.length > 0) {
@@ -596,7 +660,7 @@ export function TerminalSection() {
         setHistoryIndex(newIndex)
         setCurrentInput(commandHistory[commandHistory.length - 1 - newIndex] || "")
       }
-    } else if (e.key === "ArrowDown") {
+    } else if (e.key === "ArrowDown" && suggestions.length === 0) {
       e.preventDefault()
       if (historyIndex > 0) {
         const commandHistory = history.filter((h) => h.input).map((h) => h.input)
@@ -676,16 +740,50 @@ export function TerminalSection() {
 
           <div className="flex items-center gap-2">
             <span className="text-primary">❯</span>
-            <input
-              ref={inputRef}
-              type="text"
-              value={currentInput}
-              onChange={(e) => setCurrentInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="flex-1 bg-transparent outline-none caret-primary"
-              spellCheck={false}
-              autoComplete="off"
-            />
+            <div className="flex-1 relative">
+              <input
+                ref={inputRef}
+                type="text"
+                value={currentInput}
+                onChange={(e) => {
+                  const value = e.target.value
+                  setCurrentInput(value)
+                  // Update suggestions as user types
+                  if (fileState.authenticated) {
+                    const newSuggestions = getFileAutocomplete(value)
+                    setSuggestions(newSuggestions)
+                    setSelectedSuggestion(0)
+                  }
+                }}
+                onKeyDown={handleKeyDown}
+                className="w-full bg-transparent outline-none caret-primary"
+                spellCheck={false}
+                autoComplete="off"
+              />
+              {/* Autocomplete suggestions dropdown */}
+              {suggestions.length > 0 && (
+                <div className="absolute top-full left-0 mt-1 w-full bg-secondary border border-border rounded shadow-lg z-10">
+                  {suggestions.map((suggestion, idx) => (
+                    <div
+                      key={idx}
+                      className={`px-3 py-2 text-sm cursor-pointer ${
+                        idx === selectedSuggestion
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:bg-secondary/80"
+                      }`}
+                      onClick={() => {
+                        const parts = currentInput.trim().split(" ")
+                        const newInput = [...parts.slice(0, -1), suggestion].join(" ")
+                        setCurrentInput(newInput)
+                        setSuggestions([])
+                      }}
+                    >
+                      {suggestion}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             <span className="terminal-cursor w-2 h-5 bg-primary" />
           </div>
         </div>
