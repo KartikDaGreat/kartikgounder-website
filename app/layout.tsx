@@ -4,6 +4,7 @@ import { Inter, Work_Sans, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { ThemeProvider } from "@/components/theme-provider"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { ArticlesSidebar } from "@/components/articles-sidebar"
 import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" })
@@ -29,6 +30,7 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <ThemeToggle />
+          <ArticlesSidebar />
           {children}
         </ThemeProvider>
         <Analytics />
