@@ -6,6 +6,7 @@ type AcademicItem = {
   period: string
   gpa?: string
   focus?: string
+  coursework?: { label: string; items: string[] }[]
   year: number
   startYear: number
   endYear: number
@@ -33,6 +34,16 @@ const academics: AcademicItem[] = [
     school: "Columbia Engineering",
     period: "Aug 2025 – Dec 2026",
     focus: "AI, Machine Learning, Healthcare Applications",
+    coursework: [
+      {
+        label: "Completed (2025)",
+        items: ["Machine Learning", "Databases", "Algorithms", "Computational Learning Theory"],
+      },
+      {
+        label: "In progress (2026)",
+        items: ["NLP", "Projects in Software Engineering", "Ethical and Responsible AI", "Policy for Privacy Technology"],
+      },
+    ],
     year: 2026,
     startYear: 2025,
     endYear: 2026,
@@ -295,6 +306,25 @@ function AcademicCard({ item }: { item: AcademicItem }) {
       <p className="text-xs text-muted-foreground mt-1">{item.period}</p>
       {item.gpa && <p className="text-xs text-muted-foreground mt-2">GPA: {item.gpa}</p>}
       {item.focus && <p className="text-xs text-muted-foreground mt-2">{item.focus}</p>}
+      {item.coursework && (
+        <div className="mt-3 space-y-2">
+          {item.coursework.map((cw, idx) => (
+            <div key={idx} className="space-y-1">
+              <p className="text-xs font-semibold text-foreground/80">{cw.label}</p>
+              <div className="flex flex-wrap gap-2">
+                {cw.items.map((course) => (
+                  <span
+                    key={course}
+                    className="text-[11px] px-2 py-1 rounded-full bg-muted text-foreground border border-border"
+                  >
+                    {course}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </article>
   )
 }

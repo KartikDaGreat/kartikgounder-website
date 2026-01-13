@@ -16,6 +16,11 @@ export const metadata: Metadata = {
   description:
     "Personal portfolio of Kartik - Computer Science researcher, software engineer, and machine learning enthusiast",
   generator: "v0.app",
+  icons: {
+    icon: "/favicon.jpg",
+    shortcut: "/favicon.jpg",
+    apple: "/favicon.jpg",
+  },
 }
 
 export default function RootLayout({
