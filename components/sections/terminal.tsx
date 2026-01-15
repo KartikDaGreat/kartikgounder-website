@@ -130,6 +130,71 @@ const loginTerminal = async (password: string): Promise<string> => {
   }
 }
 
+const getVisitorInfo = async (): Promise<string | string[]> => {
+  try {
+    // Collect client-side information
+    const clientInfo = {
+      screenWidth: typeof window !== "undefined" ? window.screen.width : "Unknown",
+      screenHeight: typeof window !== "undefined" ? window.screen.height : "Unknown",
+      viewportWidth: typeof window !== "undefined" ? window.innerWidth : "Unknown",
+      viewportHeight: typeof window !== "undefined" ? window.innerHeight : "Unknown",
+      colorDepth: typeof window !== "undefined" ? window.screen.colorDepth : "Unknown",
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      dnt: typeof navigator !== "undefined" ? navigator.doNotTrack : "Unknown",
+      cookiesEnabled: typeof navigator !== "undefined" ? navigator.cookieEnabled : "Unknown",
+      localStorageEnabled: typeof localStorage !== "undefined" ? "Yes" : "No",
+      deviceMemory: typeof navigator !== "undefined" ? (navigator as any).deviceMemory || "Not available" : "Unknown",
+      connectionType: typeof navigator !== "undefined" ? ((navigator as any).connection?.effectiveType || "Not available") : "Unknown",
+    }
+
+    const r = await fetch("/api/terminal/visitors", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(clientInfo),
+    })
+    if (!r.ok) throw new Error(`HTTP ${r.status}`)
+    const data = await r.json()
+    
+    const lines = [
+      "Website Tracking Information",
+      "────────────────────────────",
+      "",
+      "Network & Location:",
+      `IP Address:        ${data.ip}`,
+      `Referrer:          ${data.referer === "Direct" ? "Direct" : data.referer}`,
+      "",
+      "Device & Display:",
+      `Platform:          ${data.platform}`,
+      `Screen Size:       ${data.screenWidth} x ${data.screenHeight}`,
+      `Viewport Size:     ${data.viewportWidth} x ${data.viewportHeight}`,
+      `Color Depth:       ${data.colorDepth}-bit`,
+      "",
+      "Browser & Language:",
+      `Browser:           ${data.browser}`,
+      `User Agent:        ${data.userAgent}`,
+      `Language:          ${data.language}`,
+      `Accepted Encoding: ${data.acceptEncoding}`,
+      "",
+      "System Information:",
+      `Timezone:          ${data.timezone}`,
+      `Device Memory:     ${data.deviceMemory}`,
+      `Connection Type:   ${data.connectionType}`,
+      "",
+      "Privacy Settings:",
+      `Do Not Track:      ${data.dnt || "Not set"}`,
+      `Cookies Enabled:   ${data.cookiesEnabled ? "Yes" : "No"}`,
+      `LocalStorage:      ${data.localStorageEnabled}`,
+      "",
+      `Timestamp:         ${data.timestamp}`,
+      `INFORMATION: THIS IS THE INFORMATION THE WEBSITE COLLECTS ABOUT YOU. KEEP SAFE!`
+    ]
+    
+    return lines
+  } catch (err: any) {
+    return `Error fetching visitor info: ${err?.message || "Unknown error"}`
+  }
+}
+
 const uploadFileWithProgress = (file: File, onProgress: (p: number) => void): Promise<string> => {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
@@ -400,6 +465,7 @@ const executeCommand = (input: string): string | string[] | Promise<string | str
         "  skills    - My skills",
         "  projects  - Recent projects",
         "  contact   - Contact info",
+        "  visitor   - Website visitor info",
         "  game      - Play games!",
         "  login     - Login to file manager (requires password)",
         "  clear     - Clear terminal",
@@ -448,6 +514,8 @@ const executeCommand = (input: string): string | string[] | Promise<string | str
         "GitHub:   github.com/KartikDaGreat",
         "LinkedIn: linkedin.com/in/kartik-gounder",
       ]
+    case "visitor":
+      return getVisitorInfo()
     case "game":
       return [
         "🎮 Games",
