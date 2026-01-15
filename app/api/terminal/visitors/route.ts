@@ -102,7 +102,16 @@ export async function POST(request: NextRequest) {
       deviceMemory: body.deviceMemory,
       connectionType: body.connectionType,
       
-      timestamp: new Date().toLocaleString(),
+      timestamp: new Date().toLocaleString('en-US', { 
+        timeZone: body.timezone || 'UTC',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      }),
     })
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || "Failed to get visitor info" }, { status: 500 })
