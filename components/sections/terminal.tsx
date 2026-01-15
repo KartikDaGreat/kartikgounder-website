@@ -156,14 +156,19 @@ const getVisitorInfo = async (): Promise<string | string[]> => {
     const data = await r.json()
     
     const lines = [
+      `INFORMATION: THIS IS THE INFORMATION THE WEBSITE COLLECTS ABOUT YOU. KEEP SAFE!`,
       "Website Tracking Information",
       "────────────────────────────",
       "",
       "Network & Location:",
       `IP Address:        ${data.ip}`,
       `Location:          ${data.location}`,
+      `Coordinates:       ${data.lat}, ${data.lon}`,
+      `Postal Code:       ${data.zip}`,
+      `Country Code:      ${data.countryCode}`,
       `ISP:               ${data.isp}`,
-      `Referrer:          ${data.referer === "Direct" ? "Direct" : data.referer}`,
+      `Organization:      ${data.org}`,
+      `ASN:               ${data.asn}`,
       "",
       "Device & Display:",
       `Platform:          ${data.platform}`,
@@ -188,7 +193,6 @@ const getVisitorInfo = async (): Promise<string | string[]> => {
       `LocalStorage:      ${data.localStorageEnabled}`,
       "",
       `Timestamp:         ${data.timestamp}`,
-      `INFORMATION: THIS IS THE INFORMATION THE WEBSITE COLLECTS ABOUT YOU. KEEP SAFE!`
     ]
     
     return lines
@@ -482,9 +486,6 @@ const executeCommand = (input: string): string | string[] | Promise<string | str
         "  download <file>     - Download file",
         "  logout              - Logout",
         "",
-        "Tips:",
-        "  • Press Tab to autocomplete file names in download/rm/mv commands",
-        "  • Use arrow keys to navigate history or autocomplete suggestions",
       ]
     case "about":
       return [
