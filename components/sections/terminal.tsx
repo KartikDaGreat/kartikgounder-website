@@ -161,6 +161,8 @@ const getVisitorInfo = async (): Promise<string | string[]> => {
       "",
       "Network & Location:",
       `IP Address:        ${data.ip}`,
+      `Location:          ${data.location}`,
+      `ISP:               ${data.isp}`,
       `Referrer:          ${data.referer === "Direct" ? "Direct" : data.referer}`,
       "",
       "Device & Display:",

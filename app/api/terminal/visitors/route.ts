@@ -26,15 +26,51 @@ export async function POST(request: NextRequest) {
     else if (userAgent.includes("Firefox")) browser = "Firefox"
     else if (userAgent.includes("Edge")) browser = "Edge"
 
+    // Fetch location data from ip-api.com
+    const ipAddress = String(ip).split(",")[0]
+    let location = "Unknown"
+    let city = "Unknown"
+    let region = "Unknown"
+    let country = "Unknown"
+    let isp = "Unknown"
+    
+    try {
+      // Only fetch location if it's not localhost
+      if (ipAddress !== "Unknown" && ipAddress !== "::1" && !ipAddress.startsWith("127.") && !ipAddress.startsWith("192.168.")) {
+        const locationResponse = await fetch(`http://ip-api.com/json/${ipAddress}?fields=status,country,regionName,city,isp`)
+        if (locationResponse.ok) {
+          const locationData = await locationResponse.json()
+          if (locationData.status === "success") {
+            city = locationData.city || "Unknown"
+            region = locationData.regionName || "Unknown"
+            country = locationData.country || "Unknown"
+            isp = locationData.isp || "Unknown"
+            location = `${city}, ${region}, ${country}`
+          }
+        }
+      } else {
+        location = "Localhost"
+        country = "Local"
+      }
+    } catch (error) {
+      // Silently fail if location API is unavailable
+      console.error("Location fetch error:", error)
+    }
+
     return NextResponse.json({
       // Server-side collected
-      ip: String(ip).split(",")[0],
+      ip: ipAddress,
       browser: browser,
       platform: platform,
       userAgent: userAgent,
       language: acceptLanguage.split(",")[0],
       acceptEncoding: acceptEncoding,
       referer: referer,
+      location: location,
+      city: city,
+      region: region,
+      country: country,
+      isp: isp,
       
       // Client-side collected
       screenWidth: body.screenWidth,
