@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink, ChevronUp } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface Article {
   date: string
@@ -85,67 +86,8 @@ const articles: Article[] = [
   },
 ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
-export function ArticlesSidebar() {
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const intervalRef = useRef<number | null>(null)
-  const isPausedRef = useRef(false)
-  const resumeTimeoutRef = useRef<number | null>(null)
-
-  useEffect(() => {
-    const scrollContainer = scrollRef.current
-    if (!scrollContainer) return
-
-    // Use setInterval for reliable scrolling
-    intervalRef.current = window.setInterval(() => {
-      if (!isPausedRef.current && scrollContainer) {
-        const currentScroll = scrollContainer.scrollTop
-        const maxScroll = scrollContainer.scrollHeight - scrollContainer.clientHeight
-        
-        if (currentScroll >= maxScroll) {
-          scrollContainer.scrollTop = 0
-        } else {
-          scrollContainer.scrollTop = currentScroll + 1
-        }
-      }
-    }, 30) // Scroll every 30ms for smooth animation
-
-    const handleUserInteraction = () => {
-      isPausedRef.current = true
-      
-      if (resumeTimeoutRef.current) {
-        clearTimeout(resumeTimeoutRef.current)
-      }
-      
-      resumeTimeoutRef.current = window.setTimeout(() => {
-        isPausedRef.current = false
-      }, 3000)
-    }
-
-    scrollContainer.addEventListener('wheel', handleUserInteraction, { passive: true })
-    scrollContainer.addEventListener('touchstart', handleUserInteraction, { passive: true })
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-      }
-      if (resumeTimeoutRef.current) {
-        clearTimeout(resumeTimeoutRef.current)
-      }
-      scrollContainer.removeEventListener('wheel', handleUserInteraction)
-      scrollContainer.removeEventListener('touchstart', handleUserInteraction)
-    }
-  }, [])
-
-  const handleMouseEnter = () => {
-    isPausedRef.current = true
-    if (resumeTimeoutRef.current) {
-      clearTimeout(resumeTimeoutRef.current)
-    }
-  }
-
-  const handleMouseLeave = () => {
-    isPausedRef.current = false
-  }
+export function MobileNewsDrawer() {
+  const [isOpen, setIsOpen] = useState(false)
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -153,22 +95,40 @@ export function ArticlesSidebar() {
   }
 
   return (
-    <div
-      className="fixed top-0 right-0 h-screen w-80 bg-background border-l shadow-lg z-40 flex flex-col hidden lg:flex md:hidden"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <div className="p-4 border-b bg-background">
-        <h3 className="text-lg font-semibold">📚 Interesting Articles</h3>
-        <p className="text-xs text-muted-foreground">Healthcare tech insights</p>
-      </div>
-      
+    <>
+      {/* Bottom drawer trigger - mobile only */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          "fixed bottom-0 left-0 right-0 z-40 lg:hidden",
+          "bg-muted/90 backdrop-blur-sm border-t border-border",
+          "px-4 py-3 flex items-center justify-between",
+          "hover:bg-muted transition-colors"
+        )}
+      >
+        <span className="text-sm font-semibold">📚 News & Articles</span>
+        <ChevronUp className={cn("w-4 h-4 transition-transform", isOpen && "rotate-180")} />
+      </button>
+
+      {/* Drawer overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-background/40 backdrop-blur-sm z-30 lg:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Drawer content */}
       <div
-        ref={scrollRef}
-        className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent"
+        className={cn(
+          "fixed bottom-12 left-0 right-0 z-40 lg:hidden",
+          "bg-background border-t border-border shadow-lg",
+          "overflow-y-auto transition-all duration-300 ease-in-out",
+          isOpen ? "max-h-[60vh]" : "max-h-0"
+        )}
       >
         <div className="p-4 space-y-3">
-          {articles.map((article, idx) => (
+          {articles.slice(0, 5).map((article, idx) => (
             <div
               key={idx}
               className="p-3 bg-muted/30 rounded-md hover:bg-muted/50 transition-colors group"
@@ -199,6 +159,6 @@ export function ArticlesSidebar() {
           ))}
         </div>
       </div>
-    </div>
+    </>
   )
 }

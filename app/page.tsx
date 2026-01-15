@@ -64,8 +64,8 @@ export default function Home() {
   return (
     <div className="min-h-screen flex">
       <Sidebar activeSection={activeSection} onNavigate={handleNavigate} />
-      <main ref={mainRef} className="flex-1 ml-0 md:ml-24 lg:ml-72 mr-80 transition-all duration-300">
-        <div className="min-h-screen p-6 md:p-12 lg:p-16 lg:pl-24 max-w-4xl mx-auto">
+      <main ref={mainRef} className="flex-1 ml-0 md:ml-24 lg:ml-72 lg:mr-80 transition-all duration-300">
+        <div className="min-h-screen p-6 pt-16 md:p-12 md:pt-12 lg:p-16 lg:pl-24 max-w-4xl mx-auto">
           <Suspense fallback={<SectionLoader />}>{renderSection()}</Suspense>
         </div>
       </main>

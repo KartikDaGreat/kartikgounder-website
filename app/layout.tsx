@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { ThemeProvider } from "@/components/theme-provider"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { ArticlesSidebar } from "@/components/articles-sidebar"
+import { MobileNewsDrawer } from "@/components/mobile-news-drawer"
 import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" })
@@ -36,6 +37,7 @@ export default function RootLayout({
         <ThemeProvider>
           <ThemeToggle />
           <ArticlesSidebar />
+          <MobileNewsDrawer />
           {children}
         </ThemeProvider>
         <Analytics />
