@@ -154,7 +154,7 @@ export function ArticlesSidebar() {
 
   return (
     <div
-      className="fixed top-0 right-0 h-screen w-80 bg-background border-l shadow-lg z-40 flex flex-col"
+      className="fixed top-0 right-0 h-screen w-80 bg-background border-l shadow-lg z-40 flex flex-col hidden lg:flex"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
