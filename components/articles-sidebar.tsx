@@ -82,7 +82,48 @@ const articles: Article[] = [
     source: "The Verge",
     url: "https://www.theverge.com/tech/859132/optimizer-ces-2026-metabolism-bodily-fluids-health-tech-wearables",
     description: "Metabolic monitoring & smart fluid-based diagnostics",
-  },
+  },{
+  date: "2026-01-15",
+  title: "Boston Scientific to Acquire Penumbra in ~$14.5B Medtech Deal",
+  source: "MarketMinute",
+  url: "https://markets.chroniclejournal.com/chroniclejournal/article/marketminute-2026-2-2-boston-scientifics-145-billion-stroke-of-genius-consolidation-heats-up-in-the-medtech-arms-race",
+  description: "Boston Scientific announced the acquisition of thrombectomy and neurovascular leader Penumbra, marking major consolidation in medtech device space.", 
+},
+{
+  date: "2026-01-22",
+  title: "FDA Clears LIBERTY Endovascular Robotic System",
+  source: "Today’s Medical Developments",
+  url: "https://www.todaysmedicaldevelopments.com/article/regulatory-news-insights-january-february-2026/",
+  description: "Microbot Medical’s remote endovascular robotic platform received FDA 510(k) clearance, promising efficiency gains and reduced clinician radiation exposure.",
+},
+{
+  date: "2026-01-28",
+  title: "Senseonics to Participate at BTIG MedTech Conference",
+  source: "Seeking Alpha",
+  url: "https://seekingalpha.com/pr/20379947-senseonics-holdings-inc-to-participate-at-the-btig-13th-annual-medtech-digital-health-life",
+  description: "Senseonics, maker of long-term implantable glucose monitors, announced participation in a key MedTech, Digital Health & Life Sciences conference.", 
+},
+{
+  date: "2026-01-30",
+  title: "MD&M West 2026 Preview Highlights Industry Innovation",
+  source: "Med-Tech Insights",
+  url: "https://med-techinsights.com/2026/01/30/mdm-west-preview/",
+  description: "Preview of MD&M West 2026 showcases new manufacturing, design, and connected device technologies in medical device engineering.",
+},
+{
+  date: "2026-02-02",
+  title: "Robotic Surgery Trends to Watch in 2026",
+  source: "MedTech Dive",
+  url: "https://www.medtechdive.com/news/5-robotic-surgery-trends-to-watch-2026/810577/",
+  description: "Trend analysis on soft tissue robotic systems and expansion of surgical robotics into new clinical specialties.",
+},
+{
+  date: "2026-02-02",
+  title: "Stryker Raises 2026 Profit Forecast on MedTech Strength",
+  source: "Reuters",
+  url: "https://www.reuters.com/business/healthcare-pharmaceuticals/stryker-raises-annual-profit-forecast-strong-sales-medical-devices-2026-01-29/",
+  description: "Stryker boosted its full-year profit outlook, driven by strong medtech device sales in implants and neurotechnology.",
+},
 ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
 export function ArticlesSidebar() {

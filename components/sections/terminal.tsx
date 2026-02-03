@@ -46,6 +46,21 @@ const HANGMAN_WORDS = [
   "neural",
 ]
 
+const formatFileSize = (bytes: number): string => {
+  if (!Number.isFinite(bytes) || bytes <= 0) return "0 B"
+  const units = ["B", "KB", "MB", "GB", "TB"]
+  let size = bytes
+  let unitIndex = 0
+
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024
+    unitIndex += 1
+  }
+
+  const rounded = Math.round(size * 2) / 2
+  return `${rounded % 1 === 0 ? rounded.toFixed(0) : rounded.toFixed(1)} ${units[unitIndex]}`
+}
+
 const drawHangman = (wrong: number): string[] => {
   const stages = [
     "  +---+\n  |   |\n      |\n      |\n      |\n      |\n=========",
@@ -72,7 +87,7 @@ const fetchFiles = async (): Promise<string | string[]> => {
     if (!r.ok) throw new Error(`HTTP ${r.status}`)
     const files = await r.json()
     fileState.files = files
-    return files.map((f: any) => `  ${f.name}  (${f.size} bytes)`)
+    return files.map((f: any) => `  ${f.name}  (${formatFileSize(Number(f.size))})`)
   } catch (err: any) {
     return `Error fetching files: ${err?.message || "Unknown error"}`
   }
