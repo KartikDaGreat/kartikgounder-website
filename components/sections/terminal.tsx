@@ -633,7 +633,7 @@ const executeCommand = (input: string): string | string[] | Promise<string | str
         "Enter a letter to guess!",
         "Type 'quit' to exit.",
       ]
-    case "cls":
+    case "clear":
       return "__CLEAR__"
     case "date":
       return new Date().toLocaleString()
