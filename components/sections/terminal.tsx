@@ -216,32 +216,65 @@ const getVisitorInfo = async (): Promise<string | string[]> => {
   }
 }
 
-const uploadFileWithProgress = (file: File, onProgress: (p: number) => void): Promise<string> => {
+const uploadFileWithProgress = async (file: File, onProgress: (p: number) => void): Promise<string> => {
   return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
-    xhr.open("POST", "/api/storage/upload")
-
-    xhr.upload.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percent = Math.round((event.loaded / event.total) * 100)
-        onProgress(percent)
-      }
-    }
-
-    xhr.onerror = () => reject(new Error("Network error during upload"))
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState === XMLHttpRequest.DONE) {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          resolve(`Uploaded ${file.name}`)
-        } else {
-          reject(new Error(`HTTP ${xhr.status}`))
-        }
-      }
-    }
-
     const formData = new FormData()
     formData.append("file", file)
-    xhr.send(formData)
+
+    fetch("/api/storage/upload", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => {
+        if (!response.body) {
+          throw new Error("No response body")
+        }
+
+        const reader = response.body.getReader()
+        const decoder = new TextDecoder()
+        let buffer = ""
+
+        const readStream = () => {
+          reader.read().then(({ done, value }) => {
+            if (done) {
+              onProgress(100)
+              resolve(`Uploaded ${file.name}`)
+              return
+            }
+
+            buffer += decoder.decode(value, { stream: true })
+            const lines = buffer.split("\n")
+            buffer = lines.pop() || ""
+
+            for (const line of lines) {
+              if (line.startsWith("data: ")) {
+                try {
+                  const data = JSON.parse(line.slice(6))
+                  if (data.progress !== undefined) {
+                    onProgress(data.progress)
+                  }
+                  if (data.ok) {
+                    onProgress(100)
+                  }
+                  if (data.error) {
+                    reject(new Error(data.error))
+                    return
+                  }
+                } catch (e) {
+                  // Ignore parse errors
+                }
+              }
+            }
+
+            readStream()
+          })
+        }
+
+        readStream()
+      })
+      .catch((err) => {
+        reject(new Error(`Network error: ${err.message}`))
+      })
   })
 }
 
@@ -845,6 +878,7 @@ export function TerminalSection() {
                 className="w-full bg-transparent outline-none caret-primary"
                 spellCheck={false}
                 autoComplete="off"
+                disabled={uploadingFile !== null}
               />
               {/* Autocomplete suggestions dropdown */}
               {suggestions.length > 0 && (

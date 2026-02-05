@@ -46,17 +46,49 @@ export function StorageSection() {
   const onUpload: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
     const file = e.target.files?.[0]
     if (!file) return
+
     const fd = new FormData()
     fd.append("file", file)
+
     try {
       setUploading(true)
-      const r = await fetch("/api/storage/upload", { method: "POST", body: fd })
-      if (!r.ok) {
-        const t = await r.text()
-        alert(`Upload failed: ${t || r.statusText}`)
-      } else {
-        await load()
+      const response = await fetch("/api/storage/upload", { method: "POST", body: fd })
+
+      if (!response.body) {
+        alert("Upload failed: No response body")
+        return
       }
+
+      // Read SSE stream for progress (optional - server sends progress events)
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ""
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split("\n")
+        buffer = lines.pop() || ""
+
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            try {
+              const data = JSON.parse(line.slice(6))
+              if (data.error) {
+                alert(`Upload failed: ${data.error}`)
+                return
+              }
+            } catch (e) {
+              // Ignore parse errors
+            }
+          }
+        }
+      }
+
+      // Reload file list after successful upload
+      await load()
     } finally {
       setUploading(false)
       e.target.value = ""
