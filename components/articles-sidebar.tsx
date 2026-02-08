@@ -124,6 +124,48 @@ const articles: Article[] = [
   url: "https://www.reuters.com/business/healthcare-pharmaceuticals/stryker-raises-annual-profit-forecast-strong-sales-medical-devices-2026-01-29/",
   description: "Stryker boosted its full-year profit outlook, driven by strong medtech device sales in implants and neurotechnology.",
 },
+{
+  date: "2026-02-06",
+  title: "MedTech Trends Shaping 2026",
+  source: "IQVIA",
+  url: "https://www.iqvia.com/blogs/2026/02/medtech-trends-shaping-2026",
+  description: "Explores top medtech trends for 2026 including AI, real-world evidence, diagnostics, robotics, and digital health shaping the future of medical technology.",
+},
+{
+  date: "2026-02-05",
+  title: "Medtech Funding Challenges Discussed at MD&M West Keynote",
+  source: "Design News",
+  url: "https://www.designnews.com/medical/medtech-funding-challenges-discussed-at-mdm-west-keynote",
+  description: "Key insights from MD&M West highlight funding pressures on medtech startups as strategic buyers focus on later-stage products amid industry consolidation.",
+},
+{
+  date: "2026-02-02",
+  title: "Beta Bionics Receives FDA Warning Letter",
+  source: "MedTech Dive",
+  url: "https://www.medtechdive.com/news/beta-bionics-receives-fda-warning-letter/811140/",
+  description: "Beta Bionics announced an FDA warning letter related to its operations — noted not to affect current marketing, manufacturing, or distribution of its products.",
+},
+{
+  date: "2026-02-02",
+  title: "Affluent Medical Officially Becomes CARVOLIX",
+  source: "TradingView News",
+  url: "https://www.tradingview.com/news/eqs%3A595eada36094b%3A0-affluent-medical-officially-becomes-carvolix/",
+  description: "Medtech company Affluent Medical completed a rebrand and corporate evolution, officially taking on the name CARVOLIX.",
+},
+{
+  date: "2026-02-08",
+  title: "India-US Trade Framework Expected to Deepen Pharma and Medtech Collaboration",
+  source: "Times of India",
+  url: "https://timesofindia.indiatimes.com/business/india-business/india-us-trade-framework-expected-to-deepen-pharma-and-medtech-collaboration-says-ipa/articleshow/128042417.cms",
+  description: "News on India–US interim trade agreement expected to enhance collaboration in pharmaceuticals and medtech, strengthening innovation and supply chains between the two nations.",
+},
+{
+  date: "2026-02-06",
+  title: "Paperclip-Sized Heart Sensor to Help NHS Patients with Chronic Heart Failure",
+  source: "The Sun",
+  url: "https://www.thesun.co.uk/health/38127862/brits-deadly-heart-issues-get-nhs-implant/",
+  description: "A tiny wireless implantable sensor (CardioMEMS HF System) is being rolled out on the NHS to remotely monitor heart failure symptoms, reducing hospital admissions.",
+},
 ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
 export function ArticlesSidebar() {

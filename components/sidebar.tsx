@@ -265,7 +265,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
                           <span>Rating unavailable</span>
                         )}
                         <a
-                          href={`https://www.google.com/maps/dir/?api=1&origin=${donutLocation.lat},${donutLocation.lng}&destination=place_id:${place.placeId}`}
+                          href={`https://www.google.com/maps/dir/?api=1&origin=${donutLocation.lat},${donutLocation.lng}&destination=${encodeURIComponent(place.address || place.name)}&destination_place_id=${place.placeId}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] text-primary border-primary/40 hover:bg-primary/10"

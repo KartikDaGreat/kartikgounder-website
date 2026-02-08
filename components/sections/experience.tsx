@@ -21,10 +21,22 @@ interface Project {
   year: number // Added year for sorting
   highlights?: string[]
   accuracy?: string
-  category: "swe" | "ml"
+  category: Array<"swe" | "ml">
 }
 
 const experiences: Experience[] = [
+  {
+    title: "aiX Convergence Design Studio Intern",
+    company: "Columbia University",
+    period: "Jan 2026 - Present",
+    year: 2026,
+    location: "New York, NY",
+    type: "internship",
+    highlights: [
+      "Supporting a multi-year AI literacy initiative in pedagogy with Prof. Anthony Vanky",
+      "Using computer vision to examine algorithmic bias and urban equity in course design",
+    ],
+  },
   {
     title: "Software Development Intern",
     company: "eNova Software and Hardware Solutions",
@@ -77,13 +89,23 @@ const experiences: Experience[] = [
 
 const projects: Project[] = [
   {
+    title: "FuelForm (Snapdragon Hack)",
+    description:
+      "Adaptive fitness and nutrition planner built on Snapdragon S25 Elite with an Android app, on-device model, and laptop AI agents synced via Firebase.",
+    technologies: ["Android", "Kotlin", "Firebase", "Python", "AI/ML", "Snapdragon S25 Elite"],
+    github: "https://github.com/shruti-create/snapdragon-hack",
+    period: "February 2026",
+    year: 2026,
+    category: ["ml", "swe"],
+  },
+  {
     title: "On-Device Document Classification",
     description: "Framework to classify documents based on images and limited text for on-device deployment.",
     technologies: ["Python", "CNN", "TensorFlow"],
     period: "January - May 2024",
     year: 2024,
     paper: "#",
-    category: "ml",
+    category: ["ml"],
     highlights: ["3.7M parameter model", "Published at ISEC-2025"],
   },
   {
@@ -93,7 +115,7 @@ const projects: Project[] = [
     period: "January - March 2024",
     year: 2024,
     paper: "#",
-    category: "ml",
+    category: ["ml"],
     accuracy: "87% satisfaction",
   },
   {
@@ -103,7 +125,7 @@ const projects: Project[] = [
     period: "October - December 2023",
     year: 2023,
     paper: "#",
-    category: "ml",
+    category: ["ml"],
     accuracy: "96.33%",
   },
   {
@@ -112,7 +134,7 @@ const projects: Project[] = [
     technologies: ["Python", "NLP", "Scikit-learn"],
     period: "March - May 2024",
     year: 2024,
-    category: "ml",
+    category: ["ml"],
     accuracy: "96.3%",
   },
   {
@@ -120,7 +142,7 @@ const projects: Project[] = [
     description: "Automated Speeding Ticket Framework for NHAI using computer vision.",
     technologies: ["Computer Vision", "IoT", "Python"],
     year: 2023,
-    category: "swe",
+    category: ["swe"],
   },
   {
     title: "Chota-Dhobi Mobile App",
@@ -128,7 +150,7 @@ const projects: Project[] = [
     technologies: ["Firebase", "Mobile Dev"],
     github: "https://github.com/KartikDaGreat",
     year: 2023,
-    category: "swe",
+    category: ["swe"],
   },
   {
     title: "Personal Portfolio Website",
@@ -136,7 +158,7 @@ const projects: Project[] = [
     technologies: ["Next.js", "TypeScript", "Tailwind CSS"],
     github: "https://github.com/KartikDaGreat/kartikgounder-website",
     year: 2025,
-    category: "swe",
+    category: ["swe"],
   },
 ]
 
@@ -334,16 +356,23 @@ function ExperienceCard({ experience, alignRight }: { experience: Experience; al
 }
 
 function ProjectCard({ project }: { project: Project }) {
+  const categories = project.category.length > 0 ? project.category : ["swe"]
+
   return (
     <article className="p-4 rounded-lg border border-border hover:border-primary/50 transition-colors bg-card">
       <div className="mb-2">
-        <span
-          className={`inline-block px-2 py-0.5 text-xs font-mono rounded mb-2 ${project.category === "ml" ? "bg-primary/10 text-primary" : "bg-secondary text-secondary-foreground"}`}
-        >
-          {project.category === "ml" ? "ML/AI" : "SWE"}
-        </span>
+        <div className="flex flex-wrap gap-1 mb-2">
+          {categories.map((category) => (
+            <span
+              key={category}
+              className={`inline-block px-2 py-0.5 text-xs font-mono rounded ${category === "ml" ? "bg-primary/10 text-primary" : "bg-secondary text-secondary-foreground"}`}
+            >
+              {category === "ml" ? "ML/AI" : "SWE"}
+            </span>
+          ))}
+        </div>
         <h3 className="font-medium">{project.title}</h3>
-        {project.period && <p className="text-xs text-muted-foreground font-mono">{project.period}</p>}
+        {project.period && <p className="text-sm text-muted-foreground font-mono">{project.period}</p>}
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed mb-2">{project.description}</p>
       {project.accuracy && <p className="text-xs text-primary font-medium mb-2">{project.accuracy}</p>}
