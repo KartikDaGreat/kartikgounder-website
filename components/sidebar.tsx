@@ -29,9 +29,27 @@ type ArduinoStatus = {
   error?: string
 }
 
+type DonutPlace = {
+  name: string
+  address?: string
+  placeId: string
+  rating?: number
+  userRatingsTotal?: number
+}
+
+type DonutLocation = {
+  lat: number
+  lng: number
+  source: "device" | "ip"
+}
+
 export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [arduinoStatus, setArduinoStatus] = useState<ArduinoStatus>({ connected: false, logs: [] })
+  const [donutPlaces, setDonutPlaces] = useState<DonutPlace[]>([])
+  const [donutLocation, setDonutLocation] = useState<DonutLocation | null>(null)
+  const [donutLoading, setDonutLoading] = useState(false)
+  const [donutError, setDonutError] = useState<string>("")
 
   useEffect(() => {
     let cancelled = false
@@ -63,6 +81,68 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
       clearInterval(intervalId)
     }
   }, [])
+
+  const getDeviceLocation = (): Promise<DonutLocation | null> =>
+    new Promise((resolve) => {
+      if (!navigator.geolocation) {
+        resolve(null)
+        return
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude, source: "device" })
+        },
+        () => resolve(null),
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 },
+      )
+    })
+
+  const getIpLocation = async (): Promise<DonutLocation | null> => {
+    try {
+      const r = await fetch("/api/location/ip", { cache: "no-store" })
+      if (!r.ok) return null
+      const data = await r.json()
+      if (typeof data.lat !== "number" || typeof data.lng !== "number") return null
+      return { lat: data.lat, lng: data.lng, source: "ip" }
+    } catch {
+      return null
+    }
+  }
+
+  const loadDonutPlaces = async () => {
+    setDonutLoading(true)
+    setDonutError("")
+
+    const deviceLocation = await getDeviceLocation()
+    const location = deviceLocation || (await getIpLocation())
+
+    if (!location) {
+      setDonutError("Unable to resolve your location")
+      setDonutLoading(false)
+      return
+    }
+
+    try {
+      setDonutLocation(location)
+      const r = await fetch(`/api/places/donuts?lat=${location.lat}&lng=${location.lng}`, { cache: "no-store" })
+      if (!r.ok) {
+        setDonutError(`Donut search failed (HTTP ${r.status})`)
+        setDonutPlaces([])
+        return
+      }
+      const data = await r.json()
+      setDonutPlaces(Array.isArray(data.places) ? data.places : [])
+      if (Array.isArray(data.places) && data.places.length === 0) {
+        setDonutError("No donut shops found nearby")
+      }
+    } catch (err: any) {
+      setDonutError(err?.message || "Donut search failed")
+      setDonutPlaces([])
+    } finally {
+      setDonutLoading(false)
+    }
+  }
 
   return (
     <>
@@ -140,6 +220,64 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
 
           {/* Theme indicator at bottom */}
           <div className="mt-auto pt-4 border-t border-sidebar-border space-y-3">
+            <div className="px-3 py-2 rounded-md bg-sidebar-accent/30 border border-sidebar-border">
+              <div className="flex items-center justify-between text-xs font-medium">
+                <span className="text-muted-foreground">Donut Finder</span>
+                <button
+                  onClick={loadDonutPlaces}
+                  disabled={donutLoading}
+                  className={cn(
+                    "inline-flex items-center gap-2 px-2.5 py-1 rounded-full border text-xs transition",
+                    donutLoading
+                      ? "bg-muted text-muted-foreground border-border"
+                      : "bg-rose-500/20 text-rose-200 border-rose-400/40 hover:bg-rose-500/30",
+                  )}
+                >
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-300 shadow-[0_0_8px_rgba(251,113,133,0.8)]" />
+                  {donutLoading ? "Finding..." : "Find donuts"}
+                </button>
+              </div>
+              <div className="mt-2 text-[11px] text-muted-foreground leading-relaxed space-y-1">
+                {donutLocation && (
+                  <div className="flex items-center justify-between">
+                    <span>Location source</span>
+                    <span className="font-mono text-foreground">
+                      {donutLocation.source === "device" ? "Device" : "IP"}
+                    </span>
+                  </div>
+                )}
+                {donutError && <div className="text-rose-300/90">{donutError}</div>}
+              </div>
+              {donutPlaces.length > 0 && donutLocation && (
+                <div className="mt-3 rounded bg-sidebar border border-sidebar-border/60 max-h-40 overflow-y-auto text-[11px] text-muted-foreground p-2 space-y-2">
+                  {donutPlaces.map((place) => (
+                    <div key={place.placeId} className="space-y-1">
+                      <div className="text-foreground font-medium truncate" title={place.name}>
+                        {place.name}
+                      </div>
+                      {place.address && <div className="truncate">{place.address}</div>}
+                      <div className="flex items-center justify-between">
+                        {typeof place.rating === "number" ? (
+                          <span>
+                            {place.rating.toFixed(1)} stars{place.userRatingsTotal ? ` (${place.userRatingsTotal})` : ""}
+                          </span>
+                        ) : (
+                          <span>Rating unavailable</span>
+                        )}
+                        <a
+                          href={`https://www.google.com/maps/dir/?api=1&origin=${donutLocation.lat},${donutLocation.lng}&destination=place_id:${place.placeId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] text-primary border-primary/40 hover:bg-primary/10"
+                        >
+                          Directions
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             <div className="px-3 py-2 rounded-md bg-sidebar-accent/40 border border-sidebar-border">
               <div className="flex items-center justify-between text-xs font-medium">
                 <span className="text-muted-foreground">Arduino</span>
