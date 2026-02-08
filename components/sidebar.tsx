@@ -179,7 +179,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
           }
         }
       >
-        <nav className="flex flex-col h-full pt-16 md:pt-8 px-3 pb-8">
+        <nav className="flex flex-col h-full pt-16 md:pt-8 px-3 pb-8 overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
           {/* Logo/Name area */}
           <div className="mb-8 px-2 overflow-hidden">
             <span className="text-xl font-bold text-foreground whitespace-nowrap">
