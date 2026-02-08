@@ -50,6 +50,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
   const [donutLocation, setDonutLocation] = useState<DonutLocation | null>(null)
   const [donutLoading, setDonutLoading] = useState(false)
   const [donutError, setDonutError] = useState<string>("")
+  const [donutOpen, setDonutOpen] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -144,6 +145,13 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
     }
   }
 
+  const handleDonutOpen = () => {
+    setDonutOpen(true)
+    if (donutPlaces.length === 0 && !donutLoading) {
+      loadDonutPlaces()
+    }
+  }
+
   return (
     <>
       {/* Mobile menu button */}
@@ -179,111 +187,92 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
           }
         }
       >
-        <nav className="flex flex-col h-full pt-16 md:pt-8 px-3 pb-8 overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+        <nav className="flex flex-col h-full pt-16 md:pt-8 px-3 pb-6">
           {/* Logo/Name area */}
-          <div className="mb-8 px-2 overflow-hidden">
+          <div className="mb-6 px-2 overflow-hidden">
             <span className="text-xl font-bold text-foreground whitespace-nowrap">
               K<span className="md:opacity-0 md:group-hover:opacity-100 lg:opacity-100 transition-opacity">artik</span>
             </span>
           </div>
 
           {/* Navigation items */}
-          <ul className="flex flex-col gap-1 flex-1">
-            {navItems.map((item) => {
-              const Icon = item.icon
-              const isActive = activeSection === item.id
+          <div className="flex-1">
+            <ul className="flex flex-col gap-1 pb-4">
+              {navItems.map((item) => {
+                const Icon = item.icon
+                const isActive = activeSection === item.id
 
-              return (
-                <li key={item.id}>
-                  <button
-                    onClick={() => {
-                      onNavigate(item.id)
-                      setMobileOpen(false)
-                    }}
-                    className={cn(
-                      "w-full flex items-center gap-3 px-3 py-2.5 rounded-md",
-                      "text-base font-medium transition-all duration-200",
-                      "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                      isActive && "bg-sidebar-accent text-primary",
-                    )}
-                  >
-                    <Icon className="w-5 h-5 flex-shrink-0" />
-                    <span className="whitespace-nowrap overflow-hidden md:opacity-0 md:group-hover:opacity-100 lg:opacity-100">
-                      {item.label}
-                    </span>
-                    {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />}
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
+                return (
+                  <li key={item.id}>
+                    <button
+                      onClick={() => {
+                        onNavigate(item.id)
+                        setMobileOpen(false)
+                      }}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-3 py-2.5 rounded-md",
+                        "text-sm font-medium transition-colors",
+                        "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                        isActive && "bg-sidebar-accent text-primary",
+                      )}
+                    >
+                      <Icon className="w-4.5 h-4.5 flex-shrink-0" />
+                      <span className="whitespace-nowrap overflow-hidden md:opacity-0 md:group-hover:opacity-100 lg:opacity-100">
+                        {item.label}
+                      </span>
+                      {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />}
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
 
           {/* Theme indicator at bottom */}
-          <div className="mt-auto pt-4 border-t border-sidebar-border space-y-3">
-            <div className="px-3 py-2 rounded-md bg-sidebar-accent/30 border border-sidebar-border">
-              <div className="flex items-center justify-between text-xs font-medium">
+          <div className="pt-3 border-t border-sidebar-border space-y-2">
+            <div className="px-3 py-2 rounded-md bg-sidebar-accent/20 border border-sidebar-border/60">
+              <div className="flex items-center justify-between text-[11px] font-medium">
                 <span className="text-muted-foreground">Donut Finder</span>
                 <button
-                  onClick={loadDonutPlaces}
+                  onClick={handleDonutOpen}
                   disabled={donutLoading}
                   className={cn(
-                    "inline-flex items-center gap-2 px-2.5 py-1 rounded-full border text-xs transition",
+                    "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[11px] transition",
                     donutLoading
                       ? "bg-muted text-muted-foreground border-border"
-                      : "bg-rose-500/20 text-rose-200 border-rose-400/40 hover:bg-rose-500/30",
+                      : "bg-rose-500/15 text-rose-200 border-rose-400/40 hover:bg-rose-500/25",
                   )}
                 >
-                  <span className="w-2.5 h-2.5 rounded-full bg-rose-300 shadow-[0_0_8px_rgba(251,113,133,0.8)]" />
-                  {donutLoading ? "Finding..." : "Find donuts"}
+                  <span className="w-2 h-2 rounded-full bg-rose-300" />
+                  {donutLoading ? "Finding..." : "Find"}
                 </button>
               </div>
               <div className="mt-2 text-[11px] text-muted-foreground leading-relaxed space-y-1">
                 {donutLocation && (
                   <div className="flex items-center justify-between">
-                    <span>Location source</span>
+                    <span>Location</span>
                     <span className="font-mono text-foreground">
                       {donutLocation.source === "device" ? "Device" : "IP"}
                     </span>
                   </div>
                 )}
                 {donutError && <div className="text-rose-300/90">{donutError}</div>}
+                {donutPlaces.length > 0 && (
+                  <button
+                    onClick={() => setDonutOpen(true)}
+                    className="text-[11px] text-primary hover:underline"
+                  >
+                    View results
+                  </button>
+                )}
               </div>
-              {donutPlaces.length > 0 && donutLocation && (
-                <div className="mt-3 rounded bg-sidebar border border-sidebar-border/60 max-h-40 overflow-y-auto text-[11px] text-muted-foreground p-2 space-y-2">
-                  {donutPlaces.map((place) => (
-                    <div key={place.placeId} className="space-y-1">
-                      <div className="text-foreground font-medium truncate" title={place.name}>
-                        {place.name}
-                      </div>
-                      {place.address && <div className="truncate">{place.address}</div>}
-                      <div className="flex items-center justify-between">
-                        {typeof place.rating === "number" ? (
-                          <span>
-                            {place.rating.toFixed(1)} stars{place.userRatingsTotal ? ` (${place.userRatingsTotal})` : ""}
-                          </span>
-                        ) : (
-                          <span>Rating unavailable</span>
-                        )}
-                        <a
-                          href={`https://www.google.com/maps/dir/?api=1&origin=${donutLocation.lat},${donutLocation.lng}&destination=${encodeURIComponent(place.address || place.name)}&destination_place_id=${place.placeId}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] text-primary border-primary/40 hover:bg-primary/10"
-                        >
-                          Directions
-                        </a>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
-            <div className="px-3 py-2 rounded-md bg-sidebar-accent/40 border border-sidebar-border">
-              <div className="flex items-center justify-between text-xs font-medium">
+            <div className="px-3 py-2 rounded-md bg-sidebar-accent/20 border border-sidebar-border/60">
+              <div className="flex items-center justify-between text-[11px] font-medium">
                 <span className="text-muted-foreground">Arduino</span>
                 <span
                   className={cn(
-                    "flex items-center gap-1 px-2 py-0.5 rounded-full",
+                    "flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px]",
                     arduinoStatus.connected
                       ? "bg-emerald-500/10 text-emerald-300 border border-emerald-400/40"
                       : "bg-rose-500/10 text-rose-300 border border-rose-400/40",
@@ -314,7 +303,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
                 {arduinoStatus.error && <div className="text-rose-300/90">{arduinoStatus.error}</div>}
               </div>
               {arduinoStatus.logs && arduinoStatus.logs.length > 0 && (
-                <div className="mt-3 rounded bg-sidebar border border-sidebar-border/60 max-h-24 overflow-y-auto text-[11px] text-muted-foreground p-2 space-y-1">
+                <div className="mt-3 rounded bg-sidebar border border-sidebar-border/60 max-h-24 overflow-y-auto text-[11px] text-muted-foreground p-2 space-y-1 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
                   {arduinoStatus.logs.slice(0, 4).map((log, i) => (
                     <div key={i} className="truncate" title={log}>
                       {log}
@@ -323,12 +312,70 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
                 </div>
               )}
             </div>
-            <div className="px-3 py-2 text-xs text-muted-foreground">
+            <div className="px-3 text-[11px] text-muted-foreground">
               <span className="whitespace-nowrap overflow-hidden">Theme changes on reload</span>
             </div>
           </div>
         </nav>
       </aside>
+
+      {donutOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-background/70 backdrop-blur-sm"
+            onClick={() => setDonutOpen(false)}
+          />
+          <div className="relative w-full max-w-sm rounded-lg border border-border bg-card shadow-xl">
+            <div className="flex items-center justify-between px-4 py-3">
+              <h3 className="text-sm font-semibold">Donut Finder</h3>
+              <button
+                onClick={() => setDonutOpen(false)}
+                className="text-xs text-muted-foreground hover:text-foreground"
+              >
+                Close
+              </button>
+            </div>
+            <div className="px-4 pb-4">
+              {donutLoading && <p className="text-sm text-muted-foreground">Finding nearby donut shops...</p>}
+              {!donutLoading && donutError && (
+                <p className="text-sm text-rose-300/90">{donutError}</p>
+              )}
+              {!donutLoading && !donutError && donutPlaces.length === 0 && (
+                <p className="text-sm text-muted-foreground">No results yet.</p>
+              )}
+              {donutPlaces.length > 0 && donutLocation && (
+                <div className="space-y-3">
+                  {donutPlaces.map((place) => (
+                    <div key={place.placeId} className="rounded-md border border-border/60 p-3">
+                      <div className="text-sm font-medium text-foreground" title={place.name}>
+                        {place.name}
+                      </div>
+                      {place.address && <div className="text-xs text-muted-foreground mt-1">{place.address}</div>}
+                      <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                        {typeof place.rating === "number" ? (
+                          <span>
+                            {place.rating.toFixed(1)} stars{place.userRatingsTotal ? ` (${place.userRatingsTotal})` : ""}
+                          </span>
+                        ) : (
+                          <span>Rating unavailable</span>
+                        )}
+                        <a
+                          href={`https://www.google.com/maps/dir/?api=1&origin=${donutLocation.lat},${donutLocation.lng}&destination=${encodeURIComponent(place.address || place.name)}&destination_place_id=${place.placeId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-primary border-primary/40 hover:bg-primary/10"
+                        >
+                          Directions
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
