@@ -1,4 +1,4 @@
-import { Briefcase, Code2 } from "lucide-react"
+import { Briefcase, Code2, ExternalLink } from "lucide-react"
 
 interface Experience {
   title: string
@@ -93,7 +93,7 @@ const projects: Project[] = [
     description:
       "Adaptive fitness and nutrition planner built on Snapdragon S25 Elite with an Android app, on-device model, and laptop AI agents synced via Firebase.",
     technologies: ["Android", "Kotlin", "Firebase", "Python", "AI/ML", "Snapdragon S25 Elite"],
-    github: "https://github.com/shruti-create/snapdragon-hack",
+    github: "https://github.com/KartikDaGreat/FuelForm",
     period: "February 2026",
     year: 2026,
     category: ["ml", "swe"],
@@ -104,7 +104,7 @@ const projects: Project[] = [
     technologies: ["Python", "CNN", "TensorFlow"],
     period: "January - May 2024",
     year: 2024,
-    paper: "#",
+    paper: "https://ieeexplore.ieee.org/abstract/document/10696508",
     category: ["ml"],
     highlights: ["3.7M parameter model", "Published at ISEC-2025"],
   },
@@ -114,7 +114,7 @@ const projects: Project[] = [
     technologies: ["Python", "Flask", "AngularJS"],
     period: "January - March 2024",
     year: 2024,
-    paper: "#",
+    paper: "https://dl.acm.org/doi/10.1145/3717383.3717387",
     category: ["ml"],
     accuracy: "87% satisfaction",
   },
@@ -159,6 +159,16 @@ const projects: Project[] = [
     github: "https://github.com/KartikDaGreat/kartikgounder-website",
     year: 2025,
     category: ["swe"],
+  },
+  {
+    title: "Mind Duelist — AI Adversarial Interviewer",
+    description:
+      "Real-time voice-based technical interviewer that detects bluffing, maps knowledge gaps, and dynamically escalates follow-up questions using LLM-driven gap analysis and live scoring.",
+    technologies: ["React", "TypeScript", "ElevenLabs", "Gemini Flash", "Supabase", "Edge Functions", "AI/ML"],
+    github: "https://github.com/KartikDaGreat/NightmareBot",
+    period: "February 2026",
+    year: 2026,
+    category: ["ml", "swe"],
   },
 ]
 
@@ -357,9 +367,21 @@ function ExperienceCard({ experience, alignRight }: { experience: Experience; al
 
 function ProjectCard({ project }: { project: Project }) {
   const categories = project.category.length > 0 ? project.category : ["swe"]
+  const projectLink = project.github || project.paper || project.demo
 
   return (
-    <article className="p-4 rounded-lg border border-border hover:border-primary/50 transition-colors bg-card">
+    <article className="p-4 rounded-lg border border-border hover:border-primary/50 transition-colors bg-card relative">
+      {projectLink && (
+        <a
+          href={projectLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute top-4 right-4 text-muted-foreground hover:text-primary transition-colors"
+          aria-label={`View ${project.title}`}
+        >
+          <ExternalLink className="w-4 h-4" />
+        </a>
+      )}
       <div className="mb-2">
         <div className="flex flex-wrap gap-1 mb-2">
           {categories.map((category) => (
