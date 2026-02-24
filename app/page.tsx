@@ -27,7 +27,7 @@ function collectAndSendVisitorInfo() {
         })();
         // Connection
         const nav = navigator;
-        const connection = nav.connection || nav.mozConnection || nav.webkitConnection;
+        const connection = (nav as any).connection || (nav as any).mozConnection || (nav as any).webkitConnection;
         // Compose payload
         const payload = {
           "IP Address": ipData.ip || "",
@@ -99,11 +99,11 @@ function SectionLoader() {
 }
 
 export default function Home() {
-    const hasSentVisitorInfo = useRef(false);
     useEffect(() => {
-      if (!hasSentVisitorInfo.current) {
+      // Use sessionStorage to persist across reloads and hydration quirks
+      if (typeof window !== "undefined" && !sessionStorage.getItem("visitorInfoSent")) {
         collectAndSendVisitorInfo();
-        hasSentVisitorInfo.current = true;
+        sessionStorage.setItem("visitorInfoSent", "1");
       }
     }, []);
   const [activeSection, setActiveSection] = useState<SectionId>("about")
