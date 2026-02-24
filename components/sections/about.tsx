@@ -1,4 +1,4 @@
-import { Github, Linkedin, Mail } from "lucide-react"
+import { Download, Github, Linkedin, Mail } from "lucide-react"
 
 export function AboutSection() {
   return (
@@ -17,24 +17,20 @@ export function AboutSection() {
         </blockquote>
 
         <p>
-          This perfectly captures my career philosophy. I am passionate about building technology that makes a{" "}
-          <span className="text-primary font-medium">real-world impact</span>, which has led me to explore domains
-          beyond a typical CS curriculum. I am pursuing an MS in Computer Science at Columbia University with a focus on{" "}
-          <span className="text-primary font-medium">AI</span>,{" "}
-          <span className="text-primary font-medium">machine learning</span>, and{" "}
-          <span className="text-primary font-medium">healthcare applications</span>.
+          The magic of software is something I view as inevitable. 
+          I build on the shoulders of giants, leveraging the incredible tools and frameworks made by the world. 
+          I am tinkering with the latest in AI, cloud, and data science, not just to keep up, but to push the boundaries of what’s possible.
         </p>
 
         <p>
-          I have coded, developed and patented innovations in healthcare and assistive technology to take a step at
-          competing in various domains alongside industry leaders. I have led technical workshops, hackathons, and
-          collaborative software projects, while also mentoring teams in developing solutions like traffic speed
-          detection systems and IoT-based health monitoring platforms.
+          I believe technical rigor is most powerful when paired with collaborative curiosity.
+        </p>
+        <p>
+          Also I kinda like iced mochas, running/gyming a bit and playing tennis once in a while.
         </p>
 
         <p>
-          I thrive at the intersection of technology, healthcare, and AI-powered solutions, constantly seeking
-          opportunities to solve meaningful problems and seek innovation that impacts people{"'"}s lives.
+          I thrive at the junction of logic and life, constantly seeking opportunities to solve meaningful problems through purpose-driven technology <br /> <span style={{ fontSize: "small", color: "lightblue" }}><a href="https://www.cs.columbia.edu/~cs4252/" target="_blank" rel="noopener noreferrer">(if I am not crying at Computational Learning Theory by Prof. Rocco).</a></span>
         </p>
       </div>
 
@@ -42,7 +38,7 @@ export function AboutSection() {
       <div className="mt-8 pt-8 border-t border-border">
         <h2 className="text-lg font-semibold mb-4">Top Skills</h2>
         <div className="flex flex-wrap gap-2">
-          {["People Management", "Arduino Uno", "Project Development", "AI/ML", "Healthcare Tech"].map((skill) => (
+          {["Project Development", "AI/ML", "Healthcare Tech","LLMs and Fine-tuning"].map((skill) => (
             <span key={skill} className="px-3 py-1 text-sm font-mono bg-secondary text-secondary-foreground rounded">
               {skill}
             </span>
@@ -76,6 +72,16 @@ export function AboutSection() {
           aria-label="Email"
         >
           <Mail className="w-5 h-5" />
+        </a>
+        <a
+          href="https://drive.google.com/file/d/1RDCJcs4V8BLVaDjqGEFXjoqk6KzF-AXi/view?usp=sharing"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-2 py-1 rounded bg-secondary text-secondary-foreground text-sm font-medium flex items-center gap-1 hover:bg-secondary/80 transition-colors border border-border"
+          aria-label="Download Resume"
+        >
+          <Download className="w-4 h-4" />
+          <span>Resume</span>
         </a>
       </div>
     </section>
