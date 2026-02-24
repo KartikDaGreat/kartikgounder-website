@@ -106,7 +106,7 @@ export function MobileNewsDrawer() {
           "hover:bg-muted transition-colors"
         )}
       >
-        <span className="text-sm font-semibold">📚 News & Articles</span>
+        <span className="text-sm font-semibold">Articles I found Interesting</span>
         <ChevronUp className={cn("w-4 h-4 transition-transform", isOpen && "rotate-180")} />
       </button>
 

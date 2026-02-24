@@ -242,7 +242,7 @@ export function ArticlesSidebar() {
       onMouseLeave={handleMouseLeave}
     >
       <div className="p-4 border-b bg-background">
-        <h3 className="text-lg font-semibold">📚 Interesting Articles</h3>
+        <h3 className="text-lg font-semibold">Articles I found Interesting</h3>
         <p className="text-xs text-muted-foreground">Healthcare tech insights</p>
       </div>
       
