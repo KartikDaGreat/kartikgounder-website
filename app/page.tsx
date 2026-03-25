@@ -19,12 +19,15 @@ function trackPageView(section: string) {
     const sheetUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEET_URL;
     if (!sheetUrl) return;
     const formData = new URLSearchParams();
-    formData.append("type", "pageview");
     formData.append("Visitor ID", getVisitorId());
     formData.append("Section", section);
     formData.append("Timestamp", new Date().toISOString());
     formData.append("Source", "nav_click");
-    fetch(sheetUrl, { method: "POST", body: formData });
+    fetch(sheetUrl, {
+      method: "POST",
+      body: formData,
+      mode: "no-cors",
+    });
   } catch { /* ignore errors */ }
 }
 
