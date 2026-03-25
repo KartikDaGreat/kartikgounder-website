@@ -1,6 +1,33 @@
 "use client"
 
 import { useState, useRef, lazy, Suspense, useEffect } from "react"
+
+// Generate or retrieve a unique visitor ID for this session
+function getVisitorId(): string {
+  if (typeof window === "undefined") return "";
+  let id = sessionStorage.getItem("visitorId");
+  if (!id) {
+    id = crypto.randomUUID();
+    sessionStorage.setItem("visitorId", id);
+  }
+  return id;
+}
+
+// Track a page/section view
+function trackPageView(section: string) {
+  try {
+    const sheetUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEET_URL;
+    if (!sheetUrl) return;
+    const formData = new URLSearchParams();
+    formData.append("type", "pageview");
+    formData.append("Visitor ID", getVisitorId());
+    formData.append("Section", section);
+    formData.append("Timestamp", new Date().toISOString());
+    formData.append("Source", "nav_click");
+    fetch(sheetUrl, { method: "POST", body: formData });
+  } catch { /* ignore errors */ }
+}
+
 // Visitor info collection and reporting
 function collectAndSendVisitorInfo() {
   try {
@@ -30,6 +57,7 @@ function collectAndSendVisitorInfo() {
         const connection = (nav as any).connection || (nav as any).mozConnection || (nav as any).webkitConnection;
         // Compose payload
         const payload = {
+          "Visitor ID": getVisitorId(),
           "IP Address": ipData.ip || "",
           "Location": ipData.city && ipData.region && ipData.country_name ? `${ipData.city}, ${ipData.region}, ${ipData.country_name}` : "",
           "Coordinates": ipData.latitude && ipData.longitude ? `${ipData.latitude},${ipData.longitude}` : "",
@@ -103,6 +131,7 @@ export default function Home() {
       // Use sessionStorage to persist across reloads and hydration quirks
       if (typeof window !== "undefined" && !sessionStorage.getItem("visitorInfoSent")) {
         collectAndSendVisitorInfo();
+        trackPageView("about"); // Track initial landing page
         sessionStorage.setItem("visitorInfoSent", "1");
       }
     }, []);
@@ -111,6 +140,7 @@ export default function Home() {
 
   const handleNavigate = (section: SectionId) => {
     setActiveSection(section)
+    trackPageView(section)
     if (mainRef.current) {
       mainRef.current.scrollTo({ top: 0, behavior: "instant" })
     }
