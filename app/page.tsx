@@ -82,6 +82,7 @@ function collectAndSendVisitorInfo() {
           "Do Not Track": nav.doNotTrack || "",
           "Cookies Enabled": cookiesEnabled,
           "LocalStorage": localStorageEnabled,
+          "Visitor ID": getVisitorId(),
           "Timestamp": new Date().toLocaleString()
         };
         // Convert payload to form data
@@ -93,7 +94,8 @@ function collectAndSendVisitorInfo() {
         if (sheetUrl) {
           fetch(sheetUrl, {
             method: "POST",
-            body: formData
+            body: formData,
+            mode: "no-cors",
           });
         }
       });
