@@ -57,7 +57,6 @@ function collectAndSendVisitorInfo() {
         const connection = (nav as any).connection || (nav as any).mozConnection || (nav as any).webkitConnection;
         // Compose payload
         const payload = {
-          "Visitor ID": getVisitorId(),
           "IP Address": ipData.ip || "",
           "Location": ipData.city && ipData.region && ipData.country_name ? `${ipData.city}, ${ipData.region}, ${ipData.country_name}` : "",
           "Coordinates": ipData.latitude && ipData.longitude ? `${ipData.latitude},${ipData.longitude}` : "",
