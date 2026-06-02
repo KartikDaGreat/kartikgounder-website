@@ -117,7 +117,10 @@ const ContactSection = lazy(() => import("@/components/sections/contact").then((
 const TerminalSection = lazy(() =>
   import("@/components/sections/terminal").then((m) => ({ default: m.TerminalSection })),
 )
-export type SectionId = "about" | "academics" | "research" | "experience" | "contact" | "terminal"
+const SystemsSection = lazy(() =>
+  import("@/components/sections/systems").then((m) => ({ default: m.SystemsSection })),
+)
+export type SectionId = "about" | "academics" | "research" | "experience" | "contact" | "terminal" | "systems"
 
 function SectionLoader() {
   return (
@@ -137,6 +140,8 @@ export default function Home() {
         collectAndSendVisitorInfo();
         trackPageView("about"); // Track initial landing page
         sessionStorage.setItem("visitorInfoSent", "1");
+        // Count visit for systems dashboard
+        fetch("/api/visitors/count", { method: "POST" }).catch(() => {});
       }
     }, []);
   const [activeSection, setActiveSection] = useState<SectionId>("about")
@@ -165,6 +170,8 @@ export default function Home() {
         return <ContactSection />
       case "terminal":
         return <TerminalSection />
+      case "systems":
+        return <SystemsSection />
       default:
         return <AboutSection />
     }

@@ -70,29 +70,30 @@ const patents: Publication[] = [
 export function ResearchSection() {
   return (
     <section className="max-w-5xl animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <h1 className="text-3xl md:text-4xl font-bold mb-2">Research</h1>
-      <p className="text-muted-foreground mb-12">Publications and patents in computer science and AI</p>
+      <div className="mb-12">
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">Research</h1>
+        <p className="text-muted-foreground">Publications and patents in computer science and AI</p>
+      </div>
 
-      <div className="mb-16">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-            <FileText className="w-5 h-5 text-primary" />
+      <div className="mb-14">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+            <FileText className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold">Publications</h2>
+            <h2 className="text-lg font-semibold">Publications</h2>
             <p className="text-sm text-muted-foreground">Peer-reviewed research papers</p>
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-5">
           {publications.map((pub, index) => (
             <article
               key={index}
               className="group relative overflow-hidden rounded-xl border border-border bg-card hover:border-primary/50 transition-all duration-300"
             >
               <div className="flex flex-col lg:flex-row">
-                {/* Image */}
-                <div className="lg:w-72 h-48 lg:h-56 flex-shrink-0 bg-secondary/20 flex items-center justify-center border-b lg:border-b-0 lg:border-r border-border relative overflow-hidden">
+                <div className="lg:w-64 h-44 lg:h-52 flex-shrink-0 bg-secondary/20 flex items-center justify-center border-b lg:border-b-0 lg:border-r border-border relative overflow-hidden">
                   {pub.image ? (
                     <Image
                       src={pub.image}
@@ -102,35 +103,34 @@ export function ResearchSection() {
                     />
                   ) : (
                     <div className="text-center p-6">
-                      <div className="w-16 h-16 rounded-full bg-background/50 flex items-center justify-center mx-auto mb-3">
-                        <ImageIcon className="w-8 h-8 text-muted-foreground/50" />
+                      <div className="w-14 h-14 rounded-full bg-background/50 flex items-center justify-center mx-auto mb-2">
+                        <ImageIcon className="w-7 h-7 text-muted-foreground/50" />
                       </div>
                       <span className="text-xs text-muted-foreground">Paper thumbnail</span>
                     </div>
                   )}
                 </div>
 
-                {/* Content */}
-                <div className="flex-1 p-6">
-                  <div className="flex items-start justify-between gap-4 mb-4">
+                <div className="flex-1 p-5">
+                  <div className="flex items-start justify-between gap-4 mb-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="px-2 py-0.5 text-xs font-mono rounded bg-primary/10 text-primary">
+                        <span className="px-2 py-0.5 text-xs font-mono rounded-md bg-primary/10 text-primary">
                           {pub.venue}
                         </span>
                         <span className="text-xs text-muted-foreground">{pub.year}</span>
                       </div>
-                      <h3 className="text-lg font-medium leading-snug mb-2 group-hover:text-primary transition-colors">
+                      <h3 className="text-base font-medium leading-snug mb-1.5 group-hover:text-primary transition-colors">
                         {pub.title}
                       </h3>
-                      <p className="text-sm text-muted-foreground mb-3">{pub.authors}</p>
+                      <p className="text-sm text-muted-foreground">{pub.authors}</p>
                     </div>
                     {pub.link && (
                       <a
                         href={pub.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-2.5 rounded-lg bg-secondary hover:bg-primary hover:text-primary-foreground transition-colors flex-shrink-0"
+                        className="p-2 rounded-lg bg-secondary hover:bg-primary hover:text-primary-foreground transition-colors flex-shrink-0"
                         aria-label="View publication"
                       >
                         <ExternalLink className="w-4 h-4" />
@@ -138,7 +138,7 @@ export function ResearchSection() {
                     )}
                   </div>
                   {pub.description && (
-                    <p className="text-sm text-muted-foreground leading-relaxed border-t border-border pt-4">
+                    <p className="text-sm text-muted-foreground leading-relaxed border-t border-border pt-3 mt-3">
                       {pub.description}
                     </p>
                   )}
@@ -150,24 +150,23 @@ export function ResearchSection() {
       </div>
 
       <div>
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Award className="w-5 h-5 text-primary" />
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Award className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold">Patents</h2>
+            <h2 className="text-lg font-semibold">Patents</h2>
             <p className="text-sm text-muted-foreground">Intellectual property filings</p>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-5">
           {patents.map((patent, index) => (
             <article
               key={index}
               className="group relative overflow-hidden rounded-xl border border-border bg-card hover:border-primary/50 transition-all duration-300"
             >
-              {/* Image */}
-              <div className="h-40 bg-secondary/20 flex items-center justify-center border-b border-border relative overflow-hidden">
+              <div className="h-36 bg-secondary/20 flex items-center justify-center border-b border-border relative overflow-hidden">
                 {patent.image ? (
                   <Image
                     src={patent.image}
@@ -186,18 +185,17 @@ export function ResearchSection() {
                 )}
               </div>
 
-              {/* Content */}
               <div className="p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="px-2 py-0.5 text-xs font-mono rounded bg-secondary text-secondary-foreground">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="px-2 py-0.5 text-xs font-mono rounded-md bg-secondary text-secondary-foreground">
                     Patent
                   </span>
                   <span className="text-xs text-muted-foreground">{patent.year}</span>
                 </div>
-                <h3 className="font-medium leading-snug mb-2 group-hover:text-primary transition-colors">
+                <h3 className="font-medium leading-snug mb-1.5 group-hover:text-primary transition-colors">
                   {patent.title}
                 </h3>
-                <p className="text-sm text-muted-foreground mb-3">{patent.authors}</p>
+                <p className="text-sm text-muted-foreground mb-2">{patent.authors}</p>
                 {patent.description && (
                   <p className="text-sm text-muted-foreground leading-relaxed border-t border-border pt-3">
                     {patent.description}

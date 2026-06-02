@@ -1,27 +1,16 @@
-import { Briefcase, Code2, ExternalLink } from "lucide-react"
+import { Briefcase, Code2, ExternalLink, Award } from "lucide-react"
+import Link from "next/link"
+import { projects, type Project } from "@/lib/projects"
 
 interface Experience {
   title: string
   company: string
   period: string
-  year: number // Added year for sorting
+  year: number
   location: string
   highlights: string[]
   type: "internship" | "research"
-}
-
-interface Project {
-  title: string
-  description: string
-  technologies: string[]
-  github?: string
-  paper?: string
-  demo?: string
-  period?: string
-  year: number // Added year for sorting
-  highlights?: string[]
-  accuracy?: string
-  category: Array<"swe" | "ml">
+  certificate?: string
 }
 
 const experiences: Experience[] = [
@@ -35,7 +24,9 @@ const experiences: Experience[] = [
     highlights: [
       "Supporting a multi-year AI literacy initiative in pedagogy with Prof. Anthony Vanky",
       "Using computer vision to examine algorithmic bias and urban equity in course design",
+      "Researching and developing statistics for evaluating Data Science related agents with Prof. Tian Zheng",
     ],
+    certificate: "https://drive.google.com/file/d/16NPax7jJQkdyVKtOyuql-afV0C6ChhWL/view?usp=sharing",
   },
   {
     title: "Software Development Intern",
@@ -87,112 +78,29 @@ const experiences: Experience[] = [
   },
 ]
 
-const projects: Project[] = [
-  {
-    title: "FuelForm (Snapdragon Hack)",
-    description:
-      "Adaptive fitness and nutrition planner built on Snapdragon S25 Elite with an Android app, on-device model, and laptop AI agents synced via Firebase.",
-    technologies: ["Android", "Kotlin", "Firebase", "Python", "AI/ML", "Snapdragon S25 Elite"],
-    github: "https://github.com/KartikDaGreat/FuelForm",
-    period: "February 2026",
-    year: 2026,
-    category: ["ml", "swe"],
-  },
-  {
-    title: "On-Device Document Classification",
-    description: "Framework to classify documents based on images and limited text for on-device deployment.",
-    technologies: ["Python", "CNN", "TensorFlow"],
-    period: "January - May 2024",
-    year: 2024,
-    paper: "https://ieeexplore.ieee.org/abstract/document/10696508",
-    category: ["ml"],
-    highlights: ["3.7M parameter model", "Published at ISEC-2025"],
-  },
-  {
-    title: "Psychological Counselling Chatbot",
-    description: "3-modal chatbot for assessing patients' mental states.",
-    technologies: ["Python", "Flask", "AngularJS"],
-    period: "January - March 2024",
-    year: 2024,
-    paper: "https://dl.acm.org/doi/10.1145/3717383.3717387",
-    category: ["ml"],
-    accuracy: "87% satisfaction",
-  },
-  {
-    title: "Skin Cancer Detection Ensemble",
-    description: "Ensemble model using ResNet, EfficientNet, and MobileNet.",
-    technologies: ["Python", "PyTorch"],
-    period: "October - December 2023",
-    year: 2023,
-    paper: "#",
-    category: ["ml"],
-    accuracy: "96.33%",
-  },
-  {
-    title: "Fake News Origin Detection",
-    description: "ML system for detecting the origins of misinformation.",
-    technologies: ["Python", "NLP", "Scikit-learn"],
-    period: "March - May 2024",
-    year: 2024,
-    category: ["ml"],
-    accuracy: "96.3%",
-  },
-  {
-    title: "Traffic Speed Detection System",
-    description: "Automated Speeding Ticket Framework for NHAI using computer vision.",
-    technologies: ["Computer Vision", "IoT", "Python"],
-    year: 2023,
-    category: ["swe"],
-  },
-  {
-    title: "Chota-Dhobi Mobile App",
-    description: "On-demand laundry services app with real-time tracking.",
-    technologies: ["Firebase", "Mobile Dev"],
-    github: "https://github.com/KartikDaGreat",
-    year: 2023,
-    category: ["swe"],
-  },
-  {
-    title: "Personal Portfolio Website",
-    description: "Interactive portfolio with terminal emulator, file management, and dynamic theming.",
-    technologies: ["Next.js", "TypeScript", "Tailwind CSS"],
-    github: "https://github.com/KartikDaGreat/kartikgounder-website",
-    year: 2025,
-    category: ["swe"],
-  },
-  {
-    title: "Mind Duelist — AI Adversarial Interviewer",
-    description:
-      "Real-time voice-based technical interviewer that detects bluffing, maps knowledge gaps, and dynamically escalates follow-up questions using LLM-driven gap analysis and live scoring.",
-    technologies: ["React", "TypeScript", "ElevenLabs", "Gemini Flash", "Supabase", "Edge Functions", "AI/ML"],
-    github: "https://github.com/KartikDaGreat/NightmareBot",
-    period: "February 2026",
-    year: 2026,
-    category: ["ml", "swe"],
-  },
-]
-
 const allYears = [...new Set([...experiences.map((e) => e.year), ...projects.map((p) => p.year)])].sort((a, b) => b - a)
 
 export function ExperienceSection() {
   return (
     <section className="max-w-6xl animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <h1 className="text-3xl md:text-4xl font-bold mb-2">Experience</h1>
-      <p className="text-muted-foreground mb-12">Professional experience, internships, and technical projects</p>
+      <div className="mb-12">
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">Experience</h1>
+        <p className="text-muted-foreground">Professional experience, internships, and technical projects</p>
+      </div>
 
       {/* Column Headers */}
       <div className="hidden md:grid md:grid-cols-[1fr_auto_1fr] gap-0 mb-8">
         <div className="text-right pr-8">
-          <h2 className="text-xl font-semibold text-primary flex items-center justify-end gap-2">
-            <Briefcase className="w-5 h-5" />
+          <h2 className="text-lg font-semibold text-primary flex items-center justify-end gap-2">
+            <Briefcase className="w-4 h-4" />
             Internships
           </h2>
           <p className="text-sm text-muted-foreground">Professional work experience</p>
         </div>
         <div className="w-16" />
         <div className="text-left pl-8">
-          <h2 className="text-xl font-semibold text-primary flex items-center gap-2">
-            <Code2 className="w-5 h-5" />
+          <h2 className="text-lg font-semibold text-primary flex items-center gap-2">
+            <Code2 className="w-4 h-4" />
             Projects
           </h2>
           <p className="text-sm text-muted-foreground">SWE and ML/AI projects</p>
@@ -200,24 +108,24 @@ export function ExperienceSection() {
       </div>
 
       {/* Mobile View */}
-      <div className="md:hidden space-y-12">
+      <div className="md:hidden space-y-10">
         <div>
-          <h2 className="text-xl font-semibold text-primary flex items-center gap-2 mb-6">
-            <Briefcase className="w-5 h-5" />
+          <h2 className="text-lg font-semibold text-primary flex items-center gap-2 mb-5">
+            <Briefcase className="w-4 h-4" />
             Internships
           </h2>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {experiences.map((exp, index) => (
               <ExperienceCard key={index} experience={exp} />
             ))}
           </div>
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-primary flex items-center gap-2 mb-6">
-            <Code2 className="w-5 h-5" />
+          <h2 className="text-lg font-semibold text-primary flex items-center gap-2 mb-5">
+            <Code2 className="w-4 h-4" />
             Projects
           </h2>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {projects.map((project, index) => (
               <ProjectCard key={index} project={project} />
             ))}
@@ -237,10 +145,8 @@ export function ExperienceSection() {
               <div className="grid grid-cols-[1fr_auto_1fr] gap-0">
                 <div />
                 <div className="flex flex-col items-center">
-                  {/* Connecting line from previous year */}
                   {yearIndex > 0 && <div className="w-0.5 h-8 bg-border" />}
-                  {/* Year badge */}
-                  <div className="w-16 h-10 rounded-full bg-primary flex items-center justify-center z-10">
+                  <div className="w-14 h-9 rounded-full bg-primary flex items-center justify-center z-10">
                     <span className="text-sm font-bold text-primary-foreground">{year}</span>
                   </div>
                 </div>
@@ -250,7 +156,6 @@ export function ExperienceSection() {
               {/* Items for this year */}
               {Array.from({ length: maxItems }).map((_, itemIndex) => (
                 <div key={itemIndex} className="grid grid-cols-[1fr_auto_1fr] gap-0">
-                  {/* Left: Internship */}
                   <div className="flex justify-end pr-8 py-3">
                     {yearExperiences[itemIndex] ? (
                       <div className="w-full max-w-md">
@@ -261,14 +166,12 @@ export function ExperienceSection() {
                     )}
                   </div>
 
-                  {/* Center timeline with dot */}
                   <div className="flex flex-col items-center w-16">
                     <div className="w-0.5 flex-1 bg-border" />
-                    <div className="w-3 h-3 rounded-full bg-muted-foreground/50 border-2 border-background flex-shrink-0" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/40 border-2 border-background flex-shrink-0" />
                     <div className="w-0.5 flex-1 bg-border" />
                   </div>
 
-                  {/* Right: Project */}
                   <div className="pl-8 py-3">
                     {yearProjects[itemIndex] ? (
                       <div className="w-full max-w-md">
@@ -281,7 +184,6 @@ export function ExperienceSection() {
                 </div>
               ))}
 
-              {/* Extra timeline segment if needed */}
               {yearIndex < allYears.length - 1 && (
                 <div className="grid grid-cols-[1fr_auto_1fr] gap-0">
                   <div />
@@ -298,7 +200,7 @@ export function ExperienceSection() {
 
       {/* Skills Section */}
       <div className="mt-16 pt-8 border-t border-border">
-        <h2 className="text-xl font-semibold mb-6 text-primary">Technical Skills</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-5">Technical Skills</h2>
         <div className="grid md:grid-cols-2 gap-8">
           <div>
             <h3 className="text-sm font-medium mb-3">Programming & Development</h3>
@@ -306,7 +208,7 @@ export function ExperienceSection() {
               {["C++", "Python", "Java", "PHP", "JavaScript", "AngularJS", "Flask", "Vercel", "Spark"].map((skill) => (
                 <span
                   key={skill}
-                  className="px-2 py-0.5 text-xs font-mono bg-secondary text-secondary-foreground rounded"
+                  className="px-2.5 py-1 text-xs font-mono bg-secondary text-secondary-foreground rounded-md border border-border"
                 >
                   {skill}
                 </span>
@@ -320,7 +222,7 @@ export function ExperienceSection() {
                 (skill) => (
                   <span
                     key={skill}
-                    className="px-2 py-0.5 text-xs font-mono bg-secondary text-secondary-foreground rounded"
+                    className="px-2.5 py-1 text-xs font-mono bg-secondary text-secondary-foreground rounded-md border border-border"
                   >
                     {skill}
                   </span>
@@ -340,17 +242,17 @@ function ExperienceCard({ experience, alignRight }: { experience: Experience; al
       className={`p-4 rounded-lg border border-border hover:border-primary/50 transition-colors bg-card ${alignRight ? "text-right" : ""}`}
     >
       <span
-        className={`inline-block px-2 py-0.5 text-xs font-mono rounded mb-2 ${experience.type === "research" ? "bg-primary/10 text-primary" : "bg-secondary text-secondary-foreground"}`}
+        className={`inline-block px-2 py-0.5 text-xs font-mono rounded-md mb-2 ${experience.type === "research" ? "bg-primary/10 text-primary" : "bg-secondary text-secondary-foreground"}`}
       >
         {experience.type === "research" ? "Research" : "Internship"}
       </span>
-      <div className={`flex flex-col gap-1 mb-2 ${alignRight ? "items-end" : ""}`}>
+      <div className={`flex flex-col gap-0.5 mb-2 ${alignRight ? "items-end" : ""}`}>
         <h3 className="font-medium">{experience.title}</h3>
         <span className="text-sm text-muted-foreground font-mono">{experience.period}</span>
       </div>
       <p className="text-sm text-primary mb-1">{experience.company}</p>
       <p className="text-xs text-muted-foreground mb-3">{experience.location}</p>
-      <ul className={`space-y-1 ${alignRight ? "text-right" : ""}`}>
+      <ul className={`space-y-1.5 ${alignRight ? "text-right" : ""}`}>
         {experience.highlights.map((highlight, i) => (
           <li
             key={i}
@@ -361,50 +263,54 @@ function ExperienceCard({ experience, alignRight }: { experience: Experience; al
           </li>
         ))}
       </ul>
+      {experience.certificate && (
+        <a
+          href={experience.certificate}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`inline-flex items-center gap-1.5 mt-3 px-2.5 py-1 text-xs font-medium rounded-md bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors ${alignRight ? "float-right" : ""}`}
+        >
+          <Award className="w-3 h-3" />
+          Certificate
+        </a>
+      )}
     </article>
   )
 }
 
 function ProjectCard({ project }: { project: Project }) {
   const categories = project.category.length > 0 ? project.category : ["swe"]
-  const projectLink = project.github || project.paper || project.demo
 
   return (
-    <article className="p-4 rounded-lg border border-border hover:border-primary/50 transition-colors bg-card relative">
-      {projectLink && (
-        <a
-          href={projectLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="absolute top-4 right-4 text-muted-foreground hover:text-primary transition-colors"
-          aria-label={`View ${project.title}`}
-        >
-          <ExternalLink className="w-4 h-4" />
-        </a>
-      )}
-      <div className="mb-2">
-        <div className="flex flex-wrap gap-1 mb-2">
-          {categories.map((category) => (
-            <span
-              key={category}
-              className={`inline-block px-2 py-0.5 text-xs font-mono rounded ${category === "ml" ? "bg-primary/10 text-primary" : "bg-secondary text-secondary-foreground"}`}
-            >
-              {category === "ml" ? "ML/AI" : "SWE"}
+    <Link href={`/projects/${project.slug}`} className="block group">
+      <article className="p-4 rounded-lg border border-border group-hover:border-primary/50 transition-colors bg-card relative">
+        <div className="absolute top-4 right-4 text-muted-foreground group-hover:text-primary transition-colors">
+          <ExternalLink className="w-3.5 h-3.5" />
+        </div>
+        <div className="mb-2">
+          <div className="flex flex-wrap gap-1 mb-2">
+            {categories.map((category) => (
+              <span
+                key={category}
+                className={`inline-block px-2 py-0.5 text-xs font-mono rounded-md ${category === "ml" ? "bg-primary/10 text-primary" : "bg-secondary text-secondary-foreground"}`}
+              >
+                {category === "ml" ? "ML/AI" : "SWE"}
+              </span>
+            ))}
+          </div>
+          <h3 className="font-medium group-hover:text-primary transition-colors">{project.title}</h3>
+          {project.period && <p className="text-sm text-muted-foreground font-mono">{project.period}</p>}
+        </div>
+        <p className="text-sm text-muted-foreground leading-relaxed mb-2">{project.description}</p>
+        {project.accuracy && <p className="text-xs text-primary font-medium mb-2">{project.accuracy}</p>}
+        <div className="flex flex-wrap gap-1.5">
+          {project.technologies.map((tech) => (
+            <span key={tech} className="px-1.5 py-0.5 text-xs font-mono bg-secondary text-secondary-foreground rounded">
+              {tech}
             </span>
           ))}
         </div>
-        <h3 className="font-medium">{project.title}</h3>
-        {project.period && <p className="text-sm text-muted-foreground font-mono">{project.period}</p>}
-      </div>
-      <p className="text-sm text-muted-foreground leading-relaxed mb-2">{project.description}</p>
-      {project.accuracy && <p className="text-xs text-primary font-medium mb-2">{project.accuracy}</p>}
-      <div className="flex flex-wrap gap-1.5">
-        {project.technologies.map((tech) => (
-          <span key={tech} className="px-1.5 py-0.5 text-xs font-mono bg-secondary text-secondary-foreground rounded">
-            {tech}
-          </span>
-        ))}
-      </div>
-    </article>
+      </article>
+    </Link>
   )
 }

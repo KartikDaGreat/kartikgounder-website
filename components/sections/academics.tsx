@@ -1,15 +1,24 @@
-import { Award, GraduationCap, ShieldCheck, Trophy, Users } from "lucide-react"
+import { Award, GraduationCap, ShieldCheck, Trophy } from "lucide-react"
 
 type AcademicItem = {
   title: string
   school: string
   period: string
   gpa?: string
+  expectedGpa?: string
   focus?: string
   coursework?: { label: string; items: string[] }[]
   year: number
   startYear: number
   endYear: number
+  continuing?: boolean
+}
+
+type MilestoneItem = {
+  title: string
+  school: string
+  detail: string
+  year: number
 }
 
 type LeadershipItem = {
@@ -33,29 +42,48 @@ const academics: AcademicItem[] = [
     title: "Master of Science · Computer Science",
     school: "Columbia Engineering",
     period: "Aug 2025 – Dec 2026",
-    focus: "AI, Machine Learning, Healthcare Applications",
+    gpa: "3.62",
+    expectedGpa: "3.76",
     coursework: [
       {
-        label: "Completed (2025)",
-        items: ["Machine Learning", "Databases", "Algorithms", "Computational Learning Theory"],
+        label: "Fall 2026 (Expected: 3.76 cumulative GPA)",
+        items: ["Advanced Software Engineering", "Projects in Computer Science"],
       },
       {
-        label: "In progress (2026)",
-        items: ["NLP", "Projects in Software Engineering", "Ethical and Responsible AI", "Policy for Privacy Technology"],
+        label: "Spring 2026 (4.1 GPA)",
+        items: ["User Interface Design", "Ethical and Responsible AI", "Topics in Software Engineering", "Policy for Privacy Technologies"],
       },
     ],
     year: 2026,
-    startYear: 2025,
+    startYear: 2026,
     endYear: 2026,
+    continuing: true,
   },
   {
-    title: "B.Tech · Computer Science",
+    title: "Master of Science · Computer Science",
+    school: "Columbia Engineering",
+    period: "Aug 2025 – Dec 2026",
+    gpa: "3.62",
+    expectedGpa: "3.76",
+    focus: "AI, Machine Learning, Healthcare Applications",
+    coursework: [
+      {
+        label: "Fall 2025 (3.1 GPA)",
+        items: ["Machine Learning", "Databases", "Algorithms", "Computational Learning Theory"],
+      },
+    ],
+    year: 2025,
+    startYear: 2025,
+    endYear: 2025,
+  },
+  {
+    title: "Bachelor of Technology · Computer Science",
     school: "Vellore Institute of Technology",
     period: "May 2021 – May 2025",
     gpa: "9.6/10",
-    year: 2025,
+    year: 2021,
     startYear: 2021,
-    endYear: 2025,
+    endYear: 2024,
   },
   {
     title: "High School · Computer Science",
@@ -72,6 +100,15 @@ const academics: AcademicItem[] = [
     year: 2019,
     startYear: 2017,
     endYear: 2019,
+  },
+]
+
+const milestones: MilestoneItem[] = [
+  {
+    title: "B.Tech Graduated · Computer Science",
+    school: "Vellore Institute of Technology",
+    detail: "GPA 9.6/10 · Rank 11 of 4,000",
+    year: 2025,
   },
 ]
 
@@ -148,14 +185,14 @@ const accolades: AccoladeItem[] = [
   },
 ]
 
-const allYears = [...new Set([...academics, ...leadership, ...accolades].map((item) => item.year))]
+const allYears = [...new Set([...academics, ...leadership, ...accolades, ...milestones].map((item) => item.year))]
   .filter((y) => y > 0)
   .sort((a, b) => b - a)
 
 export function AcademicsSection() {
   return (
     <section className="max-w-6xl animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="mb-20">
+      <div className="mb-16">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">Academics</h1>
         <p className="text-muted-foreground">Education, leadership, and achievements</p>
       </div>
@@ -163,7 +200,7 @@ export function AcademicsSection() {
       {/* Mobile layout */}
       <div className="md:hidden space-y-10">
         <div>
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-primary">
             <GraduationCap className="w-5 h-5" />
             Education
           </h2>
@@ -171,10 +208,13 @@ export function AcademicsSection() {
             {academics.map((item, idx) => (
               <AcademicCard key={idx} item={item} />
             ))}
+            {milestones.map((item, idx) => (
+              <MilestoneCard key={idx} item={item} />
+            ))}
           </div>
         </div>
         <div>
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-primary">
             <ShieldCheck className="w-5 h-5" />
             Leadership
           </h2>
@@ -185,7 +225,7 @@ export function AcademicsSection() {
           </div>
         </div>
         <div>
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-primary">
             <Trophy className="w-5 h-5" />
             Awards & Community
           </h2>
@@ -203,79 +243,63 @@ export function AcademicsSection() {
           {allYears.map((year, yearIndex) => {
             const yearLeadership = leadership.filter((l) => l.year === year)
             const yearAccolades = accolades.filter((a) => a.year === year)
-            const spanningAcademics = academics.filter((a) => year >= a.startYear && year <= a.endYear)
-            const isAcademicStart = (item: AcademicItem) => item.startYear === year
+            const yearMilestones = milestones.filter((m) => m.year === year)
+            const yearAcademics = academics.filter((a) => a.year === year)
+            const spanningAcademics = academics.filter((a) => a.year !== year && year >= a.startYear && year <= a.endYear)
 
-            const hasContent = spanningAcademics.length > 0 || yearLeadership.length > 0 || yearAccolades.length > 0
+            const hasContent = yearAcademics.length > 0 || spanningAcademics.length > 0 || yearLeadership.length > 0 || yearAccolades.length > 0 || yearMilestones.length > 0
             if (!hasContent) return null
 
-            // Determine layout based on what content exists
-            const hasEducation = spanningAcademics.length > 0
-            const hasLeadership = yearLeadership.length > 0
-            const hasAwards = yearAccolades.length > 0
+            const hasEducation = yearAcademics.length > 0 || spanningAcademics.length > 0 || yearMilestones.length > 0
             const rightContent = yearLeadership.concat(yearAccolades as any)
 
             return (
               <div key={year}>
-                {/* Year divider */}
                 {yearIndex > 0 && <div className="h-px bg-border my-8" />}
 
-                {/* Year label */}
                 <div className="text-sm font-bold text-foreground mb-4">{year}</div>
 
-                {/* Flexible content grid - adapts based on what's present */}
                 {hasEducation && rightContent.length > 0 ? (
-                  // 2 columns: education left, leadership+awards right
                   <div className="grid grid-cols-2 gap-8 mb-8">
-                    <div>
-                      <div className="space-y-3">
-                        {spanningAcademics.map((academic, idx) => {
-                          if (isAcademicStart(academic)) {
-                            return <AcademicCard key={idx} item={academic} />
-                          }
-                          return null
-                        })}
-                        {spanningAcademics.length > 0 && !spanningAcademics.some(isAcademicStart) && (
-                          <div className="text-sm text-muted-foreground border-l-2 border-primary/50 pl-4">
-                            {spanningAcademics.map((a) => a.school).join(", ")}
-                          </div>
-                        )}
-                      </div>
+                    <div className="space-y-3">
+                      {yearAcademics.map((academic, idx) => (
+                        <AcademicCard key={idx} item={academic} />
+                      ))}
+                      {spanningAcademics.length > 0 && yearAcademics.length === 0 && yearMilestones.length === 0 && (
+                        <SpanningIndicator schools={spanningAcademics.map((a) => a.school)} />
+                      )}
+                      {yearMilestones.map((item, idx) => (
+                        <MilestoneCard key={`m-${idx}`} item={item} />
+                      ))}
                     </div>
-                    <div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-3">
-                          {yearLeadership.map((item, idx) => (
-                            <LeadershipCard key={idx} item={item} />
-                          ))}
-                        </div>
-                        <div className="space-y-3">
-                          {yearAccolades.map((item, idx) => (
-                            <AccoladeCard key={idx} item={item} />
-                          ))}
-                        </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-3">
+                        {yearLeadership.map((item, idx) => (
+                          <LeadershipCard key={idx} item={item} />
+                        ))}
+                      </div>
+                      <div className="space-y-3">
+                        {yearAccolades.map((item, idx) => (
+                          <AccoladeCard key={idx} item={item} />
+                        ))}
                       </div>
                     </div>
                   </div>
                 ) : hasEducation ? (
-                  // Only education
                   <div className="mb-8 max-w-xl">
                     <div className="space-y-3">
-                      {spanningAcademics.map((academic, idx) => {
-                        if (isAcademicStart(academic)) {
-                          return <AcademicCard key={idx} item={academic} />
-                        }
-                        return null
-                      })}
-                      {spanningAcademics.length > 0 && !spanningAcademics.some(isAcademicStart) && (
-                        <div className="text-sm text-muted-foreground border-l-2 border-primary/50 pl-4">
-                          {spanningAcademics.map((a) => a.school).join(", ")}
-                        </div>
+                      {yearAcademics.map((academic, idx) => (
+                        <AcademicCard key={idx} item={academic} />
+                      ))}
+                      {spanningAcademics.length > 0 && yearAcademics.length === 0 && yearMilestones.length === 0 && (
+                        <SpanningIndicator schools={spanningAcademics.map((a) => a.school)} />
                       )}
+                      {yearMilestones.map((item, idx) => (
+                        <MilestoneCard key={`m-${idx}`} item={item} />
+                      ))}
                     </div>
                   </div>
                 ) : (
-                  // Only leadership + awards
                   <div className="grid grid-cols-2 gap-4 mb-8">
                     <div className="space-y-3">
                       {yearLeadership.map((item, idx) => (
@@ -298,20 +322,41 @@ export function AcademicsSection() {
   )
 }
 
+function SpanningIndicator({ schools }: { schools: string[] }) {
+  return (
+    <div className="text-sm text-muted-foreground border-l-2 border-primary/30 pl-4 py-2">
+      {schools.join(", ")}
+    </div>
+  )
+}
+
 function AcademicCard({ item }: { item: AcademicItem }) {
   return (
-    <article className="p-4 border-l-2 border-primary/50">
+    <article className="p-5 border-l-2 border-primary/50 rounded-r-lg bg-card/50">
+      {item.continuing ? (
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-xs font-mono px-2 py-0.5 rounded-md bg-primary/10 text-primary">Continuing</span>
+        </div>
+      ) : null}
       <h3 className="font-semibold text-foreground">{item.title}</h3>
       <p className="text-sm text-primary mt-1">{item.school}</p>
       <p className="text-xs text-muted-foreground mt-1">{item.period}</p>
-      {item.gpa && <p className="text-xs text-muted-foreground mt-2">GPA: {item.gpa}</p>}
-      {item.focus && <p className="text-xs text-muted-foreground mt-2">{item.focus}</p>}
+      {(item.gpa || item.expectedGpa) && (
+        <div className="flex flex-wrap items-center gap-2 mt-3">
+          {item.gpa && (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md bg-primary/10 text-primary border border-primary/20">
+              GPA: {item.gpa}
+            </span>
+          )}
+        </div>
+      )}
+      {item.focus && <p className="text-xs text-muted-foreground mt-3">{item.focus}</p>}
       {item.coursework && (
-        <div className="mt-3 space-y-2">
+        <div className="mt-4 space-y-3">
           {item.coursework.map((cw, idx) => (
-            <div key={idx} className="space-y-1">
+            <div key={idx} className="space-y-1.5">
               <p className="text-xs font-semibold text-foreground/80">{cw.label}</p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {cw.items.map((course) => (
                   <span
                     key={course}
@@ -329,9 +374,22 @@ function AcademicCard({ item }: { item: AcademicItem }) {
   )
 }
 
+function MilestoneCard({ item }: { item: MilestoneItem }) {
+  return (
+    <article className="p-5 border-l-2 border-primary bg-primary/5 rounded-r-lg">
+      <div className="flex items-center gap-2 mb-1">
+        <Award className="w-4 h-4 text-primary flex-shrink-0" />
+        <h3 className="font-semibold text-foreground">{item.title}</h3>
+      </div>
+      <p className="text-sm text-primary mt-1">{item.school}</p>
+      <p className="text-sm text-muted-foreground mt-2 font-medium">{item.detail}</p>
+    </article>
+  )
+}
+
 function LeadershipCard({ item }: { item: LeadershipItem }) {
   return (
-    <article className="p-4 border-l-2 border-border">
+    <article className="p-4 border-l-2 border-border rounded-r-lg bg-card/30">
       <h3 className="font-semibold text-foreground text-sm">{item.title}</h3>
       <p className="text-xs text-primary mt-1">{item.org}</p>
       <p className="text-xs text-muted-foreground mt-1">{item.period}</p>
@@ -349,7 +407,7 @@ function LeadershipCard({ item }: { item: LeadershipItem }) {
 
 function AccoladeCard({ item }: { item: AccoladeItem }) {
   return (
-    <article className="p-4 border-l-2 border-border">
+    <article className="p-4 border-l-2 border-border rounded-r-lg bg-card/30">
       <h3 className="font-semibold text-foreground text-sm">{item.title}</h3>
       <p className="text-xs text-primary mt-1">{item.org}</p>
       <p className="text-xs text-muted-foreground mt-1">{item.period}</p>
