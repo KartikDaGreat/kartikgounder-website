@@ -20,19 +20,27 @@ export async function GET(request: NextRequest) {
   const url = new URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json")
   url.searchParams.set("location", `${lat},${lng}`)
   url.searchParams.set("radius", String(DEFAULT_RADIUS_METERS))
-  url.searchParams.set("keyword", "donut")
-  url.searchParams.set("type", "bakery")
+  url.searchParams.set("keyword", "donut doughnut")
   url.searchParams.set("key", GOOGLE_MAPS_API)
 
   try {
     const r = await fetch(url.toString(), { cache: "no-store" })
+    const data = await r.json()
+
     if (!r.ok) {
-      return NextResponse.json({ error: `Places lookup failed (HTTP ${r.status})` }, { status: 502 })
+      console.error("Places API HTTP error:", r.status, data)
+      return NextResponse.json(
+        { error: data?.error_message || `Places API returned HTTP ${r.status}` },
+        { status: 502 }
+      )
     }
 
-    const data = await r.json()
     if (data.status && data.status !== "OK" && data.status !== "ZERO_RESULTS") {
-      return NextResponse.json({ error: data.error_message || "Places lookup failed" }, { status: 502 })
+      console.error("Places API status error:", data.status, data.error_message)
+      return NextResponse.json(
+        { error: `${data.status}: ${data.error_message || "Places lookup failed"}` },
+        { status: 502 }
+      )
     }
 
     const places = Array.isArray(data.results)

@@ -129,12 +129,12 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
     try {
       setDonutLocation(location)
       const r = await fetch(`/api/places/donuts?lat=${location.lat}&lng=${location.lng}`, { cache: "no-store" })
+      const data = await r.json()
       if (!r.ok) {
-        setDonutError(`Donut search failed (HTTP ${r.status})`)
+        setDonutError(data?.error || `Donut search failed (HTTP ${r.status})`)
         setDonutPlaces([])
         return
       }
-      const data = await r.json()
       setDonutPlaces(Array.isArray(data.places) ? data.places : [])
       if (Array.isArray(data.places) && data.places.length === 0) {
         setDonutError("No donut shops found nearby")
