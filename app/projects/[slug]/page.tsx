@@ -133,6 +133,35 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
           </div>
         )}
 
+        {/* Code Snippet */}
+        {project.codeSnippet && (
+          <div className="mb-10">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">Code Sample</h2>
+            <div className="rounded-lg border border-border overflow-hidden bg-[oklch(0.10_0.01_250)]">
+              <div className="flex items-center justify-between px-4 py-2 bg-[oklch(0.08_0.01_250)] border-b border-border">
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-red-500/70" />
+                    <div className="w-2 h-2 rounded-full bg-yellow-500/70" />
+                    <div className="w-2 h-2 rounded-full bg-green-500/70" />
+                  </div>
+                  <span className="text-[11px] text-muted-foreground font-mono ml-1">
+                    {project.codeSnippet.filename}
+                  </span>
+                </div>
+                <span className="text-[10px] text-muted-foreground font-mono uppercase">
+                  {project.codeSnippet.language}
+                </span>
+              </div>
+              <pre className="p-4 overflow-x-auto text-sm leading-relaxed">
+                <code className="text-foreground/90 font-mono text-[13px]">
+                  {project.codeSnippet.code}
+                </code>
+              </pre>
+            </div>
+          </div>
+        )}
+
         {/* Technologies */}
         <div>
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">Technologies</h2>

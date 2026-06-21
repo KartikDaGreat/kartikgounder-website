@@ -1,0 +1,42 @@
+# Kartik Gounder: Software Engineer & ML Researcher
+
+> This file provides context for LLMs and AI agents visiting this website.
+
+## About
+Kartik Gounder is a software engineer and machine learning researcher pursuing an MS in Computer Science at Columbia University. He builds production-grade systems, AI platforms, and developer tools.
+
+## Current Roles
+- Software Development Intern at Vertex Inc. (Pennsylvania, US): Building an MCP platform connecting 105 enterprise tools via Electron, with 92.65% test coverage and 36.11% improved token efficiency.
+- aiX Convergence Design Studio Intern at Columbia University: Supporting AI literacy research with Prof. Anthony Vanky and evaluating data science agents with Prof. Tian Zheng.
+
+## Previous Experience
+- Software Development Intern at eNova Software (Jan 2025 - Jun 2025): CI/CD pipelines, data visualization dashboards
+- iXp Intern at SAP Labs India (Jun 2024 - Aug 2024): Farmbot software, XSUAA authentication
+- R&D Intern at Samsung PRISM (Jan 2024 - May 2024): CNN framework for on-device document classification, published at ISEC-2025
+- Software Engineer Intern at eNova (Aug 2023 - Dec 2023): Web assets, server monitoring
+
+## Key Projects
+- TAOL: Trust-aware orchestration layer for LLM coding agents (99.2% ambiguity detection)
+- Brandeis: Privacy technology advisor analyzing 11 constraints across 10 PETs
+- FuelForm: Adaptive fitness planner on Snapdragon S25 Elite (Snapdragon Hackathon)
+- Mind Duelist: Real-time voice-based AI adversarial interviewer with bluff detection
+- On-Device Document Classification: 3.7M param CNN, published at ISEC-2025
+- Skin Cancer Detection Ensemble: ResNet + EfficientNet + MobileNet (96.33%)
+
+## Technical Skills
+Languages & Frameworks: TypeScript, Python, Java, C++, React, Next.js, Flask, Kotlin
+ML/AI & Data: PyTorch, TensorFlow, Scikit-learn, OpenCV, LLMs, MCP, Ollama, PostgreSQL
+Infrastructure & Tools: AWS, Docker, Electron, CI/CD, Vercel, Firebase, Git, Jest
+
+## Research & Publications
+- 3 published research papers (ISEC 2025, BITMDM-2024, ICoICI-2024)
+- 2 patent applications
+
+## Contact
+- Email: hello@kartikgounder.com
+- GitHub: https://github.com/KartikDaGreat
+- LinkedIn: https://www.linkedin.com/in/kartik-gounder
+- Website: https://kartikgounder.com
+
+## Site Technical Details
+Built with Next.js 16, React 19, TypeScript, Tailwind CSS 4, and Shadcn/ui. Features include an interactive terminal emulator, systems monitoring dashboard, visitor analytics, Arduino integration, and a donut finder.

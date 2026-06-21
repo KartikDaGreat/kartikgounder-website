@@ -1,63 +1,93 @@
-import { Download, Github, Linkedin, Mail } from "lucide-react"
-import { AgentBanner } from "@/components/agent-banner"
+import { Download, Github, Linkedin, Mail, MapPin, Terminal } from "lucide-react"
+import { GitHubStats } from "@/components/github-stats"
 
 export function AboutSection() {
   return (
     <section className="max-w-3xl animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Agent Banner - first thing visitors see */}
-      <div className="mb-10">
-        <AgentBanner />
+      {/* Code-style greeting */}
+      <div className="mb-8 font-mono text-sm text-muted-foreground">
+        <span className="text-emerald-500">~/kartik</span>
+        <span className="text-muted-foreground/60"> $ </span>
+        <span className="text-foreground">whoami</span>
       </div>
 
       <div className="mb-10">
         <h1 className="text-4xl md:text-5xl font-bold mb-3 tracking-tight">Kartik Gounder</h1>
-        <p className="text-xl text-primary font-medium">Building Meaningful Technology</p>
+        <p className="text-xl text-primary font-medium">Software Engineer & ML Researcher</p>
+        <div className="flex items-center gap-4 mt-2 text-muted-foreground text-sm">
+          <span className="flex items-center gap-1">
+            <MapPin className="w-3.5 h-3.5" />
+            New York, NY
+          </span>
+          <span className="font-mono text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+            open to opportunities
+          </span>
+        </div>
         <p className="text-muted-foreground mt-2">
-          MS in Computer Science @ Columbia | Technical Engineer & Data Analyst
+          MS in Computer Science @ Columbia | Building at Vertex Inc. & Columbia aiX
         </p>
       </div>
 
       <div className="space-y-5 text-foreground/90 leading-relaxed">
         <blockquote className="border-l-2 border-primary/60 pl-4 italic text-muted-foreground py-1">
-          {'"Why fit in when you were born to stand out?" – Dr. Seuss'}
+          {'"First, solve the problem. Then, write the code." – John Johnson'}
         </blockquote>
 
         <p>
-          The magic of software is something I view as inevitable.
-          I build on the shoulders of giants, leveraging the incredible tools and frameworks made by the world.
-          I am tinkering with the latest in AI, cloud, and data science, not just to keep up, but to push the boundaries of what's possible.
+          I build systems that work: from production-grade MCP platforms connecting 100+ enterprise tools
+          to trust-aware AI orchestration layers with 99.2% ambiguity detection. I care about shipping
+          reliable software, writing tests that matter, and making infrastructure that scales.
         </p>
 
         <p>
-          I believe technical rigor is most powerful when paired with collaborative curiosity.
+          My work spans full-stack development, ML/AI pipelines, and developer tooling.
+          I believe the best engineering happens at the intersection of deep technical rigor
+          and genuine curiosity about how things should work.
         </p>
 
-        <p>
-          Also I kinda like iced mochas, running/gyming a bit and playing tennis once in a while.
-        </p>
-
-        <p>
-          I thrive at the junction of logic and life, constantly seeking opportunities to solve meaningful problems through purpose-driven technology
-          <br />
-          <span className="text-sm text-primary/70">
-            <a href="https://www.cs.columbia.edu/~cs4252/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-              (if I am not crying at Computational Learning Theory by Prof. Rocco).
-            </a>
-          </span>
+        <p className="text-sm text-muted-foreground font-mono">
+          {"// also: iced mochas, running, tennis, and the occasional gym session"}
         </p>
       </div>
 
-      {/* Skills */}
+      {/* Top Skills */}
       <div className="mt-10 pt-8 border-t border-border">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">Top Skills</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">Core Strengths</h2>
         <div className="flex flex-wrap gap-2">
-          {["Project Development", "AI/ML", "Healthcare Tech", "LLMs and Fine-tuning"].map((skill) => (
+          {[
+            "Full-Stack Development",
+            "AI/ML Systems",
+            "Developer Tooling",
+            "Cloud & Infrastructure",
+            "Testing & Quality",
+          ].map((skill) => (
             <span key={skill} className="px-3 py-1.5 text-sm font-mono bg-secondary text-secondary-foreground rounded-md border border-border">
               {skill}
             </span>
           ))}
         </div>
       </div>
+
+      {/* Currently working on */}
+      <div className="mt-6 p-4 rounded-lg border border-border bg-card">
+        <div className="flex items-center gap-2 mb-2">
+          <Terminal className="w-4 h-4 text-muted-foreground" />
+          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Currently</span>
+        </div>
+        <div className="space-y-1.5 text-sm">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-foreground/80">Building MCP platform @ <span className="font-medium text-foreground">Vertex Inc.</span></span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+            <span className="text-foreground/80">AI literacy research @ <span className="font-medium text-foreground">Columbia aiX Lab</span></span>
+          </div>
+        </div>
+      </div>
+
+      {/* GitHub Stats */}
+      <GitHubStats />
 
       {/* Social links */}
       <div className="flex items-center gap-3 mt-8 pt-8 border-t border-border">

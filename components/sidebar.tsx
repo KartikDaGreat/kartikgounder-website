@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
-import { User, FlaskConical, GraduationCap, Briefcase, Mail, Terminal, Activity, Menu, X } from "lucide-react"
+import { User, FlaskConical, GraduationCap, Briefcase, Mail, Terminal, Activity, Menu, X, Wrench } from "lucide-react"
 import type { SectionId } from "@/app/page"
 
 interface SidebarProps {
@@ -20,6 +20,7 @@ const navItems: { id: SectionId; label: string; icon: React.ElementType }[] = [
   { id: "contact", label: "Contact", icon: Mail },
   { id: "terminal", label: "Terminal", icon: Terminal },
   { id: "systems", label: "Systems", icon: Activity },
+  { id: "uses", label: "Uses", icon: Wrench },
 ]
 
 type ArduinoStatus = {

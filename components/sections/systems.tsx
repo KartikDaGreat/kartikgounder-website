@@ -943,7 +943,7 @@ export function SystemsSection() {
     <section>
       <h2 className="text-2xl font-bold mb-1">Systems</h2>
       <p className="text-sm text-muted-foreground mb-6">
-        Live infrastructure dashboard — hardware, code, and deployments.
+        Live infrastructure dashboard: hardware, code, and deployments.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

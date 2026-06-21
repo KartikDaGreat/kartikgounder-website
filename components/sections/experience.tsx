@@ -15,6 +15,19 @@ interface Experience {
 
 const experiences: Experience[] = [
   {
+    title: "Software Development Intern",
+    company: "Vertex Inc.",
+    period: "June 2026 - Present",
+    year: 2026,
+    location: "Pennsylvania, US",
+    type: "internship",
+    highlights: [
+      "Built a production-grade MCP platform that connects 105 enterprise tools via an Electron desktop app (10 providers)",
+      "Implemented 78 automated tests across unit, integration, functional and e2e layers reaching a 92.65% coverage rate",
+      "Integrated data collection for token optimization in tool discovery and reaching 36.11% improved token efficiency",
+    ],
+  },
+  {
     title: "aiX Convergence Design Studio Intern",
     company: "Columbia University",
     period: "Jan 2026 - Present",
@@ -201,11 +214,11 @@ export function ExperienceSection() {
       {/* Skills Section */}
       <div className="mt-16 pt-8 border-t border-border">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-5">Technical Skills</h2>
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-sm font-medium mb-3">Programming & Development</h3>
+            <h3 className="text-sm font-medium mb-3">Languages & Frameworks</h3>
             <div className="flex flex-wrap gap-2">
-              {["C++", "Python", "Java", "PHP", "JavaScript", "AngularJS", "Flask", "Vercel", "Spark"].map((skill) => (
+              {["TypeScript", "Python", "Java", "C++", "React", "Next.js", "Flask", "Kotlin"].map((skill) => (
                 <span
                   key={skill}
                   className="px-2.5 py-1 text-xs font-mono bg-secondary text-secondary-foreground rounded-md border border-border"
@@ -216,9 +229,24 @@ export function ExperienceSection() {
             </div>
           </div>
           <div>
-            <h3 className="text-sm font-medium mb-3">ML/AI & Tools</h3>
+            <h3 className="text-sm font-medium mb-3">ML/AI & Data</h3>
             <div className="flex flex-wrap gap-2">
-              {["TensorFlow", "PyTorch", "Scikit-learn", "OpenCV", "AWS", "Docker", "CI/CD", "PostgreSQL"].map(
+              {["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "LLMs", "MCP", "Ollama", "PostgreSQL"].map(
+                (skill) => (
+                  <span
+                    key={skill}
+                    className="px-2.5 py-1 text-xs font-mono bg-secondary text-secondary-foreground rounded-md border border-border"
+                  >
+                    {skill}
+                  </span>
+                ),
+              )}
+            </div>
+          </div>
+          <div>
+            <h3 className="text-sm font-medium mb-3">Infrastructure & Tools</h3>
+            <div className="flex flex-wrap gap-2">
+              {["AWS", "Docker", "Electron", "CI/CD", "Vercel", "Firebase", "Git", "Jest"].map(
                 (skill) => (
                   <span
                     key={skill}

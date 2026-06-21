@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, lazy, Suspense, useEffect } from "react"
+import { useState, useRef, lazy, Suspense, useEffect, useCallback } from "react"
 
 // Generate or retrieve a unique visitor ID for this session
 function getVisitorId(): string {
@@ -102,6 +102,8 @@ function collectAndSendVisitorInfo() {
   } catch (e) { /* ignore errors */ }
 }
 import { Sidebar } from "@/components/sidebar"
+import { CommandPalette } from "@/components/command-palette"
+import { KeyboardShortcuts } from "@/components/keyboard-shortcuts"
 
 const AboutSection = lazy(() => import("@/components/sections/about").then((m) => ({ default: m.AboutSection })))
 const AcademicsSection = lazy(() =>
@@ -120,7 +122,12 @@ const TerminalSection = lazy(() =>
 const SystemsSection = lazy(() =>
   import("@/components/sections/systems").then((m) => ({ default: m.SystemsSection })),
 )
-export type SectionId = "about" | "academics" | "research" | "experience" | "contact" | "terminal" | "systems"
+const UsesSection = lazy(() =>
+  import("@/components/sections/uses").then((m) => ({ default: m.UsesSection })),
+)
+export type SectionId = "about" | "academics" | "research" | "experience" | "contact" | "terminal" | "systems" | "uses"
+
+const sectionOrder: SectionId[] = ["about", "academics", "research", "experience", "contact", "terminal", "systems", "uses"]
 
 function SectionLoader() {
   return (
@@ -147,14 +154,60 @@ export default function Home() {
   const [activeSection, setActiveSection] = useState<SectionId>("about")
   const mainRef = useRef<HTMLDivElement>(null)
 
-  const handleNavigate = (section: SectionId) => {
+  const handleNavigate = useCallback((section: SectionId) => {
     setActiveSection(section)
     trackPageView(section)
     if (mainRef.current) {
       mainRef.current.scrollTo({ top: 0, behavior: "instant" })
     }
     window.scrollTo({ top: 0, behavior: "instant" })
-  }
+  }, [])
+
+  // Keyboard navigation: j/k for next/prev, 1-8 for direct jump
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Skip if user is typing in an input/textarea or command palette is open
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        (e.metaKey || e.ctrlKey)
+      ) {
+        return
+      }
+
+      if (e.key === "j") {
+        e.preventDefault()
+        setActiveSection((prev) => {
+          const idx = sectionOrder.indexOf(prev)
+          const next = sectionOrder[Math.min(idx + 1, sectionOrder.length - 1)]
+          trackPageView(next)
+          return next
+        })
+        if (mainRef.current) mainRef.current.scrollTo({ top: 0, behavior: "instant" })
+        window.scrollTo({ top: 0, behavior: "instant" })
+      } else if (e.key === "k") {
+        e.preventDefault()
+        setActiveSection((prev) => {
+          const idx = sectionOrder.indexOf(prev)
+          const next = sectionOrder[Math.max(idx - 1, 0)]
+          trackPageView(next)
+          return next
+        })
+        if (mainRef.current) mainRef.current.scrollTo({ top: 0, behavior: "instant" })
+        window.scrollTo({ top: 0, behavior: "instant" })
+      } else {
+        // Number keys 1-8 for direct section jump
+        const num = parseInt(e.key)
+        if (num >= 1 && num <= sectionOrder.length) {
+          e.preventDefault()
+          const section = sectionOrder[num - 1]
+          handleNavigate(section)
+        }
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [handleNavigate])
 
   const renderSection = () => {
     switch (activeSection) {
@@ -172,6 +225,8 @@ export default function Home() {
         return <TerminalSection />
       case "systems":
         return <SystemsSection />
+      case "uses":
+        return <UsesSection />
       default:
         return <AboutSection />
     }
@@ -180,6 +235,8 @@ export default function Home() {
   return (
     <div className="min-h-screen flex">
       <Sidebar activeSection={activeSection} onNavigate={handleNavigate} />
+      <CommandPalette onNavigate={handleNavigate} />
+      <KeyboardShortcuts />
       <main ref={mainRef} className="flex-1 ml-0 md:ml-24 lg:ml-72 lg:mr-80 transition-all duration-300">
         <div className="min-h-screen p-6 pt-16 md:p-12 md:pt-12 lg:p-16 lg:pl-24 max-w-4xl mx-auto">
           <Suspense fallback={<SectionLoader />}>{renderSection()}</Suspense>
