@@ -17,6 +17,7 @@ export interface Project {
     filename: string
     code: string
   }
+  images?: string[]
 }
 
 function toSlug(title: string): string {
@@ -84,6 +85,14 @@ export const projects: Project[] = [
         # Phase 6: Route to auto_apply | human_review | defer_to_human
         return handover_manager.route(generation, cts, trust)`,
     },
+    images: [
+      "/projects/taol/taol_9.jpg",
+      "/projects/taol/taol_8.png",
+      "/projects/taol/taol_3.png",
+      "/projects/taol/taol_venn.png",
+      "/projects/taol/taol_results.png",
+      "/projects/taol/taol_5.png",
+    ],
   },
   {
     title: "Brandeis: Privacy Technology Advisor",
@@ -138,6 +147,13 @@ export const projects: Project[] = [
   return [...deduplicateRecs(recs), ...warnings];
 }`,
     },
+    images: [
+      "/projects/brandeis/brandeis_8.png",
+      "/projects/brandeis/brandeis_2.png",
+      "/projects/brandeis/brandeis_5.png",
+      "/projects/brandeis/brandeis_6.png",
+      "/projects/brandeis/brandeis_4.png",
+    ],
   },
   {
     title: "FuelForm (Snapdragon Hack)",

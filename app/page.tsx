@@ -151,7 +151,13 @@ export default function Home() {
         fetch("/api/visitors/count", { method: "POST" }).catch(() => {});
       }
     }, []);
-  const [activeSection, setActiveSection] = useState<SectionId>("about")
+  const [activeSection, setActiveSection] = useState<SectionId>(() => {
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash.replace("#", "") as SectionId
+      if (sectionOrder.includes(hash)) return hash
+    }
+    return "about"
+  })
   const mainRef = useRef<HTMLDivElement>(null)
 
   const handleNavigate = useCallback((section: SectionId) => {
@@ -161,6 +167,22 @@ export default function Home() {
       mainRef.current.scrollTo({ top: 0, behavior: "instant" })
     }
     window.scrollTo({ top: 0, behavior: "instant" })
+  }, [])
+
+  // Listen for hash changes (e.g. back button from project pages)
+  useEffect(() => {
+    function onHashChange() {
+      const hash = window.location.hash.replace("#", "") as SectionId
+      if (sectionOrder.includes(hash)) {
+        setActiveSection(hash)
+        if (mainRef.current) mainRef.current.scrollTo({ top: 0, behavior: "instant" })
+        window.scrollTo({ top: 0, behavior: "instant" })
+      }
+    }
+    window.addEventListener("hashchange", onHashChange)
+    // Also check on mount in case we arrived with a hash
+    onHashChange()
+    return () => window.removeEventListener("hashchange", onHashChange)
   }, [])
 
   // Keyboard navigation: j/k for next/prev, 1-8 for direct jump

@@ -297,13 +297,15 @@ function ExperienceCard({ experience, alignRight }: { experience: Experience; al
         ))}
       </ul>
       {experience.certificate && (
-        <PopupLink
-          href={experience.certificate}
-          className={`inline-flex items-center gap-1.5 mt-3 px-2.5 py-1 text-xs font-medium rounded-md bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors ${alignRight ? "float-right" : ""}`}
-        >
-          <Award className="w-3 h-3" />
-          Certificate
-        </PopupLink>
+        <div className={`mt-3 ${alignRight ? "flex justify-end" : ""}`}>
+          <PopupLink
+            href={experience.certificate}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
+          >
+            <Award className="w-3 h-3" />
+            Certificate
+          </PopupLink>
+        </div>
       )}
     </article>
   )

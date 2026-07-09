@@ -8,11 +8,11 @@ export function BackButton() {
 
   return (
     <button
-      onClick={() => router.back()}
+      onClick={() => router.push("/#experience")}
       className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-12 cursor-pointer"
     >
       <ArrowLeft className="w-4 h-4" />
-      Back
+      Back to Experience
     </button>
   )
 }
