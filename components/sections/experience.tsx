@@ -1,6 +1,7 @@
 import { Briefcase, Code2, ExternalLink, Award } from "lucide-react"
 import Link from "next/link"
 import { projects, type Project } from "@/lib/projects"
+import { PopupLink } from "@/components/popup-link"
 
 interface Experience {
   title: string
@@ -39,7 +40,7 @@ const experiences: Experience[] = [
       "Using computer vision to examine algorithmic bias and urban equity in course design",
       "Researching and developing statistics for evaluating Data Science related agents with Prof. Tian Zheng",
     ],
-    certificate: "https://drive.google.com/file/d/16NPax7jJQkdyVKtOyuql-afV0C6ChhWL/view?usp=sharing",
+    certificate: "https://drive.google.com/file/d/1XNSc5r4Z2FpBkPpxfL4F7uuOdVi5_0Mb/view?usp=sharing",
   },
   {
     title: "Software Development Intern",
@@ -52,6 +53,7 @@ const experiences: Experience[] = [
       "Built automated deployment scripts with CI/CD pipelines, reducing release time by 23%",
       "Designed data visualization dashboards for internal teams, cutting manual reporting by 8+ hours/week",
     ],
+    certificate: "https://drive.google.com/file/d/1kL7yFm7ALNFfT2R6YdrNCYVFRnZWNI_z/view?usp=sharing",
   },
   {
     title: "iXp Intern",
@@ -64,6 +66,7 @@ const experiences: Experience[] = [
       "Designed and developed Farmbot software, achieving a 28% decrease in API call time",
       "Integrated XSUAA authentication using JWT access tokens",
     ],
+    certificate: "https://drive.google.com/file/d/1P6tKBze3g_Ph-Tz2fRZoHEUmEasikRZn/view?usp=sharing",
   },
   {
     title: "R&D Intern (Samsung PRISM)",
@@ -76,6 +79,7 @@ const experiences: Experience[] = [
       "Developed a custom CNN framework for on-device document classification",
       "Co-authored and published a research paper at ISEC-2025",
     ],
+    certificate: "https://drive.google.com/file/d/1xpLRjU5B9Chpf3GpxL4jeNGbhm4g0_5B/view?usp=sharing",
   },
   {
     title: "Software Engineer Intern",
@@ -88,6 +92,7 @@ const experiences: Experience[] = [
       "Developed key web assets including email landing pages and server status monitoring",
       "Contributed to the update and enhancement of the internship training syllabus",
     ],
+    certificate: "https://drive.google.com/file/d/1kL7yFm7ALNFfT2R6YdrNCYVFRnZWNI_z/view?usp=sharing",
   },
 ]
 
@@ -292,15 +297,13 @@ function ExperienceCard({ experience, alignRight }: { experience: Experience; al
         ))}
       </ul>
       {experience.certificate && (
-        <a
+        <PopupLink
           href={experience.certificate}
-          target="_blank"
-          rel="noopener noreferrer"
           className={`inline-flex items-center gap-1.5 mt-3 px-2.5 py-1 text-xs font-medium rounded-md bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors ${alignRight ? "float-right" : ""}`}
         >
           <Award className="w-3 h-3" />
           Certificate
-        </a>
+        </PopupLink>
       )}
     </article>
   )

@@ -1,14 +1,16 @@
 import { notFound } from "next/navigation"
-import Link from "next/link"
-import { ArrowLeft, ExternalLink, Github, FileText } from "lucide-react"
+import { ExternalLink, Github, FileText } from "lucide-react"
 import { getProjectBySlug, getAllProjectSlugs } from "@/lib/projects"
+import { PopupLink } from "@/components/popup-link"
+import { BackButton } from "@/components/back-button"
 
 export function generateStaticParams() {
   return getAllProjectSlugs().map((slug) => ({ slug }))
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const project = getProjectBySlug(params.slug)
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const project = getProjectBySlug(slug)
   if (!project) return { title: "Project Not Found" }
   return {
     title: `${project.title} | Kartik Gounder`,
@@ -16,22 +18,20 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   }
 }
 
-export default function ProjectPage({ params }: { params: { slug: string } }) {
-  const project = getProjectBySlug(params.slug)
+export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const project = getProjectBySlug(slug)
   if (!project) notFound()
 
   const categories = project.category.length > 0 ? project.category : ["swe"]
 
+  const linkClass =
+    "inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-border bg-card hover:border-primary/50 transition-colors"
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-3xl mx-auto px-6 py-12 md:py-20">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-12"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to portfolio
-        </Link>
+        <BackButton />
 
         {/* Header */}
         <div className="mb-8">
@@ -65,41 +65,26 @@ export default function ProjectPage({ params }: { params: { slug: string } }) {
           )}
         </div>
 
-        {/* Links */}
+        {/* Links — open in popup windows */}
         {(project.github || project.paper || project.demo) && (
           <div className="flex flex-wrap gap-3 mb-10 pb-10 border-b border-border">
             {project.github && (
-              <a
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-border bg-card hover:border-primary/50 transition-colors"
-              >
+              <PopupLink href={project.github} className={linkClass}>
                 <Github className="w-4 h-4" />
                 GitHub
-              </a>
+              </PopupLink>
             )}
             {project.paper && project.paper !== "#" && (
-              <a
-                href={project.paper}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-border bg-card hover:border-primary/50 transition-colors"
-              >
+              <PopupLink href={project.paper} className={linkClass}>
                 <FileText className="w-4 h-4" />
                 Paper
-              </a>
+              </PopupLink>
             )}
             {project.demo && (
-              <a
-                href={project.demo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-border bg-card hover:border-primary/50 transition-colors"
-              >
+              <PopupLink href={project.demo} className={linkClass}>
                 <ExternalLink className="w-4 h-4" />
                 Demo
-              </a>
+              </PopupLink>
             )}
           </div>
         )}
