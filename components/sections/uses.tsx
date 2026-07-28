@@ -28,11 +28,11 @@ const categories: UseCategory[] = [
     title: "Terminal & Shell",
     icon: Terminal,
     items: [
-      { name: "Windows Terminal", description: "Primary terminal emulator" },
-      { name: "Bash / Zsh", description: "Shell with oh-my-zsh" },
-      { name: "Claude Code", description: "AI-powered CLI for development", url: "https://claude.ai" },
-      { name: "Git", description: "Version control with conventional commits" },
-      { name: "pnpm", description: "Fast, disk-efficient package manager" },
+      { name: "Windows Terminal", description: "Tabbed terminal with custom profiles for WSL, PowerShell, and SSH" },
+      { name: "Bash / Zsh", description: "Zsh with oh-my-zsh on WSL, Bash on remote machines" },
+      { name: "Claude Code", description: "AI CLI I use for scaffolding, debugging, and bulk refactors", url: "https://claude.ai" },
+      { name: "Git", description: "Conventional commits, interactive rebase, signed commits" },
+      { name: "pnpm", description: "Faster installs, strict dependency resolution, saves disk space" },
     ],
   },
   {
@@ -50,20 +50,20 @@ const categories: UseCategory[] = [
     title: "Hardware",
     icon: Monitor,
     items: [
-      { name: "Custom PC", description: "Primary development machine, Windows 11" },
-      { name: "Raspberry Pi 4", description: "Home server for file storage & APIs" },
-      { name: "Arduino Uno", description: "IoT sensor projects and monitoring" },
-      { name: "Dual Monitor Setup", description: "27\" + 24\" for productivity" },
+      { name: "Custom PC", description: "Ryzen build, Windows 11. Primary dev machine for everything." },
+      { name: "Raspberry Pi 4", description: "Runs the file storage API this site talks to over Tailscale" },
+      { name: "Arduino Uno", description: "Sends real heartbeat telemetry to this site's Systems dashboard" },
+      { name: "Dual Monitor Setup", description: "27\" + 24\". Code on the big one, terminal and docs on the other." },
     ],
   },
   {
     title: "Productivity",
     icon: Coffee,
     items: [
-      { name: "Notion", description: "Notes, project management, knowledge base" },
-      { name: "Arc Browser", description: "Primary browser with spaces", url: "https://arc.net" },
-      { name: "Spotify", description: "Lo-fi beats while coding" },
-      { name: "ChatGPT / Claude", description: "AI assistants for research and brainstorming" },
+      { name: "Notion", description: "Project tracking, meeting notes, knowledge base for every course and project" },
+      { name: "Arc Browser", description: "Spaces for each project context. Way better tab management than Chrome.", url: "https://arc.net" },
+      { name: "Spotify", description: "Lo-fi beats while coding. Silence while debugging." },
+      { name: "ChatGPT / Claude", description: "Research, rubber-ducking, and exploring ideas before I write code" },
     ],
   },
 ]
@@ -73,7 +73,7 @@ export function UsesSection() {
     <section className="max-w-3xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="mb-10">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">Uses</h1>
-        <p className="text-muted-foreground">Tools, hardware, and software I use daily for development.</p>
+        <p className="text-muted-foreground">The actual tools and hardware I use every day. Not aspirational, just what's open on my screen right now.</p>
         <p className="text-sm text-muted-foreground mt-1 font-mono">
           {"// inspired by uses.tech"}
         </p>

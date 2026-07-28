@@ -145,74 +145,35 @@ const loginTerminal = async (password: string): Promise<string> => {
   }
 }
 
-const getVisitorInfo = async (): Promise<string | string[]> => {
+const getVisitorInfo = (): string | string[] => {
   try {
-    // Collect client-side information
-    const clientInfo = {
-      screenWidth: typeof window !== "undefined" ? window.screen.width : "Unknown",
-      screenHeight: typeof window !== "undefined" ? window.screen.height : "Unknown",
-      viewportWidth: typeof window !== "undefined" ? window.innerWidth : "Unknown",
-      viewportHeight: typeof window !== "undefined" ? window.innerHeight : "Unknown",
-      colorDepth: typeof window !== "undefined" ? window.screen.colorDepth : "Unknown",
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      dnt: typeof navigator !== "undefined" ? navigator.doNotTrack : "Unknown",
-      cookiesEnabled: typeof navigator !== "undefined" ? navigator.cookieEnabled : "Unknown",
-      localStorageEnabled: typeof localStorage !== "undefined" ? "Yes" : "No",
-      deviceMemory: typeof navigator !== "undefined" ? (navigator as any).deviceMemory || "Not available" : "Unknown",
-      connectionType: typeof navigator !== "undefined" ? ((navigator as any).connection?.effectiveType || "Not available") : "Unknown",
-    }
+    const browser = (() => {
+      const ua = navigator.userAgent
+      if (ua.includes("Chrome") && !ua.includes("Edge")) return "Chrome"
+      if (ua.includes("Firefox")) return "Firefox"
+      if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari"
+      if (ua.includes("Edge")) return "Edge"
+      return "Other"
+    })()
 
-    const r = await fetch("/api/terminal/visitors", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(clientInfo),
-    })
-    if (!r.ok) throw new Error(`HTTP ${r.status}`)
-    const data = await r.json()
-    
     const lines = [
-      `INFORMATION: THIS IS THE INFORMATION THE WEBSITE COLLECTS ABOUT YOU. KEEP SAFE!`,
-      "Website Tracking Information",
-      "────────────────────────────",
+      "Your Visit",
+      "──────────",
       "",
-      "Network & Location:",
-      `IP Address:        ${data.ip}`,
-      `Location:          ${data.location}`,
-      `Coordinates:       ${data.lat}, ${data.lon}`,
-      `Postal Code:       ${data.zip}`,
-      `Country Code:      ${data.countryCode}`,
-      `ISP:               ${data.isp}`,
-      `Organization:      ${data.org}`,
-      `ASN:               ${data.asn}`,
+      `Browser:        ${browser}`,
+      `Language:       ${navigator.language}`,
+      `Timezone:       ${Intl.DateTimeFormat().resolvedOptions().timeZone}`,
+      `Screen:         ${window.screen.width}x${window.screen.height}`,
+      `Viewport:       ${window.innerWidth}x${window.innerHeight}`,
+      `Color depth:    ${window.screen.colorDepth}-bit`,
       "",
-      "Device & Display:",
-      `Platform:          ${data.platform}`,
-      `Screen Size:       ${data.screenWidth} x ${data.screenHeight}`,
-      `Viewport Size:     ${data.viewportWidth} x ${data.viewportHeight}`,
-      `Color Depth:       ${data.colorDepth}-bit`,
-      "",
-      "Browser & Language:",
-      `Browser:           ${data.browser}`,
-      `User Agent:        ${data.userAgent}`,
-      `Language:          ${data.language}`,
-      `Accepted Encoding: ${data.acceptEncoding}`,
-      "",
-      "System Information:",
-      `Timezone:          ${data.timezone}`,
-      `Device Memory:     ${data.deviceMemory}`,
-      `Connection Type:   ${data.connectionType}`,
-      "",
-      "Privacy Settings:",
-      `Do Not Track:      ${data.dnt || "Not set"}`,
-      `Cookies Enabled:   ${data.cookiesEnabled ? "Yes" : "No"}`,
-      `LocalStorage:      ${data.localStorageEnabled}`,
-      "",
-      `Timestamp:         ${data.timestamp}`,
+      "That's all we collect. No IP, no location, no fingerprinting.",
+      "Privacy matters.",
     ]
-    
+
     return lines
-  } catch (err: any) {
-    return `Error fetching visitor info: ${err?.message || "Unknown error"}`
+  } catch {
+    return "Could not gather visitor info."
   }
 }
 
@@ -640,7 +601,7 @@ const executeCommand = (input: string): string | string[] | Promise<string | str
     case "echo":
       return args.join(" ") || ""
     case "ls":
-      return ["about/", "academics/", "research/", "experience/", "contact/", "terminal/"]
+      return ["about/", "experience/", "research/", "academics/", "contact/", "terminal/", "systems/", "uses/"]
     case "whoami":
       return "visitor@kartik-portfolio"
     case "pwd":
@@ -824,7 +785,9 @@ export function TerminalSection() {
   return (
     <section className="max-w-4xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <h1 className="text-3xl md:text-4xl font-bold mb-2">Terminal</h1>
-      <p className="text-muted-foreground mb-8">Interactive command-line with games</p>
+      <p className="text-muted-foreground mb-8">
+        A working shell, not a demo. Try <code className="text-xs font-mono bg-secondary px-1.5 py-0.5 rounded">help</code> for commands, <code className="text-xs font-mono bg-secondary px-1.5 py-0.5 rounded">game</code> to play hangman or rock-paper-scissors, or <code className="text-xs font-mono bg-secondary px-1.5 py-0.5 rounded">visitor</code> to see what this site knows about you (not much, by design).
+      </p>
 
       <div className="rounded-lg border border-border overflow-hidden bg-card">
         <div className="flex items-center gap-2 px-4 py-2 bg-secondary border-b border-border">
@@ -838,7 +801,7 @@ export function TerminalSection() {
 
         <div
           ref={terminalRef}
-          className="p-4 h-[420px] overflow-y-auto font-mono text-sm"
+          className="p-4 h-[420px] md:h-[520px] overflow-y-auto font-mono text-sm"
           onClick={() => inputRef.current?.focus()}
         >
           {history.map((cmd, index) => (

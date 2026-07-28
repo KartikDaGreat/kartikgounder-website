@@ -41,7 +41,7 @@ export const projects: Project[] = [
     category: ["ml", "swe"],
     accuracy: "99.2% ambiguity detection | AUC 0.999",
     longDescription: [
-      "TAOL is a middleware layer that sits between a developer and their local LLM (Ollama), intercepting every prompt and every generated output to decide whether code should be auto-applied, sent for human review, or deferred with clarification questions. Instead of blindly trusting AI-generated code, TAOL computes a Composite Trust Score (CTS) from 4 post-execution risk signals — Static Analysis Gate (SAG), Function Overlap (FO), CodeBLEU (CB), and Dependency Volatility (DV) — then routes the output through one of three decision zones.",
+      "TAOL is a middleware layer that sits between a developer and their local LLM (Ollama), intercepting every prompt and every generated output to decide whether code should be auto-applied, sent for human review, or deferred with clarification questions. Instead of blindly trusting AI-generated code, TAOL computes a Composite Trust Score (CTS) from 4 post-execution risk signals: Static Analysis Gate (SAG), Function Overlap (FO), CodeBLEU (CB), and Dependency Volatility (DV). It then routes the output through one of three decision zones.",
       "The system operates as a 6-phase pipeline: (1) an Intent Gate pre-screens prompts using a Random Forest classifier trained on 24 handcrafted semantic features achieving 99.2% accuracy and 0.999 AUC, (2) a Context Enricher performs RAG-based prompt augmentation via BM25 search and git diffs for borderline prompts, (3) an Ollama Proxy streams code generation with circuit-breaker protection, (4) a Trust Calibrator computes 4 post-execution risk signals, (5) a Decision Engine applies learned CTS weights to route output, and (6) a Handover Manager formats rich briefings with LLM-generated explanations for human review.",
       "CTS weights were learned via an ensemble of Logistic Regression, Random Forest, and Gradient Boosting with grid search on 500 SWE-bench Verified tasks from 12 major Python repositories (Django, Flask, scikit-learn, sympy, etc.). CodeBLEU emerged as the dominant signal with weight 0.5465. The system includes adaptive weight retraining, per-session Human-Over-The-Loop (HOTL) trust modifiers, live AST indexing with file watching, and a full evaluation framework with ablation studies.",
       "Built as a course project for COMS E6156: Topics in Software Engineering at Columbia University, co-authored with Anisha Apte and Shruti Bhamidipati. The project includes 144 unit tests, comprehensive API endpoints, and can be deployed as a drop-in proxy server, interactive CLI, or embedded Python library.",
@@ -105,10 +105,10 @@ export const projects: Project[] = [
     year: 2026,
     category: ["swe"],
     longDescription: [
-      "Brandeis is a privacy-preserving technology recommendation tool named after Justice Louis Brandeis, a pioneer of privacy law. It guides users through 11 structured questions covering collaboration goals, data types, sensitivity levels, party count, trust models, data mobility constraints, output requirements, accuracy tolerance, regulatory regimes, compute resources, and adversary threat models — then recommends the optimal combination of privacy-enhancing technologies.",
+      "Brandeis is a privacy-preserving technology recommendation tool named after Justice Louis Brandeis, a pioneer of privacy law. It guides users through 11 structured questions covering collaboration goals, data types, sensitivity levels, party count, trust models, data mobility constraints, output requirements, accuracy tolerance, regulatory regimes, compute resources, and adversary threat models , then recommends the optimal combination of privacy-enhancing technologies.",
       "The recommendation engine evaluates across 10 privacy-enhancing technologies: k-Anonymity, Local Differential Privacy, Central Differential Privacy, Secure Multi-Party Computation (MPC), Homomorphic Encryption (HE), Trusted Execution Environments (TEE), Private Set Intersection (PSI), Federated Learning, Synthetic Data Generation, and Data Use Agreements. Each technology entry includes detailed descriptions, strengths, limitations, and real-world use cases.",
       "The core rule engine implements a multi-pass evaluation: each of the 11 question dimensions triggers specific recommendation rules that produce primary and supporting technology suggestions with sub-decisions (implementation guidance). After deduplication, cross-cutting rules handle interactions between dimensions — for example, exact accuracy requirements with DP generate compatibility warnings, while minimal resources remove HE from consideration. The engine also detects known technology stack combinations like 'Privacy-Preserving Collaborative Learning' (Federated Learning + Local DP) and 'Private Record Linkage' (PSI + MPC).",
-      "Beyond recommendations, Brandeis provides a full decision tree visualization showing which user choices led to each recommendation, contextual explanations for every technology suggestion, a 'Why Not?' panel explaining why certain technologies were excluded, and a feedback mechanism. Built as a course project for Policy in Privacy Technology at Columbia University.",
+      "Beyond recommendations, Brandeis provides a full decision tree visualization showing which user choices led to each recommendation, contextual explanations for every technology suggestion, a \"Why Not?\" panel explaining why certain technologies were excluded, and a feedback mechanism. Built as a course project for Policy in Privacy Technology at Columbia University.",
     ],
     highlights: [
       "11-question decision framework covering goals, data types, sensitivity, trust models, regulatory regimes, and threat models",
@@ -117,7 +117,7 @@ export const projects: Project[] = [
       "Decision tree visualization showing the causal chain from user choices to technology recommendations",
       "Explainable 'Why Not?' panel detailing why each non-recommended technology was excluded",
       "Stack detection for known technology combinations (e.g., FL + Local DP, PSI + MPC)",
-      "Fully browser-based — no backend, no ML, no external APIs — pure deterministic rule evaluation",
+      "Fully browser-based. No backend, no ML, no external APIs. Pure deterministic rule evaluation.",
       "Responsive UI with progress tracking, contextual helper text, and real-time recommendation generation",
     ],
     codeSnippet: {
@@ -140,7 +140,7 @@ export const projects: Project[] = [
 
   // Cross-cutting: exact accuracy + DP → warning
   if (accuracy === "exact" && hasDifferentialPrivacy(recs)) {
-    warnings.push(makeWarning("DP adds noise — consider MPC or TEEs"));
+    warnings.push(makeWarning("DP adds noise, consider MPC or TEEs"));
   }
 
   // Deduplicate, detect known stacks, apply resource constraints
@@ -223,7 +223,7 @@ export const projects: Project[] = [
       "Mind Duelist is a voice-based AI technical interviewer that conducts adversarial interviews in real-time. Unlike standard interview prep tools that follow scripted question lists, Mind Duelist actively listens to responses, detects when candidates are bluffing or giving surface-level answers, and dynamically escalates follow-up questions to probe genuine understanding.",
       "The system uses ElevenLabs for natural text-to-speech voice synthesis and Gemini Flash for rapid LLM inference to analyze responses in real-time. When a candidate provides an answer, the system evaluates coherence against conversation history, assesses technical depth relative to the topic, checks consistency with prior statements, and identifies specific knowledge gaps. If bluffing is detected, the interviewer escalates difficulty; if the answer is genuine, it explores deeper into the topic.",
       "The backend runs on Supabase with Edge Functions for serverless processing, enabling low-latency voice-to-analysis pipelines. The React frontend provides a live interview interface with real-time scoring, knowledge gap visualization, and post-interview analytics showing strengths and areas for improvement.",
-      "The project name 'NightmareBot' reflects the interviewer's adversarial design philosophy — it's meant to challenge candidates far beyond what a typical interviewer would, making real interviews feel easy by comparison.",
+      "The project name 'NightmareBot' reflects the interviewer's adversarial design philosophy: it's meant to challenge candidates far beyond what a typical interviewer would, making real interviews feel easy by comparison.",
     ],
     highlights: [
       "Real-time voice interaction using ElevenLabs TTS and speech recognition",
@@ -273,12 +273,12 @@ export const projects: Project[] = [
     accuracy: "3.7M parameters | Published at ISEC-2025",
     longDescription: [
       "This research project developed a lightweight deep learning framework for document classification that operates on-device without requiring cloud connectivity. The key challenge was building a model compact enough for edge deployment while maintaining classification accuracy across diverse document types.",
-      "The framework uses a custom CNN architecture with only 3.7 million parameters — significantly smaller than standard document classification models — by combining visual layout features from document images with limited extracted text features. This dual-modality approach allows the model to classify documents even when OCR quality is poor or text content is minimal, such as with forms, invoices, receipts, and ID documents.",
-      "The model was designed for real-world deployment scenarios where documents need to be classified at the point of capture — on mobile devices, embedded systems, or in air-gapped environments where data cannot be sent to cloud APIs. The architecture prioritizes inference speed and memory efficiency without sacrificing accuracy.",
+      "The framework uses a custom CNN architecture with only 3.7 million parameters (significantly smaller than standard document classification models) by combining visual layout features from document images with limited extracted text features. This dual-modality approach allows the model to classify documents even when OCR quality is poor or text content is minimal, such as with forms, invoices, receipts, and ID documents.",
+      "The model was designed for real-world deployment scenarios where documents need to be classified at the point of capture: on mobile devices, embedded systems, or in air-gapped environments where data cannot be sent to cloud APIs. The architecture prioritizes inference speed and memory efficiency without sacrificing accuracy.",
       "The research was published at the IEEE International Symposium on Electronics and Communications (ISEC-2025) and presented at the ICOICI conference.",
     ],
     highlights: [
-      "3.7M parameter model — lightweight enough for mobile and edge device deployment",
+      "3.7M parameter model, lightweight enough for mobile and edge device deployment",
       "Dual-modality approach combining visual layout features with limited text extraction",
       "Designed for air-gapped and offline environments where cloud APIs are unavailable",
       "Published at IEEE ISEC-2025 (International Symposium on Electronics and Communications)",
@@ -327,7 +327,7 @@ export const projects: Project[] = [
     longDescription: [
       "This research project built a tri-modal chatbot system designed to assist in psychological counselling by analyzing patients' mental states through three simultaneous input channels: text conversations, voice tone analysis, and facial expression recognition. The system provides a more holistic assessment than text-only chatbots by capturing emotional signals across modalities.",
       "The text modality uses NLP techniques to analyze sentiment, detect distress indicators, and identify cognitive patterns in patient responses. The voice modality processes speech characteristics including tone, pace, pitch variations, and hesitation patterns that correlate with emotional states. The facial expression modality uses computer vision to detect micro-expressions and emotional indicators during video sessions.",
-      "The three modalities are fused using a weighted ensemble approach that produces a composite mental state assessment. This multi-modal fusion allows the system to detect discrepancies — for example, when a patient says they're 'fine' but their voice trembles and facial expressions show distress — providing counsellors with deeper insight than any single modality alone.",
+      "The three modalities are fused using a weighted ensemble approach that produces a composite mental state assessment. This multi-modal fusion allows the system to detect discrepancies (for example, when a patient says they're 'fine' but their voice trembles and facial expressions show distress), providing counsellors with deeper insight than any single modality alone.",
       "The system achieved 87% user satisfaction in clinical evaluations and was published at ACM ICAISS-2024 (International Conference on Artificial Intelligence and Smart Systems).",
     ],
     highlights: [
@@ -379,9 +379,9 @@ export const projects: Project[] = [
     category: ["ml"],
     accuracy: "96.33%",
     longDescription: [
-      "This project developed an ensemble deep learning approach for automated skin cancer detection from dermatological images. The system combines three pre-trained convolutional neural networks — ResNet-50, EfficientNet-B3, and MobileNetV2 — each bringing different architectural strengths to the classification task.",
+      "This project developed an ensemble deep learning approach for automated skin cancer detection from dermatological images. The system combines three pre-trained convolutional neural networks (ResNet-50, EfficientNet-B3, and MobileNetV2), each bringing different architectural strengths to the classification task.",
       "ResNet-50 provides deep feature extraction through residual connections that prevent gradient degradation. EfficientNet-B3 offers compound-scaled architecture optimized for accuracy-to-compute ratio. MobileNetV2 contributes efficient depthwise separable convolutions suited for deployment. All three models were fine-tuned on dermoscopic images using transfer learning from ImageNet weights.",
-      "The ensemble uses a weighted voting strategy where each model's prediction confidence contributes to the final classification. This approach achieves 96.33% accuracy — outperforming any individual model in the ensemble — by leveraging the complementary strengths of each architecture and reducing the impact of individual model weaknesses on edge cases.",
+      "The ensemble uses a weighted voting strategy where each model's prediction confidence contributes to the final classification. This approach achieves 96.33% accuracy (outperforming any individual model in the ensemble) by leveraging the complementary strengths of each architecture and reducing the impact of individual model weaknesses on edge cases.",
       "The model classifies across multiple categories of skin lesions including melanoma, basal cell carcinoma, and benign conditions, providing clinicians with a decision-support tool for early detection of malignant lesions.",
     ],
     highlights: [
@@ -579,7 +579,7 @@ export const projects: Project[] = [
         self.ocr = easyocr.Reader(["en"])
 
     def process(self, image: np.ndarray) -> np.ndarray:
-        # Ensemble face detection — union of all detections
+        # Ensemble face detection: union of all detections
         faces = set()
         faces.update(self.mtcnn.detect(image))
         faces.update(self.retinaface.detect(image))
@@ -608,7 +608,7 @@ export const projects: Project[] = [
     year: 2025,
     category: ["swe"],
     longDescription: [
-      "This portfolio website goes beyond a typical developer portfolio by embedding interactive systems directly into the browsing experience. The centerpiece is a fully functional terminal emulator that supports command execution, file system navigation, and system queries — visitors can interact with the site through a CLI interface alongside the traditional GUI.",
+      "This portfolio website goes beyond a typical developer portfolio by embedding interactive systems directly into the browsing experience. The centerpiece is a fully functional terminal emulator that supports command execution, file system navigation, and system queries. Visitors can interact with the site through a CLI interface alongside the traditional GUI.",
       "The site includes an encrypted file management system with upload, download, move, and delete operations backed by Supabase storage. A visitor tracking system logs and displays visit counts. Real-time integrations pull data from GitHub (contribution activity), Vercel (deployment status), and an Arduino IoT device (hardware status monitoring).",
       "The dynamic theming system supports multiple color schemes that persist across sessions. The architecture uses Next.js App Router with server-side rendering for SEO, API routes for backend functionality, and responsive design that adapts from mobile to desktop. The entire site is deployed on Vercel with automatic deployments from the main branch.",
     ],
@@ -619,7 +619,7 @@ export const projects: Project[] = [
       "Dynamic theming system with persistent color scheme preferences",
       "Visitor tracking and analytics system",
       "Next.js App Router with SSR, API routes, and responsive design",
-      "Donut shop finder API — because every developer needs donuts",
+      "Donut shop finder API, because every developer needs donuts",
     ],
   },
 ]

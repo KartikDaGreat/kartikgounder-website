@@ -5,7 +5,9 @@ export function ContactSection() {
     <section className="max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="mb-12">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">Contact</h1>
-        <p className="text-muted-foreground">{"Let's connect and collaborate"}</p>
+        <p className="text-muted-foreground">
+          I'm looking for SWE and AI infrastructure roles, especially anything involving agentic systems, developer tooling, or hard deployment problems. If you're working on something interesting, I'd like to hear about it.
+        </p>
       </div>
 
       <div className="space-y-8">

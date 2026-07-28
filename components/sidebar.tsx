@@ -14,9 +14,9 @@ interface SidebarProps {
 
 const navItems: { id: SectionId; label: string; icon: React.ElementType }[] = [
   { id: "about", label: "About Me", icon: User },
-  { id: "academics", label: "Academics", icon: GraduationCap },
-  { id: "research", label: "Research", icon: FlaskConical },
   { id: "experience", label: "Experience", icon: Briefcase },
+  { id: "research", label: "Research", icon: FlaskConical },
+  { id: "academics", label: "Academics", icon: GraduationCap },
   { id: "contact", label: "Contact", icon: Mail },
   { id: "terminal", label: "Terminal", icon: Terminal },
   { id: "systems", label: "Systems", icon: Activity },
@@ -175,7 +175,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
 
       <aside
         className={cn(
-          "fixed top-0 h-full bg-sidebar border-r border-sidebar-border z-40",
+          "group fixed top-0 h-full bg-sidebar border-r border-sidebar-border z-40",
           "transition-all duration-300 ease-in-out",
           // Mobile: full width when open, hidden when closed
           mobileOpen ? "w-56 translate-x-0 left-0" : "-translate-x-full left-0",

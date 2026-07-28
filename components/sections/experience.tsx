@@ -23,9 +23,9 @@ const experiences: Experience[] = [
     location: "Pennsylvania, US",
     type: "internship",
     highlights: [
-      "Built a production-grade MCP platform that connects 105 enterprise tools via an Electron desktop app (10 providers)",
-      "Implemented 78 automated tests across unit, integration, functional and e2e layers reaching a 92.65% coverage rate",
-      "Integrated data collection for token optimization in tool discovery and reaching 36.11% improved token efficiency",
+      "Built a production-grade MCP platform that connects 105 enterprise tools via an Electron desktop app with 10 providers. It routes real requests across Jira, Slack, GitHub, Confluence, and more.",
+      "Wrote 78 automated tests across unit, integration, functional, and e2e layers, reaching 92.65% coverage. The test suite catches regressions before they hit users.",
+      "Instrumented every tool-discovery call to collect token usage data, then cut redundant context to achieve 36.11% improved token efficiency. Real cost savings on every request.",
     ],
   },
   {
@@ -36,9 +36,9 @@ const experiences: Experience[] = [
     location: "New York, NY",
     type: "internship",
     highlights: [
-      "Supporting a multi-year AI literacy initiative in pedagogy with Prof. Anthony Vanky",
-      "Using computer vision to examine algorithmic bias and urban equity in course design",
-      "Researching and developing statistics for evaluating Data Science related agents with Prof. Tian Zheng",
+      "Supporting a multi-year AI literacy initiative with Prof. Anthony Vanky, building tools that help students and educators work with AI in course design.",
+      "Built a privacy-preserving image labeling platform with ensemble face detection (MTCNN + RetinaFace + MediaPipe) that automatically blurs PII before storage.",
+      "Developing evaluation metrics for Data Science agents with Prof. Tian Zheng. The goal: measure whether an AI agent actually helps students learn, not just whether it answers correctly.",
     ],
     certificate: "https://drive.google.com/file/d/1XNSc5r4Z2FpBkPpxfL4F7uuOdVi5_0Mb/view?usp=sharing",
   },
@@ -63,8 +63,8 @@ const experiences: Experience[] = [
     location: "Bangalore, India",
     type: "internship",
     highlights: [
-      "Designed and developed Farmbot software, achieving a 28% decrease in API call time",
-      "Integrated XSUAA authentication using JWT access tokens",
+      "Designed and built the Farmbot software platform, cutting API call time by 28% by restructuring how the frontend batched requests to SAP backend services.",
+      "Integrated XSUAA authentication using JWT access tokens, locking down every endpoint in the service layer.",
     ],
     certificate: "https://drive.google.com/file/d/1P6tKBze3g_Ph-Tz2fRZoHEUmEasikRZn/view?usp=sharing",
   },
@@ -103,7 +103,9 @@ export function ExperienceSection() {
     <section className="max-w-6xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="mb-12">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">Experience</h1>
-        <p className="text-muted-foreground">Professional experience, internships, and technical projects</p>
+        <p className="text-muted-foreground">
+          Internships on the left, projects on the right. Everything here shipped to real users or real benchmarks.
+        </p>
       </div>
 
       {/* Column Headers */}

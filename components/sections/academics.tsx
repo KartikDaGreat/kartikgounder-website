@@ -12,6 +12,7 @@ type AcademicItem = {
   startYear: number
   endYear: number
   continuing?: boolean
+  compact?: boolean
 }
 
 type MilestoneItem = {
@@ -44,6 +45,7 @@ const academics: AcademicItem[] = [
     period: "Aug 2025 – Dec 2026",
     gpa: "3.62",
     expectedGpa: "3.76",
+    focus: "AI, Machine Learning, Healthcare Applications",
     coursework: [
       {
         label: "Fall 2026 (Expected: 3.76 cumulative GPA)",
@@ -53,28 +55,15 @@ const academics: AcademicItem[] = [
         label: "Spring 2026 (4.1 GPA)",
         items: ["User Interface Design", "Ethical and Responsible AI", "Topics in Software Engineering", "Policy for Privacy Technologies"],
       },
-    ],
-    year: 2026,
-    startYear: 2026,
-    endYear: 2026,
-    continuing: true,
-  },
-  {
-    title: "Master of Science · Computer Science",
-    school: "Columbia Engineering",
-    period: "Aug 2025 – Dec 2026",
-    gpa: "3.62",
-    expectedGpa: "3.76",
-    focus: "AI, Machine Learning, Healthcare Applications",
-    coursework: [
       {
         label: "Fall 2025 (3.1 GPA)",
         items: ["Machine Learning", "Databases", "Algorithms", "Computational Learning Theory"],
       },
     ],
-    year: 2025,
+    year: 2026,
     startYear: 2025,
-    endYear: 2025,
+    endYear: 2026,
+    continuing: true,
   },
   {
     title: "Bachelor of Technology · Computer Science",
@@ -92,6 +81,7 @@ const academics: AcademicItem[] = [
     year: 2021,
     startYear: 2019,
     endYear: 2021,
+    compact: true,
   },
   {
     title: "Middle School",
@@ -100,6 +90,7 @@ const academics: AcademicItem[] = [
     year: 2019,
     startYear: 2017,
     endYear: 2019,
+    compact: true,
   },
 ]
 
@@ -192,9 +183,11 @@ const allYears = [...new Set([...academics, ...leadership, ...accolades, ...mile
 export function AcademicsSection() {
   return (
     <section className="max-w-6xl animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="mb-16">
+      <div className="mb-12">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">Academics</h1>
-        <p className="text-muted-foreground">Education, leadership, and achievements</p>
+        <p className="text-muted-foreground">
+          Columbia MS in Computer Science, VIT B.Tech (ranked 11 of 4,000), student council, IEEE board, and a few trophies along the way.
+        </p>
       </div>
 
       {/* Mobile layout */}
@@ -331,6 +324,15 @@ function SpanningIndicator({ schools }: { schools: string[] }) {
 }
 
 function AcademicCard({ item }: { item: AcademicItem }) {
+  if (item.compact) {
+    return (
+      <article className="flex items-center justify-between py-2.5 px-4 border-l-2 border-border/50 rounded-r-lg text-sm text-muted-foreground">
+        <span className="font-medium text-foreground/80">{item.title}</span>
+        <span className="text-xs">{item.school} · {item.period}</span>
+      </article>
+    )
+  }
+
   return (
     <article className="p-5 border-l-2 border-primary/50 rounded-r-lg bg-card/50">
       {item.continuing ? (

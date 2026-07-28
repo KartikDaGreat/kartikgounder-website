@@ -48,7 +48,7 @@ export function ImageLightbox({ images, projectTitle }: ImageLightboxProps) {
           >
             <Image
               src={src}
-              alt={`${projectTitle} — figure ${i + 1}`}
+              alt={`${projectTitle}, figure ${i + 1}`}
               width={800}
               height={600}
               className="w-full h-auto"
@@ -66,7 +66,7 @@ export function ImageLightbox({ images, projectTitle }: ImageLightboxProps) {
           className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md"
           onClick={close}
         >
-          {/* Close button — top-left to avoid side panel overlap */}
+          {/* Close button, top-left to avoid side panel overlap */}
           <button
             onClick={close}
             className="absolute top-5 left-5 z-[60] w-12 h-12 flex items-center justify-center rounded-full bg-white text-black hover:bg-white/80 transition-colors shadow-lg"
@@ -92,12 +92,12 @@ export function ImageLightbox({ images, projectTitle }: ImageLightboxProps) {
             </button>
           )}
 
-          {/* Full-screen image area — extra right padding to clear side panel */}
+          {/* Full-screen image area, extra right padding to clear side panel */}
           <div className="absolute inset-0 flex items-center justify-center p-16 pt-20 pr-24 lg:pr-32">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={images[activeIndex]}
-              alt={`${projectTitle} — figure ${activeIndex + 1}`}
+              alt={`${projectTitle}, figure ${activeIndex + 1}`}
               className="max-w-full max-h-full object-contain rounded-lg select-none"
               draggable={false}
               onClick={(e) => e.stopPropagation()}

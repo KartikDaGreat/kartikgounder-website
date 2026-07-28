@@ -30,9 +30,9 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
 
   const commands: CommandItem[] = [
     { id: "about", label: "About Me", icon: User, category: "navigation", action: () => onNavigate("about") },
-    { id: "academics", label: "Academics", icon: GraduationCap, category: "navigation", action: () => onNavigate("academics") },
-    { id: "research", label: "Research", icon: FlaskConical, category: "navigation", action: () => onNavigate("research") },
     { id: "experience", label: "Experience", icon: Briefcase, category: "navigation", action: () => onNavigate("experience") },
+    { id: "research", label: "Research", icon: FlaskConical, category: "navigation", action: () => onNavigate("research") },
+    { id: "academics", label: "Academics", icon: GraduationCap, category: "navigation", action: () => onNavigate("academics") },
     { id: "contact", label: "Contact", icon: Mail, category: "navigation", action: () => onNavigate("contact") },
     { id: "terminal", label: "Terminal", icon: Terminal, category: "navigation", action: () => onNavigate("terminal") },
     { id: "systems", label: "Systems", icon: Activity, category: "navigation", action: () => onNavigate("systems") },

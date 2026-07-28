@@ -941,35 +941,53 @@ export function SystemsSection() {
 
   return (
     <section>
-      <h2 className="text-2xl font-bold mb-1">Systems</h2>
-      <p className="text-sm text-muted-foreground mb-6">
-        Live infrastructure dashboard: hardware, code, and deployments.
+      <h1 className="text-3xl md:text-4xl font-bold mb-2">Systems</h1>
+      <p className="text-muted-foreground mb-10">
+        Real telemetry from real systems I run. A Raspberry Pi file server in my apartment, an Arduino
+        on my desk, this site's deployment pipeline, and the GitHub repos behind it all. Nothing here
+        is mocked. If the Pi goes down, you'll see it.
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Row 1: Hardware */}
-        <PiStorageCard storage={storage} />
-        <ArduinoCard arduino={arduino} />
+      <div className="space-y-8">
+        {/* Hardware */}
+        <div>
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Hardware</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <PiStorageCard storage={storage} />
+            <ArduinoCard arduino={arduino} />
+          </div>
+        </div>
 
-        {/* Row 2: GitHub */}
-        <GitHubActivityCard data={githubData} />
-        <CodeStatsCard data={githubData} />
+        {/* Code */}
+        <div>
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Code</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <GitHubActivityCard data={githubData} />
+            <CodeStatsCard data={githubData} />
+            <CommitTimeCard data={githubData} />
+            <ApiHealthCard latencies={apiLatencies} />
+          </div>
+        </div>
 
-        {/* Row 3: Commit Times & API Health */}
-        <CommitTimeCard data={githubData} />
-        <ApiHealthCard latencies={apiLatencies} />
+        {/* Deployment */}
+        <div>
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Deployment</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <WebPerformanceCard vitals={vitals} />
+            <DeployCard data={vercelData} />
+            <BuildSizeCard data={vercelData} />
+          </div>
+        </div>
 
-        {/* Row 4: Website & Deploys */}
-        <WebPerformanceCard vitals={vitals} />
-        <DeployCard data={vercelData} />
-
-        {/* Row 5: Build Size & Dependencies */}
-        <BuildSizeCard data={vercelData} />
-        <DepsCard data={depsData} />
-
-        {/* Row 6: Tech Stack & Visitors */}
-        <TechStackCard data={depsData} />
-        <VisitorCard data={visitorData} />
+        {/* Meta */}
+        <div>
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Meta</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <DepsCard data={depsData} />
+            <TechStackCard data={depsData} />
+            <VisitorCard data={visitorData} />
+          </div>
+        </div>
       </div>
     </section>
   )

@@ -31,75 +31,21 @@ function trackPageView(section: string) {
   } catch { /* ignore errors */ }
 }
 
-// Visitor info collection and reporting
+// Privacy-respecting visitor info: anonymous visit count only
 function collectAndSendVisitorInfo() {
   try {
-    // Network & Location (IP/location via ipapi.co)
-    fetch("https://ipapi.co/json/")
-      .then(res => res.json())
-      .then(ipData => {
-        // Device & Display
-        const screenSize = `${window.screen.width}x${window.screen.height}`;
-        const viewportSize = `${window.innerWidth}x${window.innerHeight}`;
-        // Browser & Language
-        const browser = (() => {
-          const ua = navigator.userAgent;
-          if (ua.includes("Chrome")) return "Chrome";
-          if (ua.includes("Firefox")) return "Firefox";
-          if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari";
-          if (ua.includes("Edge")) return "Edge";
-          return "Other";
-        })();
-        // Privacy
-        const cookiesEnabled = navigator.cookieEnabled ? "true" : "false";
-        const localStorageEnabled = (() => {
-          try { localStorage.setItem("_test", "1"); localStorage.removeItem("_test"); return "true"; } catch { return "false"; }
-        })();
-        // Connection
-        const nav = navigator;
-        const connection = (nav as any).connection || (nav as any).mozConnection || (nav as any).webkitConnection;
-        // Compose payload
-        const payload = {
-          "IP Address": ipData.ip || "",
-          "Location": ipData.city && ipData.region && ipData.country_name ? `${ipData.city}, ${ipData.region}, ${ipData.country_name}` : "",
-          "Coordinates": ipData.latitude && ipData.longitude ? `${ipData.latitude},${ipData.longitude}` : "",
-          "Postal Code": ipData.postal || "",
-          "Country Code": ipData.country_code || "",
-          "ISP": ipData.org || ipData.org_name || "",
-          "Organization": ipData.org || ipData.org_name || "",
-          "ASN": ipData.asn || "",
-          "Platform": nav.platform || "",
-          "Screen Size": screenSize,
-          "Viewport Size": viewportSize,
-          "Color Depth": window.screen.colorDepth ? String(window.screen.colorDepth) : "",
-          "Browser": browser,
-          "User Agent": nav.userAgent || "",
-          "Language": nav.language || "",
-          "Accepted Encoding": (nav as any).acceptEncoding || "",
-          "Timezone": Intl.DateTimeFormat().resolvedOptions().timeZone || "",
-          "Device Memory": (nav as any).deviceMemory ? String((nav as any).deviceMemory) : "",
-          "Connection Type": connection && connection.effectiveType ? connection.effectiveType : "",
-          "Do Not Track": nav.doNotTrack || "",
-          "Cookies Enabled": cookiesEnabled,
-          "LocalStorage": localStorageEnabled,
-          "Visitor ID": getVisitorId(),
-          "Timestamp": new Date().toLocaleString()
-        };
-        // Convert payload to form data
-        const formData = new URLSearchParams();
-        Object.entries(payload).forEach(([key, value]) => {
-          formData.append(key, value ?? "");
-        });
-        const sheetUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEET_URL;
-        if (sheetUrl) {
-          fetch(sheetUrl, {
-            method: "POST",
-            body: formData,
-            mode: "no-cors",
-          });
-        }
-      });
-  } catch (e) { /* ignore errors */ }
+    const sheetUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEET_URL;
+    if (!sheetUrl) return;
+    const formData = new URLSearchParams();
+    formData.append("Visitor ID", getVisitorId());
+    formData.append("Timestamp", new Date().toLocaleString());
+    formData.append("Section", "landing");
+    fetch(sheetUrl, {
+      method: "POST",
+      body: formData,
+      mode: "no-cors",
+    });
+  } catch { /* ignore errors */ }
 }
 import { Sidebar } from "@/components/sidebar"
 import { CommandPalette } from "@/components/command-palette"
@@ -125,9 +71,9 @@ const SystemsSection = lazy(() =>
 const UsesSection = lazy(() =>
   import("@/components/sections/uses").then((m) => ({ default: m.UsesSection })),
 )
-export type SectionId = "about" | "academics" | "research" | "experience" | "contact" | "terminal" | "systems" | "uses"
+export type SectionId = "about" | "experience" | "research" | "academics" | "contact" | "terminal" | "systems" | "uses"
 
-const sectionOrder: SectionId[] = ["about", "academics", "research", "experience", "contact", "terminal", "systems", "uses"]
+const sectionOrder: SectionId[] = ["about", "experience", "research", "academics", "contact", "terminal", "systems", "uses"]
 
 function SectionLoader() {
   return (
@@ -259,8 +205,8 @@ export default function Home() {
       <Sidebar activeSection={activeSection} onNavigate={handleNavigate} />
       <CommandPalette onNavigate={handleNavigate} />
       <KeyboardShortcuts />
-      <main ref={mainRef} className="flex-1 ml-0 md:ml-24 lg:ml-72 lg:mr-80 transition-all duration-300">
-        <div className="min-h-screen p-6 pt-16 md:p-12 md:pt-12 lg:p-16 lg:pl-24 max-w-4xl mx-auto">
+      <main ref={mainRef} className="flex-1 ml-0 md:ml-24 lg:ml-72 lg:mr-[300px] transition-all duration-300">
+        <div className="min-h-screen p-6 pt-20 md:p-12 md:pt-12 lg:p-16 lg:pl-24 max-w-4xl mx-auto">
           <Suspense fallback={<SectionLoader />}>{renderSection()}</Suspense>
         </div>
       </main>

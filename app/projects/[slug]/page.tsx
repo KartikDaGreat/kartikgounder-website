@@ -36,7 +36,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         <BackButton />
 
         <div className={hasImages ? "flex flex-col lg:flex-row gap-10" : ""}>
-          {/* Image Gallery — left side on desktop */}
+          {/* Image Gallery, left side on desktop */}
           {hasImages && (
             <div className="lg:w-[380px] xl:w-[440px] flex-shrink-0">
               <div className="lg:sticky lg:top-20">
@@ -80,7 +80,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               )}
             </div>
 
-            {/* Links — open in popup windows */}
+            {/* Links, open in popup windows */}
             {(project.github || project.paper || project.demo) && (
               <div className="flex flex-wrap gap-3 mb-10 pb-10 border-b border-border">
                 {project.github && (

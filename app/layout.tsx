@@ -39,7 +39,7 @@ export default function RootLayout({
           <MobileNewsDrawer />
           {children}
           {/* Cmd+K hint */}
-          <div className="fixed bottom-4 right-[340px] hidden lg:flex items-center gap-1.5 px-3 py-1.5 text-xs text-muted-foreground bg-card/80 backdrop-blur-sm border border-border rounded-full shadow-sm">
+          <div className="fixed bottom-4 right-[320px] hidden lg:flex items-center gap-1.5 px-3 py-1.5 text-xs text-muted-foreground bg-card/80 backdrop-blur-sm border border-border rounded-full shadow-sm">
             <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-secondary rounded border border-border">Ctrl+K</kbd>
             <span>to search</span>
           </div>

@@ -22,7 +22,7 @@ const publications: Publication[] = [
     type: "paper",
     image: "/DeviceClassificationFramework.PNG",
     description:
-      "Samsung PRISM collaboration - Custom CNN framework with 3.7M parameters optimized for on-device deployment",
+      "Samsung PRISM collaboration. I built a custom CNN with only 3.7M parameters that classifies documents on-device without cloud connectivity. It combines visual layout features with limited OCR text, so it works even when text quality is poor. Designed for mobile and air-gapped deployments.",
   },
   {
     title: "A Hybrid-Multimodal Mental Health Chatbot for Psychological Counselling",
@@ -32,7 +32,7 @@ const publications: Publication[] = [
     link: "https://doi.org/10.1007/978-3-031-82706-8_23",
     type: "paper",
     image: "/PsychologicalCounsellingFramework.PNG",
-    description: "3-modal chatbot system achieving 87% patient satisfaction rate for mental health assessment",
+    description: "I built a chatbot that reads three signals at once: what patients type, how their voice sounds, and what their face shows. When someone says 'I'm fine' but their voice trembles and their expression says otherwise, the system catches it. 87% patient satisfaction in clinical evaluations.",
   },
   {
     title: "Ensemble Model using Various CNNs for Improved Skin Cancer Diagnosis",
@@ -42,7 +42,7 @@ const publications: Publication[] = [
     link: "https://doi.org/10.1109/ICoICI62503.2024.10696508",
     type: "paper",
     image: "/SkinCancerFramework.PNG",
-    description: "Ensemble of ResNet, EfficientNet, and MobileNet achieving 96.33% accuracy in early detection",
+    description: "I combined ResNet-50, EfficientNet-B3, and MobileNetV2 into a weighted ensemble that hits 96.33% accuracy on skin lesion classification. Each model brings different strengths; the ensemble outperforms any single one. Designed as a decision-support tool for early malignancy detection.",
   },
 ]
 
@@ -54,7 +54,7 @@ const patents: Publication[] = [
     authors: "K. Gounder",
     type: "patent",
     image: "/SmartGlassPicture.png",
-    description: "Novel approach for assistive wearables combining sensor fusion with visual distance estimation",
+    description: "A system for assistive smart glasses that fuses ultrasonic and infrared sensors to estimate object distance, then visually scales what the wearer sees. Built the prototype hardware and the sensor fusion pipeline.",
   },
   {
     title: "Multimodal Context-Adaptive Keyframe Selection System for Vision Assistive Wearables",
@@ -63,7 +63,7 @@ const patents: Publication[] = [
     authors: "K. Gounder",
     type: "patent",
     image: "/KeyframeSelectionFramework.png",
-    description: "Intelligent keyframe selection for vision assistance using multimodal context analysis",
+    description: "An intelligent system that picks the right video frames to process on vision-assistive wearables, using multimodal context (scene complexity, motion, user gaze) to avoid wasting compute on redundant frames.",
   },
 ]
 
@@ -72,7 +72,10 @@ export function ResearchSection() {
     <section className="max-w-5xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="mb-12">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">Research</h1>
-        <p className="text-muted-foreground">Publications and patents in computer science and AI</p>
+        <p className="text-muted-foreground">
+          Three peer-reviewed papers (ACM, Springer, IEEE) and two patent applications.
+          Every project here started with hardware I could touch or a model I trained myself.
+        </p>
       </div>
 
       <div className="mb-14">
@@ -156,7 +159,7 @@ export function ResearchSection() {
           </div>
           <div>
             <h2 className="text-lg font-semibold">Patents</h2>
-            <p className="text-sm text-muted-foreground">Intellectual property filings</p>
+            <p className="text-sm text-muted-foreground">Intellectual property filings. Both came out of wearable hardware I built for ~$135.</p>
           </div>
         </div>
 

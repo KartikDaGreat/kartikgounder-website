@@ -157,7 +157,7 @@ const articles: Article[] = [
   title: "India-US Trade Framework Expected to Deepen Pharma and Medtech Collaboration",
   source: "Times of India",
   url: "https://timesofindia.indiatimes.com/business/india-business/india-us-trade-framework-expected-to-deepen-pharma-and-medtech-collaboration-says-ipa/articleshow/128042417.cms",
-  description: "News on India–US interim trade agreement expected to enhance collaboration in pharmaceuticals and medtech, strengthening innovation and supply chains between the two nations.",
+  description: "News on India-US interim trade agreement expected to enhance collaboration in pharmaceuticals and medtech, strengthening innovation and supply chains between the two nations.",
 },
 {
   date: "2026-02-06",
@@ -236,6 +236,83 @@ const articles: Article[] = [
   url: "https://www.technologyreview.com/2024/01/08/1085094/digital-twins-healthcare/",
   description: "Hospitals use digital twin technology to create virtual patient models, simulating drug responses and surgical outcomes to personalize care plans.",
 },
+  {
+    date: "2026-07-15",
+    title: "AI Wearable Cardiac Patch Achieves 99.6% Arrhythmia Detection Accuracy",
+    source: "MarketScale",
+    url: "https://www.marketscale.com/industries/healthcare/digital-healths-july-2026-signal-ai-wearables-a-new-cms-office-and-the-telehealth-billing-fight",
+    description: "A new AI-powered cardiac patch detects life-threatening heart rhythm abnormalities with 99.6% accuracy, designed for continuous remote monitoring.",
+  },
+  {
+    date: "2026-07-10",
+    title: "CMS Establishes New Office of Health Technology Products for AI Oversight",
+    source: "Healthcare IT Today",
+    url: "https://www.healthcareittoday.com/2026/07/25/weekly-roundup-july-25-2026/",
+    description: "CMS created the OHTP to oversee AI, interoperability, and digital health tools across federal healthcare programs. A signal that regulators are taking AI governance seriously.",
+  },
+  {
+    date: "2026-07-08",
+    title: "HealthLynked Launches AI Agent Platform for Patient-Provider Communication",
+    source: "Health IT Answers",
+    url: "https://www.healthitanswers.net/ai-in-healthcare-news-and-updates-071526/",
+    description: "Next-gen AI agent platform transforms how patients connect with providers and how practices manage communications. Agentic AI enters clinical workflows.",
+  },
+  {
+    date: "2026-06-20",
+    title: "Digital Health Startups Raise $4B in Q1 2026, Up $1B Year-over-Year",
+    source: "Crescendo AI",
+    url: "https://www.crescendo.ai/news/ai-in-healthcare-news",
+    description: "VC funding for digital health surged to $4B in Q1 2026. Medical imaging leads clinical AI use cases at 61%, while agentic AI is already used by 47% of respondents.",
+  },
+  {
+    date: "2026-06-15",
+    title: "Clair Health Raises $11.6M for Hormone-Monitoring Wearable",
+    source: "Building Better Healthcare",
+    url: "https://www.buildingbetterhealthcare.com/health-tech-round-up-june-2026",
+    description: "A wearable that monitors hormonal changes without blood draws, pairing 10 biosensors with AI voice biomarker analysis to track menstrual cycles and inflammation.",
+  },
+  {
+    date: "2026-06-10",
+    title: "Azalea Vision Raises \u20AC7.5M for Smart Contact Lens Biosensor",
+    source: "Healthcare Digital",
+    url: "https://www.healthcare.digital/single-post/this-week-in-european-medtech-and-healthtech-3rd-july-2026",
+    description: "Belgian medtech firm developing a medical-grade smart contact lens that analyzes biomarkers via patient tears. Non-invasive, continuous health monitoring.",
+  },
+  {
+    date: "2026-06-05",
+    title: "UnitedHealth Projects AI Could Save Nearly $1B in 2026",
+    source: "Chief Healthcare Executive",
+    url: "https://www.chiefhealthcareexecutive.com/view/ai-in-health-care-26-leaders-offer-predictions-for-2026",
+    description: "UnitedHealth projects nearly $1B in AI-driven savings; HCA Healthcare expects $400M, partly from automating revenue management. Real ROI is arriving.",
+  },
+  {
+    date: "2026-05-28",
+    title: "AI Detects Brain Hemorrhages in Seconds Before Physicians Can See Them",
+    source: "Philips",
+    url: "https://www.philips.com/a-w/about/news/archive/features/2026/this-years-emerging-trends-in-healthcare-ai-so-far.html",
+    description: "AI now detects life-threatening brain hemorrhages in seconds, flagging critical findings before physicians can visually identify them on scans.",
+  },
+  {
+    date: "2026-05-15",
+    title: "Alan Raises \u20AC480M at \u20AC5.5B Valuation, Europe's Most Valuable HealthTech",
+    source: "Healthcare Digital",
+    url: "https://www.healthcare.digital/single-post/this-week-in-european-medtech-and-healthtech-7th-july-2026",
+    description: "French digital health platform Alan closed a Series G at 5.5B euro valuation, becoming Europe's most valuable private HealthTech entity.",
+  },
+  {
+    date: "2026-04-20",
+    title: "UPatch: Wearable Ultrasound for Continuous Fetal Monitoring",
+    source: "Open Loop Health",
+    url: "https://openloophealth.com/blog/digital-health-trends-news-June-2026",
+    description: "Scientists developed UPatch, a wearable ultrasound patch for continuous baby monitoring in the womb. Could replace intermittent hospital check-ups.",
+  },
+  {
+    date: "2026-03-25",
+    title: "Trase Raises $107M Seed Round for Healthcare AI Infrastructure",
+    source: "Open Loop Health",
+    url: "https://openloophealth.com/blog/digital-health-trends-and-news-July-2026",
+    description: "One of the largest seed rounds in healthcare AI history. Trase is building infrastructure for clinical AI deployment at scale.",
+  },
 ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
 export function ArticlesSidebar() {
@@ -244,23 +321,23 @@ export function ArticlesSidebar() {
   const isPausedRef = useRef(false)
   const resumeTimeoutRef = useRef<number | null>(null)
 
+  const firstHalfRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     const scrollContainer = scrollRef.current
     if (!scrollContainer) return
 
-    // Use setInterval for reliable scrolling
+    // Infinite scroll: render articles twice, reset when first copy scrolls out
     intervalRef.current = window.setInterval(() => {
-      if (!isPausedRef.current && scrollContainer) {
-        const currentScroll = scrollContainer.scrollTop
-        const maxScroll = scrollContainer.scrollHeight - scrollContainer.clientHeight
-        
-        if (currentScroll >= maxScroll) {
-          scrollContainer.scrollTop = 0
+      if (!isPausedRef.current && scrollContainer && firstHalfRef.current) {
+        const firstHalfHeight = firstHalfRef.current.offsetHeight
+        if (scrollContainer.scrollTop >= firstHalfHeight) {
+          scrollContainer.scrollTop -= firstHalfHeight
         } else {
-          scrollContainer.scrollTop = currentScroll + 1
+          scrollContainer.scrollTop += 1
         }
       }
-    }, 30) // Scroll every 30ms for smooth animation
+    }, 45)
 
     const handleUserInteraction = () => {
       isPausedRef.current = true
@@ -307,7 +384,7 @@ export function ArticlesSidebar() {
 
   return (
     <div
-      className="fixed top-0 right-0 h-screen w-80 bg-background border-l shadow-lg z-40 flex flex-col hidden lg:flex md:hidden"
+      className="fixed top-0 right-0 h-screen w-[300px] bg-background border-l shadow-lg z-40 flex-col hidden lg:flex md:hidden"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -315,42 +392,57 @@ export function ArticlesSidebar() {
         <h3 className="text-lg font-semibold">Articles I found Interesting</h3>
         <p className="text-xs text-muted-foreground">Healthcare tech insights</p>
       </div>
-      
+
       <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent"
       >
-        <div className="p-4 space-y-3">
-          {articles.map((article, idx) => (
-            <div
-              key={idx}
-              className="p-3 bg-muted/30 rounded-md hover:bg-muted/50 transition-colors group"
-            >
-              <div className="flex items-start gap-2">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-semibold text-primary">{formatDate(article.date)}</span>
+        {/* Render articles twice for seamless infinite scroll */}
+        {[0, 1].map((copy) => (
+          <div key={copy} ref={copy === 0 ? firstHalfRef : undefined} className="p-4 space-y-3">
+            {(() => {
+              let lastYear = ""
+              return articles.map((article, idx) => {
+                const year = new Date(article.date).getFullYear().toString()
+                const showYearDivider = year !== lastYear
+                lastYear = year
+                return (
+                  <div key={`${copy}-${idx}`}>
+                    {showYearDivider && (
+                      <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground pt-2 pb-1">
+                        {year}
+                      </div>
+                    )}
+                    <div className="p-3 bg-muted/30 rounded-md hover:bg-muted/50 transition-colors group">
+                      <div className="flex items-start gap-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-xs font-semibold text-primary">{formatDate(article.date)}</span>
+                          </div>
+                          <h4 className="text-sm font-medium leading-tight mb-1 line-clamp-2">
+                            {article.title}
+                          </h4>
+                          <p className="text-xs text-muted-foreground mb-1.5">{article.source}</p>
+                          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+                            {article.description}
+                          </p>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 w-7 p-0 flex-shrink-0 opacity-70 group-hover:opacity-100"
+                          onClick={() => window.open(article.url, "_blank")}
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                  <h4 className="text-sm font-medium leading-tight mb-1 line-clamp-2">
-                    {article.title}
-                  </h4>
-                  <p className="text-xs text-muted-foreground mb-1.5">{article.source}</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
-                    {article.description}
-                  </p>
-                </div>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-7 w-7 p-0 flex-shrink-0 opacity-70 group-hover:opacity-100"
-                  onClick={() => window.open(article.url, "_blank")}
-                >
-                  <ExternalLink className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
+                )
+              })
+            })()}
+          </div>
+        ))}
       </div>
     </div>
   )
