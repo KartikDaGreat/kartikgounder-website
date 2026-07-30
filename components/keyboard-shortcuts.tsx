@@ -13,7 +13,7 @@ const shortcutGroups: ShortcutGroup[] = [
     shortcuts: [
       { keys: ["j"], description: "Next section" },
       { keys: ["k"], description: "Previous section" },
-      { keys: ["1-8"], description: "Jump to section by number" },
+      { keys: ["1-9"], description: "Jump to section by number" },
     ],
   },
   {

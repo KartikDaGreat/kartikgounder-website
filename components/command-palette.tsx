@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react"
 import {
-  User, GraduationCap, FlaskConical, Briefcase, Mail, Terminal, Activity,
+  Home, GraduationCap, FlaskConical, Briefcase, FolderGit2, Mail, Terminal, Activity,
   Github, Linkedin, Download, ExternalLink, Wrench, Search,
 } from "lucide-react"
 import type { SectionId } from "@/app/page"
@@ -29,14 +29,15 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
   const listRef = useRef<HTMLDivElement>(null)
 
   const commands: CommandItem[] = [
-    { id: "about", label: "About Me", icon: User, category: "navigation", action: () => onNavigate("about") },
-    { id: "experience", label: "Experience", icon: Briefcase, category: "navigation", action: () => onNavigate("experience") },
-    { id: "research", label: "Research", icon: FlaskConical, category: "navigation", action: () => onNavigate("research") },
-    { id: "academics", label: "Academics", icon: GraduationCap, category: "navigation", action: () => onNavigate("academics") },
+    { id: "home", label: "Hello", description: "About me", icon: Home, category: "navigation", action: () => onNavigate("home") },
+    { id: "work", label: "Building", description: "Experience", icon: Briefcase, category: "navigation", action: () => onNavigate("work") },
+    { id: "projects", label: "Projects", description: "Things I've built", icon: FolderGit2, category: "navigation", action: () => onNavigate("projects") },
+    { id: "research", label: "Research", description: "Papers & patents", icon: FlaskConical, category: "navigation", action: () => onNavigate("research") },
+    { id: "education", label: "Education", description: "Academics", icon: GraduationCap, category: "navigation", action: () => onNavigate("education") },
     { id: "contact", label: "Contact", icon: Mail, category: "navigation", action: () => onNavigate("contact") },
-    { id: "terminal", label: "Terminal", icon: Terminal, category: "navigation", action: () => onNavigate("terminal") },
-    { id: "systems", label: "Systems", icon: Activity, category: "navigation", action: () => onNavigate("systems") },
-    { id: "uses", label: "Uses", icon: Wrench, category: "navigation", action: () => onNavigate("uses") },
+    { id: "terminal", label: "Terminal", description: "A working shell", icon: Terminal, category: "navigation", action: () => onNavigate("terminal") },
+    { id: "lab", label: "Live Systems", description: "Real telemetry", icon: Activity, category: "navigation", action: () => onNavigate("lab") },
+    { id: "setup", label: "Setup", description: "Uses / gear", icon: Wrench, category: "navigation", action: () => onNavigate("setup") },
     { id: "github", label: "GitHub", description: "KartikDaGreat", icon: Github, category: "links", action: () => window.open("https://github.com/KartikDaGreat", "_blank") },
     { id: "linkedin", label: "LinkedIn", description: "kartik-gounder", icon: Linkedin, category: "links", action: () => window.open("https://www.linkedin.com/in/kartik-gounder", "_blank") },
     { id: "resume", label: "Resume", description: "Download PDF", icon: Download, category: "links", action: () => window.open("https://drive.google.com/file/d/1RDCJcs4V8BLVaDjqGEFXjoqk6KzF-AXi/view?usp=sharing", "_blank") },

@@ -601,7 +601,7 @@ const executeCommand = (input: string): string | string[] | Promise<string | str
     case "echo":
       return args.join(" ") || ""
     case "ls":
-      return ["about/", "experience/", "research/", "academics/", "contact/", "terminal/", "systems/", "uses/"]
+      return ["home/", "work/", "projects/", "research/", "education/", "contact/", "terminal/", "lab/", "setup/"]
     case "whoami":
       return "visitor@kartik-portfolio"
     case "pwd":

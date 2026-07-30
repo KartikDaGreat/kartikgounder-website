@@ -1,5 +1,6 @@
 import { ExternalLink, FileText, Award, ImageIcon } from "lucide-react"
 import Image from "next/image"
+import { Reveal } from "@/components/motion/reveal"
 
 interface Publication {
   title: string
@@ -71,10 +72,11 @@ export function ResearchSection() {
   return (
     <section className="max-w-5xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="mb-12">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">Research</h1>
-        <p className="text-muted-foreground">
-          Three peer-reviewed papers (ACM, Springer, IEEE) and two patent applications.
-          Every project here started with hardware I could touch or a model I trained myself.
+        <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Research</h1>
+        <p className="text-lg text-foreground/80 leading-relaxed max-w-2xl">
+          Three peer-reviewed papers across ACM, Springer, and IEEE, and two patent applications. None of it
+          started as a paper — each one began as a thing I was trying to make work, and the write-up came after
+          it did.
         </p>
       </div>
 
@@ -91,7 +93,7 @@ export function ResearchSection() {
 
         <div className="space-y-5">
           {publications.map((pub, index) => (
-            <article
+            <Reveal
               key={index}
               className="group relative overflow-hidden rounded-xl border border-border bg-card hover:border-primary/50 transition-all duration-300"
             >
@@ -147,7 +149,7 @@ export function ResearchSection() {
                   )}
                 </div>
               </div>
-            </article>
+            </Reveal>
           ))}
         </div>
       </div>

@@ -1,21 +1,56 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter, Work_Sans, JetBrains_Mono } from "next/font/google"
+import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { ThemeProvider } from "@/components/theme-provider"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { ArticlesSidebar } from "@/components/articles-sidebar"
-import { MobileNewsDrawer } from "@/components/mobile-news-drawer"
+import { MotionRoot } from "@/components/motion/motion-root"
 import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" })
-const workSans = Work_Sans({ subsets: ["latin"], variable: "--font-heading", display: "swap" })
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-heading", display: "swap" })
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" })
 
+const SITE_URL = "https://kartikgounder.com"
+const DESCRIPTION =
+  "Software engineer and MS CS student at Columbia. I build systems that have to survive contact with production: AI agent infrastructure, trust scoring for LLM-generated code, and privacy-preserving ML platforms."
+
 export const metadata: Metadata = {
-  title: "Kartik Gounder | Software Engineer",
-  description:
-    "Software engineer & ML researcher at Columbia. Building production systems, AI platforms, and developer tools.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Kartik Gounder | Software Engineer",
+    template: "%s | Kartik Gounder",
+  },
+  description: DESCRIPTION,
+  keywords: [
+    "Kartik Gounder",
+    "software engineer",
+    "AI infrastructure",
+    "MCP",
+    "agent evaluation",
+    "machine learning",
+    "Columbia University",
+  ],
+  authors: [{ name: "Kartik Gounder", url: SITE_URL }],
+  creator: "Kartik Gounder",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: "Kartik Gounder",
+    title: "Kartik Gounder | Software Engineer",
+    description: DESCRIPTION,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kartik Gounder | Software Engineer",
+    description: DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   icons: {
     icon: "/favicon.jpg",
     shortcut: "/favicon.jpg",
@@ -30,19 +65,30 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/*
+          Reveal wrappers server-render at opacity:0 and are animated in by JS.
+          Without JS that content would never appear, so force it visible.
+        */}
+        <noscript>
+          <style>{`[data-reveal]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
+      </head>
       <body
-        className={`${inter.variable} ${workSans.variable} ${jetbrainsMono.variable} font-sans antialiased text-[17px] md:text-[18px] leading-7 md:leading-8`}
+        className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} font-sans antialiased text-[17px] md:text-[18px] leading-7 md:leading-8`}
       >
         <ThemeProvider>
-          <ThemeToggle />
-          <ArticlesSidebar />
-          <MobileNewsDrawer />
-          {children}
-          {/* Cmd+K hint */}
-          <div className="fixed bottom-4 right-[320px] hidden lg:flex items-center gap-1.5 px-3 py-1.5 text-xs text-muted-foreground bg-card/80 backdrop-blur-sm border border-border rounded-full shadow-sm">
-            <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-secondary rounded border border-border">Ctrl+K</kbd>
-            <span>to search</span>
-          </div>
+          <MotionRoot>
+            <ThemeToggle />
+            {children}
+            {/* Cmd+K hint */}
+            <div className="fixed bottom-4 right-4 hidden lg:flex items-center gap-1.5 px-3 py-1.5 text-xs text-muted-foreground bg-card/80 backdrop-blur-sm border border-border rounded-full shadow-sm">
+              <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-secondary rounded border border-border">
+                Ctrl+K
+              </kbd>
+              <span>to search</span>
+            </div>
+          </MotionRoot>
         </ThemeProvider>
         <Analytics />
         {/* Console easter egg */}

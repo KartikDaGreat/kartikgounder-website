@@ -1602,8 +1602,7 @@
 }
 
 @theme inline {
-  --font-sans: "Inter", "Inter Fallback";
-  --font-mono: "JetBrains Mono", "JetBrains Mono Fallback";
+  /* Font families live in the single @theme block at the top of this file. */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -1654,4 +1653,55 @@
     font-family: var(--font-heading), var(--font-sans), system-ui, sans-serif;
     letter-spacing: -0.01em;
   }
+
+  h1 {
+    letter-spacing: -0.025em;
+  }
+}
+
+/* ---------- Identity utilities ---------- */
+
+/*
+ * Section eyebrow: mono, uppercase, wide tracking. Pair with a two-digit
+ * index ("01 / HELLO") so sections read as chapters of one document.
+ */
+.eyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.6875rem;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--primary);
+}
+
+.eyebrow-index {
+  color: var(--muted-foreground);
+}
+
+/*
+ * Blueprint dot grid. color-mix keeps it legible across all 40 OKLCH palettes
+ * instead of hardcoding a tint that only works in dark themes.
+ */
+.dot-grid {
+  background-image: radial-gradient(
+    color-mix(in oklch, var(--border) 70%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+}
+
+/* Fades the grid out toward the bottom so it never competes with body copy. */
+.dot-grid-fade {
+  mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+}
+
+/* Hairline rule that carries the accent color at its start. */
+.rule-accent {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    color-mix(in oklch, var(--primary) 60%, transparent),
+    var(--border) 35%,
+    transparent
+  );
 }

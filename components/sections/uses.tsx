@@ -72,11 +72,12 @@ export function UsesSection() {
   return (
     <section className="max-w-3xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="mb-10">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">Uses</h1>
-        <p className="text-muted-foreground">The actual tools and hardware I use every day. Not aspirational, just what's open on my screen right now.</p>
-        <p className="text-sm text-muted-foreground mt-1 font-mono">
-          {"// inspired by uses.tech"}
+        <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Setup</h1>
+        <p className="text-lg text-foreground/80 leading-relaxed max-w-2xl">
+          The actual tools and hardware I use every day — not aspirational, just what's open on my screen right
+          now. If something's on this list it's because I reach for it without thinking.
         </p>
+        <p className="text-sm text-muted-foreground mt-2 font-mono">{"// inspired by uses.tech"}</p>
       </div>
 
       <div className="space-y-10">

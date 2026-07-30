@@ -184,9 +184,11 @@ export function AcademicsSection() {
   return (
     <section className="max-w-6xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="mb-12">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">Academics</h1>
-        <p className="text-muted-foreground">
-          Columbia MS in Computer Science, VIT B.Tech (ranked 11 of 4,000), student council, IEEE board, and a few trophies along the way.
+        <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Education</h1>
+        <p className="text-lg text-foreground/80 leading-relaxed max-w-2xl">
+          Columbia MS in Computer Science, finishing December 2026. Before that, a B.Tech at VIT where I
+          graduated 11th out of 4,000 — plus student council, an IEEE technical board seat, and a few trophies
+          that were mostly an excuse to build things on a deadline.
         </p>
       </div>
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react"
 import { cn } from "@/lib/utils"
+import { DonutFinder } from "@/components/lab/donut-finder"
 
 // --- Types ---
 
@@ -941,11 +942,12 @@ export function SystemsSection() {
 
   return (
     <section>
-      <h1 className="text-3xl md:text-4xl font-bold mb-2">Systems</h1>
-      <p className="text-muted-foreground mb-10">
-        Real telemetry from real systems I run. A Raspberry Pi file server in my apartment, an Arduino
-        on my desk, this site's deployment pipeline, and the GitHub repos behind it all. Nothing here
-        is mocked. If the Pi goes down, you'll see it.
+      <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Live Systems</h1>
+      <p className="text-lg text-foreground/80 leading-relaxed max-w-2xl mb-10">
+        Real telemetry from real machines. A Raspberry Pi file server in my apartment, an Arduino on my desk,
+        this site's deploy pipeline, and the repos behind all of it. Nothing on this page is mocked or seeded —
+        which means when the Pi goes down, you watch it go down. That felt like the honest way to build a
+        dashboard about yourself.
       </p>
 
       <div className="space-y-8">
@@ -986,6 +988,7 @@ export function SystemsSection() {
             <DepsCard data={depsData} />
             <TechStackCard data={depsData} />
             <VisitorCard data={visitorData} />
+            <DonutFinder />
           </div>
         </div>
       </div>

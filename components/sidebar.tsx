@@ -2,9 +2,21 @@
 
 import type React from "react"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { cn } from "@/lib/utils"
-import { User, FlaskConical, GraduationCap, Briefcase, Mail, Terminal, Activity, Menu, X, Wrench } from "lucide-react"
+import {
+  Home,
+  FlaskConical,
+  GraduationCap,
+  Briefcase,
+  FolderGit2,
+  Mail,
+  Terminal,
+  Activity,
+  Menu,
+  X,
+  Wrench,
+} from "lucide-react"
 import type { SectionId } from "@/app/page"
 
 interface SidebarProps {
@@ -12,147 +24,35 @@ interface SidebarProps {
   onNavigate: (section: SectionId) => void
 }
 
-const navItems: { id: SectionId; label: string; icon: React.ElementType }[] = [
-  { id: "about", label: "About Me", icon: User },
-  { id: "experience", label: "Experience", icon: Briefcase },
-  { id: "research", label: "Research", icon: FlaskConical },
-  { id: "academics", label: "Academics", icon: GraduationCap },
-  { id: "contact", label: "Contact", icon: Mail },
-  { id: "terminal", label: "Terminal", icon: Terminal },
-  { id: "systems", label: "Systems", icon: Activity },
-  { id: "uses", label: "Uses", icon: Wrench },
+interface NavGroup {
+  label: string
+  items: { id: SectionId; label: string; icon: React.ElementType }[]
+}
+
+const navGroups: NavGroup[] = [
+  {
+    label: "Journey",
+    items: [
+      { id: "home", label: "Hello", icon: Home },
+      { id: "work", label: "Building", icon: Briefcase },
+      { id: "projects", label: "Projects", icon: FolderGit2 },
+      { id: "research", label: "Research", icon: FlaskConical },
+      { id: "education", label: "Education", icon: GraduationCap },
+      { id: "contact", label: "Contact", icon: Mail },
+    ],
+  },
+  {
+    label: "The Lab",
+    items: [
+      { id: "terminal", label: "Terminal", icon: Terminal },
+      { id: "lab", label: "Live Systems", icon: Activity },
+      { id: "setup", label: "Setup", icon: Wrench },
+    ],
+  },
 ]
-
-type ArduinoStatus = {
-  connected: boolean
-  lastHeartbeat?: string
-  latencyMs?: number
-  logs?: string[]
-  error?: string
-}
-
-type DonutPlace = {
-  name: string
-  address?: string
-  placeId: string
-  rating?: number
-  userRatingsTotal?: number
-}
-
-type DonutLocation = {
-  lat: number
-  lng: number
-  source: "device" | "ip"
-}
 
 export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [arduinoStatus, setArduinoStatus] = useState<ArduinoStatus>({ connected: false, logs: [] })
-  const [donutPlaces, setDonutPlaces] = useState<DonutPlace[]>([])
-  const [donutLocation, setDonutLocation] = useState<DonutLocation | null>(null)
-  const [donutLoading, setDonutLoading] = useState(false)
-  const [donutError, setDonutError] = useState<string>("")
-  const [donutOpen, setDonutOpen] = useState(false)
-
-  useEffect(() => {
-    let cancelled = false
-
-    const fetchStatus = async () => {
-      try {
-        const r = await fetch("/api/arduino/status", { cache: "no-store" })
-        if (!r.ok) throw new Error(`HTTP ${r.status}`)
-        const data = (await r.json()) as ArduinoStatus
-        if (!cancelled) {
-          setArduinoStatus({ ...data, connected: Boolean(data.connected), logs: data.logs || [] })
-        }
-      } catch (err: any) {
-        if (!cancelled) {
-          setArduinoStatus((prev) => ({
-            ...prev,
-            connected: false,
-            error: err?.message || "Unable to reach Arduino",
-          }))
-        }
-      }
-    }
-
-    fetchStatus()
-    const intervalId = setInterval(fetchStatus, 5000)
-
-    return () => {
-      cancelled = true
-      clearInterval(intervalId)
-    }
-  }, [])
-
-  const getDeviceLocation = (): Promise<DonutLocation | null> =>
-    new Promise((resolve) => {
-      if (!navigator.geolocation) {
-        resolve(null)
-        return
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude, source: "device" })
-        },
-        () => resolve(null),
-        { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 },
-      )
-    })
-
-  const getIpLocation = async (): Promise<DonutLocation | null> => {
-    try {
-      const r = await fetch("/api/location/ip", { cache: "no-store" })
-      if (!r.ok) return null
-      const data = await r.json()
-      if (typeof data.lat !== "number" || typeof data.lng !== "number") return null
-      return { lat: data.lat, lng: data.lng, source: "ip" }
-    } catch {
-      return null
-    }
-  }
-
-  const loadDonutPlaces = async () => {
-    setDonutLoading(true)
-    setDonutError("")
-
-    const deviceLocation = await getDeviceLocation()
-    const location = deviceLocation || (await getIpLocation())
-
-    if (!location) {
-      setDonutError("Unable to resolve your location")
-      setDonutLoading(false)
-      return
-    }
-
-    try {
-      setDonutLocation(location)
-      const r = await fetch(`/api/places/donuts?lat=${location.lat}&lng=${location.lng}`, { cache: "no-store" })
-      const data = await r.json()
-      if (!r.ok) {
-        setDonutError(data?.error || `Donut search failed (HTTP ${r.status})`)
-        setDonutPlaces([])
-        return
-      }
-      setDonutPlaces(Array.isArray(data.places) ? data.places : [])
-      if (Array.isArray(data.places) && data.places.length === 0) {
-        setDonutError("No donut shops found nearby")
-      }
-    } catch (err: any) {
-      setDonutError(err?.message || "Donut search failed")
-      setDonutPlaces([])
-    } finally {
-      setDonutLoading(false)
-    }
-  }
-
-  const handleDonutOpen = () => {
-    setDonutOpen(true)
-    if (donutPlaces.length === 0 && !donutLoading) {
-      loadDonutPlaces()
-    }
-  }
 
   return (
     <>
@@ -183,11 +83,6 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
           "md:translate-x-0 md:w-16 md:hover:w-56 md:left-8",
           "lg:w-56 lg:left-12",
         )}
-        style={
-          {
-            // On larger screens, position sidebar at the left edge of the centered container
-          }
-        }
       >
         <nav className="flex flex-col h-full pt-16 md:pt-8 px-3 pb-6">
           {/* Logo/Name area */}
@@ -197,187 +92,56 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             </span>
           </div>
 
-          {/* Navigation items */}
-          <div className="flex-1">
-            <ul className="flex flex-col gap-1 pb-4">
-              {navItems.map((item) => {
-                const Icon = item.icon
-                const isActive = activeSection === item.id
-
-                return (
-                  <li key={item.id}>
-                    <button
-                      onClick={() => {
-                        onNavigate(item.id)
-                        setMobileOpen(false)
-                      }}
-                      className={cn(
-                        "w-full flex items-center gap-3 px-3 py-2.5 rounded-md",
-                        "text-sm font-medium transition-colors",
-                        "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                        isActive && "bg-sidebar-accent text-primary",
-                      )}
-                    >
-                      <Icon className="w-4.5 h-4.5 flex-shrink-0" />
-                      <span className="whitespace-nowrap overflow-hidden md:opacity-0 md:group-hover:opacity-100 lg:opacity-100">
-                        {item.label}
-                      </span>
-                      {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />}
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-
-          {/* Theme indicator at bottom */}
-          <div className="pt-3 border-t border-sidebar-border space-y-2">
-            <div className="px-3 py-2 rounded-md bg-sidebar-accent/20 border border-sidebar-border/60">
-              <div className="flex items-center justify-between text-[11px] font-medium">
-                <span className="text-muted-foreground">Donut Finder</span>
-                <button
-                  onClick={handleDonutOpen}
-                  disabled={donutLoading}
-                  className={cn(
-                    "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[11px] transition",
-                    donutLoading
-                      ? "bg-muted text-muted-foreground border-border"
-                      : "bg-rose-500/15 text-rose-200 border-rose-400/40 hover:bg-rose-500/25",
-                  )}
-                >
-                  <span className="w-2 h-2 rounded-full bg-rose-300" />
-                  {donutLoading ? "Finding..." : "Find"}
-                </button>
-              </div>
-              <div className="mt-2 text-[11px] text-muted-foreground leading-relaxed space-y-1">
-                {donutLocation && (
-                  <div className="flex items-center justify-between">
-                    <span>Location</span>
-                    <span className="font-mono text-foreground">
-                      {donutLocation.source === "device" ? "Device" : "IP"}
-                    </span>
-                  </div>
-                )}
-                {donutError && <div className="text-rose-300/90">{donutError}</div>}
-                {donutPlaces.length > 0 && (
-                  <button
-                    onClick={() => setDonutOpen(true)}
-                    className="text-[11px] text-primary hover:underline"
-                  >
-                    View results
-                  </button>
-                )}
-              </div>
-            </div>
-            <div className="px-3 py-2 rounded-md bg-sidebar-accent/20 border border-sidebar-border/60">
-              <div className="flex items-center justify-between text-[11px] font-medium">
-                <span className="text-muted-foreground">Arduino</span>
-                <span
-                  className={cn(
-                    "flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px]",
-                    arduinoStatus.connected
-                      ? "bg-emerald-500/10 text-emerald-300 border border-emerald-400/40"
-                      : "bg-rose-500/10 text-rose-300 border border-rose-400/40",
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "w-1.5 h-1.5 rounded-full animate-pulse",
-                      arduinoStatus.connected ? "bg-emerald-400" : "bg-rose-400",
-                    )}
-                  />
-                  {arduinoStatus.connected ? "Live" : "Offline"}
-                </span>
-              </div>
-              <div className="mt-2 text-[11px] text-muted-foreground leading-relaxed space-y-1">
-                <div className="flex items-center justify-between">
-                  <span>Last heartbeat</span>
-                  <span className="font-mono text-foreground">
-                    {arduinoStatus.lastHeartbeat ? new Date(arduinoStatus.lastHeartbeat).toLocaleTimeString() : "--"}
+          {/* Navigation groups */}
+          <div className="flex-1 space-y-6">
+            {navGroups.map((navGroup) => (
+              <div key={navGroup.label}>
+                <div className="px-3 mb-1.5 h-4">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 lg:opacity-100 transition-opacity">
+                    {navGroup.label}
                   </span>
                 </div>
-                {typeof arduinoStatus.latencyMs === "number" && (
-                  <div className="flex items-center justify-between">
-                    <span>Latency</span>
-                    <span className="font-mono text-foreground">{arduinoStatus.latencyMs} ms</span>
-                  </div>
-                )}
-                {arduinoStatus.error && <div className="text-rose-300/90">{arduinoStatus.error}</div>}
+                <ul className="flex flex-col gap-1">
+                  {navGroup.items.map((item) => {
+                    const Icon = item.icon
+                    const isActive = activeSection === item.id
+
+                    return (
+                      <li key={item.id}>
+                        <button
+                          onClick={() => {
+                            onNavigate(item.id)
+                            setMobileOpen(false)
+                          }}
+                          className={cn(
+                            "w-full flex items-center gap-3 px-3 py-2.5 rounded-md",
+                            "text-sm font-medium transition-colors",
+                            "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                            isActive && "bg-sidebar-accent text-primary",
+                          )}
+                        >
+                          <Icon className="w-4.5 h-4.5 flex-shrink-0" />
+                          <span className="whitespace-nowrap overflow-hidden md:opacity-0 md:group-hover:opacity-100 lg:opacity-100">
+                            {item.label}
+                          </span>
+                          {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />}
+                        </button>
+                      </li>
+                    )
+                  })}
+                </ul>
               </div>
-              {arduinoStatus.logs && arduinoStatus.logs.length > 0 && (
-                <div className="mt-3 rounded bg-sidebar border border-sidebar-border/60 max-h-24 overflow-y-auto text-[11px] text-muted-foreground p-2 space-y-1 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
-                  {arduinoStatus.logs.slice(0, 4).map((log, i) => (
-                    <div key={i} className="truncate" title={log}>
-                      {log}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="px-3 text-[11px] text-muted-foreground">
-              <span className="whitespace-nowrap overflow-hidden">Theme changes on reload</span>
+            ))}
+          </div>
+
+          {/* Footer */}
+          <div className="pt-3 border-t border-sidebar-border">
+            <div className="px-3 text-[11px] text-muted-foreground whitespace-nowrap overflow-hidden md:opacity-0 md:group-hover:opacity-100 lg:opacity-100 transition-opacity">
+              Theme changes on reload
             </div>
           </div>
         </nav>
       </aside>
-
-      {donutOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-background/70 backdrop-blur-sm"
-            onClick={() => setDonutOpen(false)}
-          />
-          <div className="relative w-full max-w-sm rounded-lg border border-border bg-card shadow-xl">
-            <div className="flex items-center justify-between px-4 py-3">
-              <h3 className="text-sm font-semibold">Donut Finder</h3>
-              <button
-                onClick={() => setDonutOpen(false)}
-                className="text-xs text-muted-foreground hover:text-foreground"
-              >
-                Close
-              </button>
-            </div>
-            <div className="px-4 pb-4">
-              {donutLoading && <p className="text-sm text-muted-foreground">Finding nearby donut shops...</p>}
-              {!donutLoading && donutError && (
-                <p className="text-sm text-rose-300/90">{donutError}</p>
-              )}
-              {!donutLoading && !donutError && donutPlaces.length === 0 && (
-                <p className="text-sm text-muted-foreground">No results yet.</p>
-              )}
-              {donutPlaces.length > 0 && donutLocation && (
-                <div className="space-y-3">
-                  {donutPlaces.map((place) => (
-                    <div key={place.placeId} className="rounded-md border border-border/60 p-3">
-                      <div className="text-sm font-medium text-foreground" title={place.name}>
-                        {place.name}
-                      </div>
-                      {place.address && <div className="text-xs text-muted-foreground mt-1">{place.address}</div>}
-                      <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                        {typeof place.rating === "number" ? (
-                          <span>
-                            {place.rating.toFixed(1)} stars{place.userRatingsTotal ? ` (${place.userRatingsTotal})` : ""}
-                          </span>
-                        ) : (
-                          <span>Rating unavailable</span>
-                        )}
-                        <a
-                          href={`https://www.google.com/maps/dir/?api=1&origin=${donutLocation.lat},${donutLocation.lng}&destination=${encodeURIComponent(place.address || place.name)}&destination_place_id=${place.placeId}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-primary border-primary/40 hover:bg-primary/10"
-                        >
-                          Directions
-                        </a>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </>
   )
 }

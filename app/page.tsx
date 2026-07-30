@@ -71,9 +71,36 @@ const SystemsSection = lazy(() =>
 const UsesSection = lazy(() =>
   import("@/components/sections/uses").then((m) => ({ default: m.UsesSection })),
 )
-export type SectionId = "about" | "experience" | "research" | "academics" | "contact" | "terminal" | "systems" | "uses"
+const ProjectsSection = lazy(() =>
+  import("@/components/sections/projects").then((m) => ({ default: m.ProjectsSection })),
+)
+export type SectionId =
+  | "home"
+  | "work"
+  | "projects"
+  | "research"
+  | "education"
+  | "contact"
+  | "terminal"
+  | "lab"
+  | "setup"
 
-const sectionOrder: SectionId[] = ["about", "experience", "research", "academics", "contact", "terminal", "systems", "uses"]
+const sectionOrder: SectionId[] = ["home", "work", "projects", "research", "education", "contact", "terminal", "lab", "setup"]
+
+// Old section ids still resolve so existing links, bookmarks, and terminal
+// commands keep working after the IA rename.
+export const SECTION_ALIASES: Record<string, SectionId> = {
+  about: "home",
+  experience: "work",
+  academics: "education",
+  systems: "lab",
+  uses: "setup",
+}
+
+function resolveSection(raw: string): SectionId | null {
+  if (sectionOrder.includes(raw as SectionId)) return raw as SectionId
+  return SECTION_ALIASES[raw] ?? null
+}
 
 function SectionLoader() {
   return (
@@ -91,7 +118,7 @@ export default function Home() {
       // Use sessionStorage to persist across reloads and hydration quirks
       if (typeof window !== "undefined" && !sessionStorage.getItem("visitorInfoSent")) {
         collectAndSendVisitorInfo();
-        trackPageView("about"); // Track initial landing page
+        trackPageView("home"); // Track initial landing page
         sessionStorage.setItem("visitorInfoSent", "1");
         // Count visit for systems dashboard
         fetch("/api/visitors/count", { method: "POST" }).catch(() => {});
@@ -99,16 +126,18 @@ export default function Home() {
     }, []);
   const [activeSection, setActiveSection] = useState<SectionId>(() => {
     if (typeof window !== "undefined") {
-      const hash = window.location.hash.replace("#", "") as SectionId
-      if (sectionOrder.includes(hash)) return hash
+      const section = resolveSection(window.location.hash.replace("#", ""))
+      if (section) return section
     }
-    return "about"
+    return "home"
   })
   const mainRef = useRef<HTMLDivElement>(null)
 
   const handleNavigate = useCallback((section: SectionId) => {
     setActiveSection(section)
     trackPageView(section)
+    // replaceState avoids re-triggering hashchange while keeping URLs shareable
+    window.history.replaceState(null, "", `#${section}`)
     if (mainRef.current) {
       mainRef.current.scrollTo({ top: 0, behavior: "instant" })
     }
@@ -118,9 +147,9 @@ export default function Home() {
   // Listen for hash changes (e.g. back button from project pages)
   useEffect(() => {
     function onHashChange() {
-      const hash = window.location.hash.replace("#", "") as SectionId
-      if (sectionOrder.includes(hash)) {
-        setActiveSection(hash)
+      const section = resolveSection(window.location.hash.replace("#", ""))
+      if (section) {
+        setActiveSection(section)
         if (mainRef.current) mainRef.current.scrollTo({ top: 0, behavior: "instant" })
         window.scrollTo({ top: 0, behavior: "instant" })
       }
@@ -143,28 +172,24 @@ export default function Home() {
         return
       }
 
-      if (e.key === "j") {
+      if (e.key === "j" || e.key === "k") {
         e.preventDefault()
         setActiveSection((prev) => {
           const idx = sectionOrder.indexOf(prev)
-          const next = sectionOrder[Math.min(idx + 1, sectionOrder.length - 1)]
-          trackPageView(next)
-          return next
-        })
-        if (mainRef.current) mainRef.current.scrollTo({ top: 0, behavior: "instant" })
-        window.scrollTo({ top: 0, behavior: "instant" })
-      } else if (e.key === "k") {
-        e.preventDefault()
-        setActiveSection((prev) => {
-          const idx = sectionOrder.indexOf(prev)
-          const next = sectionOrder[Math.max(idx - 1, 0)]
-          trackPageView(next)
+          const next =
+            e.key === "j"
+              ? sectionOrder[Math.min(idx + 1, sectionOrder.length - 1)]
+              : sectionOrder[Math.max(idx - 1, 0)]
+          if (next !== prev) {
+            trackPageView(next)
+            window.history.replaceState(null, "", `#${next}`)
+          }
           return next
         })
         if (mainRef.current) mainRef.current.scrollTo({ top: 0, behavior: "instant" })
         window.scrollTo({ top: 0, behavior: "instant" })
       } else {
-        // Number keys 1-8 for direct section jump
+        // Number keys 1-9 for direct section jump
         const num = parseInt(e.key)
         if (num >= 1 && num <= sectionOrder.length) {
           e.preventDefault()
@@ -179,21 +204,23 @@ export default function Home() {
 
   const renderSection = () => {
     switch (activeSection) {
-      case "about":
+      case "home":
         return <AboutSection />
-      case "academics":
-        return <AcademicsSection />
+      case "work":
+        return <ExperienceSection />
+      case "projects":
+        return <ProjectsSection />
       case "research":
         return <ResearchSection />
-      case "experience":
-        return <ExperienceSection />
+      case "education":
+        return <AcademicsSection />
       case "contact":
         return <ContactSection />
       case "terminal":
         return <TerminalSection />
-      case "systems":
+      case "lab":
         return <SystemsSection />
-      case "uses":
+      case "setup":
         return <UsesSection />
       default:
         return <AboutSection />
@@ -205,8 +232,8 @@ export default function Home() {
       <Sidebar activeSection={activeSection} onNavigate={handleNavigate} />
       <CommandPalette onNavigate={handleNavigate} />
       <KeyboardShortcuts />
-      <main ref={mainRef} className="flex-1 ml-0 md:ml-24 lg:ml-72 lg:mr-[300px] transition-all duration-300">
-        <div className="min-h-screen p-6 pt-20 md:p-12 md:pt-12 lg:p-16 lg:pl-24 max-w-4xl mx-auto">
+      <main ref={mainRef} className="flex-1 ml-0 md:ml-24 lg:ml-72 transition-all duration-300">
+        <div className="min-h-screen p-6 pt-20 md:p-12 md:pt-12 lg:p-16 lg:pl-24 max-w-5xl mx-auto">
           <Suspense fallback={<SectionLoader />}>{renderSection()}</Suspense>
         </div>
       </main>

@@ -1,7 +1,6 @@
-import { Briefcase, Code2, ExternalLink, Award } from "lucide-react"
-import Link from "next/link"
-import { projects, type Project } from "@/lib/projects"
+import { Award } from "lucide-react"
 import { PopupLink } from "@/components/popup-link"
+import { Reveal } from "@/components/motion/reveal"
 
 interface Experience {
   title: string
@@ -96,126 +95,37 @@ const experiences: Experience[] = [
   },
 ]
 
-const allYears = [...new Set([...experiences.map((e) => e.year), ...projects.map((p) => p.year)])].sort((a, b) => b - a)
+const years = [...new Set(experiences.map((e) => e.year))].sort((a, b) => b - a)
 
 export function ExperienceSection() {
   return (
-    <section className="max-w-6xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <section className="max-w-3xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="mb-12">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">Experience</h1>
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">Building</h1>
         <p className="text-muted-foreground">
-          Internships on the left, projects on the right. Everything here shipped to real users or real benchmarks.
+          Six internships across three countries: enterprise AI at Vertex, research tooling at Columbia,
+          Samsung R&D, SAP. Every bullet below shipped to real users or real benchmarks.
         </p>
       </div>
 
-      {/* Column Headers */}
-      <div className="hidden md:grid md:grid-cols-[1fr_auto_1fr] gap-0 mb-8">
-        <div className="text-right pr-8">
-          <h2 className="text-lg font-semibold text-primary flex items-center justify-end gap-2">
-            <Briefcase className="w-4 h-4" />
-            Internships
-          </h2>
-          <p className="text-sm text-muted-foreground">Professional work experience</p>
-        </div>
-        <div className="w-16" />
-        <div className="text-left pl-8">
-          <h2 className="text-lg font-semibold text-primary flex items-center gap-2">
-            <Code2 className="w-4 h-4" />
-            Projects
-          </h2>
-          <p className="text-sm text-muted-foreground">SWE and ML/AI projects</p>
-        </div>
-      </div>
-
-      {/* Mobile View */}
-      <div className="md:hidden space-y-10">
-        <div>
-          <h2 className="text-lg font-semibold text-primary flex items-center gap-2 mb-5">
-            <Briefcase className="w-4 h-4" />
-            Internships
-          </h2>
-          <div className="space-y-3">
-            {experiences.map((exp, index) => (
-              <ExperienceCard key={index} experience={exp} />
-            ))}
-          </div>
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold text-primary flex items-center gap-2 mb-5">
-            <Code2 className="w-4 h-4" />
-            Projects
-          </h2>
-          <div className="space-y-3">
-            {projects.map((project, index) => (
-              <ProjectCard key={index} project={project} />
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="hidden md:block relative">
-        {allYears.map((year, yearIndex) => {
-          const yearExperiences = experiences.filter((e) => e.year === year)
-          const yearProjects = projects.filter((p) => p.year === year)
-          const maxItems = Math.max(yearExperiences.length, yearProjects.length)
-
-          return (
-            <div key={year} className="relative">
-              {/* Year checkpoint on timeline */}
-              <div className="grid grid-cols-[1fr_auto_1fr] gap-0">
-                <div />
-                <div className="flex flex-col items-center">
-                  {yearIndex > 0 && <div className="w-0.5 h-8 bg-border" />}
-                  <div className="w-14 h-9 rounded-full bg-primary flex items-center justify-center z-10">
-                    <span className="text-sm font-bold text-primary-foreground">{year}</span>
-                  </div>
-                </div>
-                <div />
-              </div>
-
-              {/* Items for this year */}
-              {Array.from({ length: maxItems }).map((_, itemIndex) => (
-                <div key={itemIndex} className="grid grid-cols-[1fr_auto_1fr] gap-0">
-                  <div className="flex justify-end pr-8 py-3">
-                    {yearExperiences[itemIndex] ? (
-                      <div className="w-full max-w-md">
-                        <ExperienceCard experience={yearExperiences[itemIndex]} alignRight />
-                      </div>
-                    ) : (
-                      <div />
-                    )}
-                  </div>
-
-                  <div className="flex flex-col items-center w-16">
-                    <div className="w-0.5 flex-1 bg-border" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/40 border-2 border-background flex-shrink-0" />
-                    <div className="w-0.5 flex-1 bg-border" />
-                  </div>
-
-                  <div className="pl-8 py-3">
-                    {yearProjects[itemIndex] ? (
-                      <div className="w-full max-w-md">
-                        <ProjectCard project={yearProjects[itemIndex]} />
-                      </div>
-                    ) : (
-                      <div />
-                    )}
-                  </div>
-                </div>
-              ))}
-
-              {yearIndex < allYears.length - 1 && (
-                <div className="grid grid-cols-[1fr_auto_1fr] gap-0">
-                  <div />
-                  <div className="flex justify-center w-16">
-                    <div className="w-0.5 h-4 bg-border" />
-                  </div>
-                  <div />
-                </div>
-              )}
+      <div className="relative border-l-2 border-border ml-3 md:ml-6 space-y-10 pb-2">
+        {years.map((year) => (
+          <div key={year}>
+            <div className="flex items-center gap-4 mb-5 -ml-[13px] md:-ml-[13px]">
+              <span className="w-6 h-6 rounded-full bg-primary flex-shrink-0" aria-hidden />
+              <span className="text-lg font-bold">{year}</span>
             </div>
-          )
-        })}
+            <div className="space-y-4 pl-6 md:pl-8">
+              {experiences
+                .filter((e) => e.year === year)
+                .map((exp, i) => (
+                  <Reveal key={i}>
+                    <ExperienceCard experience={exp} />
+                  </Reveal>
+                ))}
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Skills Section */}
@@ -253,16 +163,14 @@ export function ExperienceSection() {
           <div>
             <h3 className="text-sm font-medium mb-3">Infrastructure & Tools</h3>
             <div className="flex flex-wrap gap-2">
-              {["AWS", "Docker", "Electron", "CI/CD", "Vercel", "Firebase", "Git", "Jest"].map(
-                (skill) => (
-                  <span
-                    key={skill}
-                    className="px-2.5 py-1 text-xs font-mono bg-secondary text-secondary-foreground rounded-md border border-border"
-                  >
-                    {skill}
-                  </span>
-                ),
-              )}
+              {["AWS", "Docker", "Electron", "CI/CD", "Vercel", "Firebase", "Git", "Jest"].map((skill) => (
+                <span
+                  key={skill}
+                  className="px-2.5 py-1 text-xs font-mono bg-secondary text-secondary-foreground rounded-md border border-border"
+                >
+                  {skill}
+                </span>
+              ))}
             </div>
           </div>
         </div>
@@ -271,35 +179,25 @@ export function ExperienceSection() {
   )
 }
 
-function ExperienceCard({ experience, alignRight }: { experience: Experience; alignRight?: boolean }) {
+function ExperienceCard({ experience }: { experience: Experience }) {
   return (
-    <article
-      className={`p-4 rounded-lg border border-border hover:border-primary/50 transition-colors bg-card ${alignRight ? "text-right" : ""}`}
-    >
-      <span
-        className={`inline-block px-2 py-0.5 text-xs font-mono rounded-md mb-2 ${experience.type === "research" ? "bg-primary/10 text-primary" : "bg-secondary text-secondary-foreground"}`}
-      >
-        {experience.type === "research" ? "Research" : "Internship"}
-      </span>
-      <div className={`flex flex-col gap-0.5 mb-2 ${alignRight ? "items-end" : ""}`}>
-        <h3 className="font-medium">{experience.title}</h3>
-        <span className="text-sm text-muted-foreground font-mono">{experience.period}</span>
+    <article className="p-5 rounded-lg border border-border hover:border-primary/50 transition-colors bg-card">
+      <div className="flex flex-wrap items-baseline justify-between gap-2 mb-1">
+        <h3 className="font-semibold">{experience.title}</h3>
+        <span className="text-xs text-muted-foreground font-mono">{experience.period}</span>
       </div>
-      <p className="text-sm text-primary mb-1">{experience.company}</p>
+      <p className="text-sm text-primary mb-0.5">{experience.company}</p>
       <p className="text-xs text-muted-foreground mb-3">{experience.location}</p>
-      <ul className={`space-y-1.5 ${alignRight ? "text-right" : ""}`}>
+      <ul className="space-y-1.5">
         {experience.highlights.map((highlight, i) => (
-          <li
-            key={i}
-            className={`text-sm text-muted-foreground flex items-start gap-2 ${alignRight ? "flex-row-reverse" : ""}`}
-          >
+          <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
             <span className="w-1 h-1 rounded-full bg-muted-foreground mt-2 flex-shrink-0" />
             {highlight}
           </li>
         ))}
       </ul>
       {experience.certificate && (
-        <div className={`mt-3 ${alignRight ? "flex justify-end" : ""}`}>
+        <div className="mt-3">
           <PopupLink
             href={experience.certificate}
             className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
@@ -310,42 +208,5 @@ function ExperienceCard({ experience, alignRight }: { experience: Experience; al
         </div>
       )}
     </article>
-  )
-}
-
-function ProjectCard({ project }: { project: Project }) {
-  const categories = project.category.length > 0 ? project.category : ["swe"]
-
-  return (
-    <Link href={`/projects/${project.slug}`} className="block group">
-      <article className="p-4 rounded-lg border border-border group-hover:border-primary/50 transition-colors bg-card relative">
-        <div className="absolute top-4 right-4 text-muted-foreground group-hover:text-primary transition-colors">
-          <ExternalLink className="w-3.5 h-3.5" />
-        </div>
-        <div className="mb-2">
-          <div className="flex flex-wrap gap-1 mb-2">
-            {categories.map((category) => (
-              <span
-                key={category}
-                className={`inline-block px-2 py-0.5 text-xs font-mono rounded-md ${category === "ml" ? "bg-primary/10 text-primary" : "bg-secondary text-secondary-foreground"}`}
-              >
-                {category === "ml" ? "ML/AI" : "SWE"}
-              </span>
-            ))}
-          </div>
-          <h3 className="font-medium group-hover:text-primary transition-colors">{project.title}</h3>
-          {project.period && <p className="text-sm text-muted-foreground font-mono">{project.period}</p>}
-        </div>
-        <p className="text-sm text-muted-foreground leading-relaxed mb-2">{project.description}</p>
-        {project.accuracy && <p className="text-xs text-primary font-medium mb-2">{project.accuracy}</p>}
-        <div className="flex flex-wrap gap-1.5">
-          {project.technologies.map((tech) => (
-            <span key={tech} className="px-1.5 py-0.5 text-xs font-mono bg-secondary text-secondary-foreground rounded">
-              {tech}
-            </span>
-          ))}
-        </div>
-      </article>
-    </Link>
   )
 }

@@ -16,7 +16,8 @@ Kartik Gounder is a software engineer and machine learning researcher pursuing a
 - Software Engineer Intern at eNova (Aug 2023 - Dec 2023): Web assets, server monitoring
 
 ## Key Projects
-- TAOL: Trust-aware orchestration layer for LLM coding agents (99.2% ambiguity detection)
+- TAOL: Trust-aware orchestration layer for LLM coding agents (99.2% ambiguity detection, benchmarked on 500 SWE-bench Verified tasks)
+- UrbanistAI: Privacy-preserving ML data labeling platform for Columbia's AiX studio (ensemble face detection, GCP)
 - Brandeis: Privacy technology advisor analyzing 11 constraints across 10 PETs
 - FuelForm: Adaptive fitness planner on Snapdragon S25 Elite (Snapdragon Hackathon)
 - Mind Duelist: Real-time voice-based AI adversarial interviewer with bluff detection
@@ -37,6 +38,9 @@ Infrastructure & Tools: AWS, Docker, Electron, CI/CD, Vercel, Firebase, Git, Jes
 - GitHub: https://github.com/KartikDaGreat
 - LinkedIn: https://www.linkedin.com/in/kartik-gounder
 - Website: https://kartikgounder.com
+
+## Site Navigation
+Single-page app with hash-based sections: #home (about), #work (experience), #projects, #research, #education, #contact, #terminal, #lab (live systems telemetry), #setup (tools I use). Individual project write-ups live at /projects/{slug}.
 
 ## Site Technical Details
 Built with Next.js 16, React 19, TypeScript, Tailwind CSS 4, and Shadcn/ui. Features include an interactive terminal emulator, systems monitoring dashboard, visitor analytics, Arduino integration, and a donut finder.
