@@ -20,7 +20,7 @@ export interface Project {
   }
   images?: string[]
 
-  /** Who did what. "Solo build", "Team of 3 — I owned the trust pipeline", etc. */
+  /** Who did what. "Solo build", "Team of 3, I owned the trust pipeline", etc. */
   role?: string
   status?: "active" | "shipped" | "published"
   /** Headline numbers pulled from work that was actually measured. */
@@ -61,7 +61,7 @@ export const projects: Project[] = [
     year: 2026,
     category: ["ml", "swe"],
     accuracy: "99.2% ambiguity detection | AUC 0.999",
-    role: "Team of 3 (with Anisha Apte and Shruti Bhamidipati) — Columbia COMS E6156",
+    role: "Team of 3 (with Anisha Apte and Shruti Bhamidipati). Columbia COMS E6156",
     status: "shipped",
     metrics: [
       { value: "99.2%", label: "intent-gate accuracy" },
@@ -89,18 +89,18 @@ export const projects: Project[] = [
          └── defer_to_human    clarification questions`,
     story: {
       problem: [
-        "Coding agents will hand you a diff with total confidence whether the diff is right or catastrophically wrong. The interesting question isn't \"can an LLM write code\" — it clearly can — it's whether you can tell, before applying it, which outputs deserve your trust. I wanted a system that answers that with a number instead of a vibe.",
+        "Coding agents will hand you a diff with total confidence whether the diff is right or catastrophically wrong. The interesting question isn't \"can an LLM write code\" (it clearly can), it's whether you can tell, before applying it, which outputs deserve your trust. I wanted a system that answers that with a number instead of a vibe.",
         "There's a second failure mode upstream of generation: prompts that are too ambiguous to answer well in the first place. An agent that guesses at an underspecified request produces plausible code for the wrong problem, which is worse than producing nothing.",
       ],
       approach: [
-        "TAOL sits between a developer and their local LLM (Ollama), intercepting every prompt and every generated output. Rather than trusting or distrusting the model wholesale, it computes a Composite Trust Score from four post-execution risk signals — Static Analysis Gate, Function Overlap, CodeBLEU, and Dependency Volatility — and routes each output into one of three decision zones: auto-apply, human review, or defer with clarification questions.",
+        "TAOL sits between a developer and their local LLM (Ollama), intercepting every prompt and every generated output. Rather than trusting or distrusting the model wholesale, it computes a Composite Trust Score from four post-execution risk signals (Static Analysis Gate, Function Overlap, CodeBLEU, and Dependency Volatility) and routes each output into one of three decision zones: auto-apply, human review, or defer with clarification questions.",
         "The pipeline runs in six phases. An Intent Gate pre-screens prompts with a Random Forest classifier over 24 handcrafted semantic features. A Context Enricher does RAG-based augmentation via BM25 search and git diffs, but only for borderline prompts, so the common case stays fast. An Ollama Proxy streams generation behind a circuit breaker. Then the Trust Calibrator, Decision Engine, and Handover Manager score, route, and explain the result.",
-        "The weights weren't guessed. I learned them with an ensemble of Logistic Regression, Random Forest, and Gradient Boosting under grid search against 500 SWE-bench Verified tasks drawn from 12 real Python repositories — Django, Flask, scikit-learn, sympy and others — each with a gold patch to compare against. CodeBLEU came out dominant at weight 0.5465, with Function Overlap at 0.270, Dependency Volatility at 0.094, and Static Analysis at 0.089.",
+        "The weights weren't guessed. I learned them with an ensemble of Logistic Regression, Random Forest, and Gradient Boosting under grid search against 500 SWE-bench Verified tasks drawn from 12 real Python repositories (Django, Flask, scikit-learn, sympy and others), each with a gold patch to compare against. CodeBLEU came out dominant at weight 0.5465, with Function Overlap at 0.270, Dependency Volatility at 0.094, and Static Analysis at 0.089.",
       ],
       outcome: [
-        "The Intent Gate hits 99.2% accuracy with an AUC of 0.999, and holds 99.4% on held-out data. A five-experiment ablation study confirmed CodeBLEU as the dominant discriminator between safe and risky patches — the signal that actually separates them, not just the one that correlates.",
+        "The Intent Gate hits 99.2% accuracy with an AUC of 0.999, and holds 99.4% on held-out data. A five-experiment ablation study confirmed CodeBLEU as the dominant discriminator between safe and risky patches: the signal that actually separates them, not just the one that correlates.",
         "Beyond the scoring itself: live codebase indexing through tree-sitter AST parsing with watchdog-based incremental reindexing, and a session-adaptive Human-Over-The-Loop modifier that shifts thresholds by up to ±0.15 based on whether the developer has been accepting or rejecting suggestions.",
-        "It ships three ways — a drop-in FastAPI proxy server, an interactive Rich CLI, or an embeddable Python library — with 144 unit tests and reproducibility scripts for the full evaluation.",
+        "It ships three ways: a drop-in FastAPI proxy server, an interactive Rich CLI, or an embeddable Python library, with 144 unit tests and reproducibility scripts for the full evaluation.",
       ],
       lessons: [
         "The ablation study was the most valuable part of the project and I almost skipped it. Learning the weights told me what predicted risk; systematically removing signals told me which ones were load-bearing versus merely correlated. Those are different questions and only the second one tells you what to keep.",
@@ -172,7 +172,7 @@ export const projects: Project[] = [
     period: "March - April 2026",
     year: 2026,
     category: ["swe"],
-    role: "Solo build — Columbia, Policy in Privacy Technology",
+    role: "Solo build. Columbia, Policy in Privacy Technology",
     status: "shipped",
     metrics: [
       { value: "11", label: "constraint dimensions" },
@@ -181,17 +181,17 @@ export const projects: Project[] = [
     ],
     story: {
       problem: [
-        "Privacy-enhancing technologies are individually well documented and collectively baffling. Someone who needs to share data across organizations has to choose between k-anonymity, differential privacy in two flavors, secure multi-party computation, homomorphic encryption, trusted execution environments, private set intersection, federated learning, synthetic data, and plain legal agreements — and the right answer depends on their threat model, their regulatory regime, their compute budget, and how exact their output needs to be.",
+        "Privacy-enhancing technologies are individually well documented and collectively baffling. Someone who needs to share data across organizations has to choose between k-anonymity, differential privacy in two flavors, secure multi-party computation, homomorphic encryption, trusted execution environments, private set intersection, federated learning, synthetic data, and plain legal agreements. The right answer depends on their threat model, their regulatory regime, their compute budget, and how exact their output needs to be.",
         "Most guidance stops at describing each technology. That leaves the hardest part, the selection, entirely to the reader. Worse, the technologies interact: some combinations are standard practice and others quietly cancel each other out.",
       ],
       approach: [
-        "Brandeis — named for Justice Louis Brandeis — walks the user through 11 structured questions covering collaboration goal, data types, sensitivity, number of parties, trust model, data mobility constraints, output requirements, accuracy tolerance, regulatory regime, available compute, and adversary model. It then recommends a combination of technologies rather than a single winner, because real deployments stack them.",
+        "Brandeis, named for Justice Louis Brandeis, walks the user through 11 structured questions covering collaboration goal, data types, sensitivity, number of parties, trust model, data mobility constraints, output requirements, accuracy tolerance, regulatory regime, available compute, and adversary model. It then recommends a combination of technologies rather than a single winner, because real deployments stack them.",
         "The engine is deliberately a deterministic rule system, not a model. Each of the 11 dimensions triggers rules producing primary and supporting recommendations with implementation sub-decisions. After deduplication, a second pass handles cross-cutting interactions: requiring exact accuracy alongside differential privacy generates a compatibility warning, and declaring minimal compute resources removes homomorphic encryption from consideration entirely.",
-        "It also recognizes known-good stacks by name — Federated Learning plus Local DP as \"Privacy-Preserving Collaborative Learning\", PSI plus MPC as \"Private Record Linkage\" — so users get the recognized pattern instead of a bag of parts.",
+        "It also recognizes known-good stacks by name: Federated Learning plus Local DP as \"Privacy-Preserving Collaborative Learning\", PSI plus MPC as \"Private Record Linkage\", so users get the recognized pattern instead of a bag of parts.",
         "A rule engine was the right call over an LLM here for a specific reason: in a privacy context, a recommendation you can't trace is worthless. Every suggestion has to be auditable back to the constraint that produced it.",
       ],
       outcome: [
-        "The tool renders a decision tree showing exactly which answers led to each recommendation, contextual explanations per technology, and a \"Why Not?\" panel explaining why each excluded technology was ruled out — which is often the more instructive half.",
+        "The tool renders a decision tree showing exactly which answers led to each recommendation, contextual explanations per technology, and a \"Why Not?\" panel explaining why each excluded technology was ruled out, which is often the more instructive half.",
         "Roughly 600 lines of domain logic, entirely browser-based. No backend, no ML, no external API calls, nothing to deploy or secure. A privacy tool that transmits your privacy constraints to a server would be its own punchline.",
       ],
       lessons: [
@@ -202,7 +202,7 @@ export const projects: Project[] = [
     longDescription: [
       "Brandeis is a privacy-preserving technology recommendation tool named after Justice Louis Brandeis, a pioneer of privacy law. It guides users through 11 structured questions covering collaboration goals, data types, sensitivity levels, party count, trust models, data mobility constraints, output requirements, accuracy tolerance, regulatory regimes, compute resources, and adversary threat models , then recommends the optimal combination of privacy-enhancing technologies.",
       "The recommendation engine evaluates across 10 privacy-enhancing technologies: k-Anonymity, Local Differential Privacy, Central Differential Privacy, Secure Multi-Party Computation (MPC), Homomorphic Encryption (HE), Trusted Execution Environments (TEE), Private Set Intersection (PSI), Federated Learning, Synthetic Data Generation, and Data Use Agreements. Each technology entry includes detailed descriptions, strengths, limitations, and real-world use cases.",
-      "The core rule engine implements a multi-pass evaluation: each of the 11 question dimensions triggers specific recommendation rules that produce primary and supporting technology suggestions with sub-decisions (implementation guidance). After deduplication, cross-cutting rules handle interactions between dimensions — for example, exact accuracy requirements with DP generate compatibility warnings, while minimal resources remove HE from consideration. The engine also detects known technology stack combinations like 'Privacy-Preserving Collaborative Learning' (Federated Learning + Local DP) and 'Private Record Linkage' (PSI + MPC).",
+      "The core rule engine implements a multi-pass evaluation: each of the 11 question dimensions triggers specific recommendation rules that produce primary and supporting technology suggestions with sub-decisions (implementation guidance). After deduplication, cross-cutting rules handle interactions between dimensions. For example, exact accuracy requirements with DP generate compatibility warnings, while minimal resources remove HE from consideration. The engine also detects known technology stack combinations like 'Privacy-Preserving Collaborative Learning' (Federated Learning + Local DP) and 'Private Record Linkage' (PSI + MPC).",
       "Beyond recommendations, Brandeis provides a full decision tree visualization showing which user choices led to each recommendation, contextual explanations for every technology suggestion, a \"Why Not?\" panel explaining why certain technologies were excluded, and a feedback mechanism. Built as a course project for Policy in Privacy Technology at Columbia University.",
     ],
     highlights: [
@@ -484,15 +484,15 @@ export const projects: Project[] = [
         "Skin lesion classification is a domain where the failure modes are asymmetric in a way that matters: missing a melanoma is not the same kind of error as flagging a benign mole. Individual CNN architectures each have characteristic blind spots, and a single model's confidence tells you nothing about whether you're in one of them.",
       ],
       approach: [
-        "I combined three pre-trained networks chosen for genuinely different architectural strengths rather than for variety's sake. ResNet-50 contributes deep feature extraction via residual connections that avoid gradient degradation. EfficientNet-B3 brings compound scaling tuned for accuracy per unit of compute. MobileNetV2 adds depthwise separable convolutions — the deployment-friendly member of the group.",
+        "I combined three pre-trained networks chosen for genuinely different architectural strengths rather than for variety's sake. ResNet-50 contributes deep feature extraction via residual connections that avoid gradient degradation. EfficientNet-B3 brings compound scaling tuned for accuracy per unit of compute. MobileNetV2 adds depthwise separable convolutions, the deployment-friendly member of the group.",
         "All three were fine-tuned on dermoscopic images from ImageNet weights, then combined through weighted voting where each model's prediction confidence feeds the final classification. The weights are learned parameters passed through a softmax, not fixed constants, so the ensemble tunes its own trust in each member.",
       ],
       outcome: [
-        "96.33% accuracy across melanoma, basal cell carcinoma, and benign categories — higher than any individual model in the ensemble. The complementary architectures cover each other on the edge cases where a single model gets confidently wrong.",
+        "96.33% accuracy across melanoma, basal cell carcinoma, and benign categories, higher than any individual model in the ensemble. The complementary architectures cover each other on the edge cases where a single model gets confidently wrong.",
         "Published at ICoICI-2024 (IEEE) and designed as a clinician decision-support tool for early malignancy detection, not as an autonomous diagnostic.",
       ],
       lessons: [
-        "Ensembles only pay off when the members fail differently. Three variations of the same architecture would have averaged their errors instead of covering them — the diversity was the whole mechanism.",
+        "Ensembles only pay off when the members fail differently. Three variations of the same architecture would have averaged their errors instead of covering them. The diversity was the whole mechanism.",
       ],
     },
     longDescription: [
@@ -697,14 +697,14 @@ Konva.js labeling canvas ──▶ Cloud SQL (Postgres)
   abstract label classes      JWT auth`,
     story: {
       problem: [
-        "Columbia's AiX Convergence Design Studio needed students to collect and label street imagery for computer vision research. Street photography means faces, license plates, and storefront signage — none of which belongs in a dataset that a rotating cast of students can browse each semester.",
+        "Columbia's AiX Convergence Design Studio needed students to collect and label street imagery for computer vision research. Street photography means faces, license plates, and storefront signage, none of which belongs in a dataset that a rotating cast of students can browse each semester.",
         "The naive fix is a policy: tell students not to upload identifiable people. Policies fail quietly, and by the time you find a violation the image is already in storage with its EXIF geotags intact. I wanted privacy enforced by the pipeline, not by instructions in a syllabus.",
       ],
       approach: [
-        "Every upload runs through an automated privacy pipeline before it ever reaches storage. Three face detectors — MTCNN, RetinaFace, and MediaPipe — run as an ensemble, and I take the union of their detections rather than the intersection. A union produces false positives, which cost a slightly over-blurred image; an intersection produces false negatives, which cost someone's face. That asymmetry makes the choice obvious.",
+        "Every upload runs through an automated privacy pipeline before it ever reaches storage. Three face detectors (MTCNN, RetinaFace, and MediaPipe) run as an ensemble, and I take the union of their detections rather than the intersection. A union produces false positives, which cost a slightly over-blurred image; an intersection produces false negatives, which cost someone's face. That asymmetry makes the choice obvious.",
         "EasyOCR handles text regions for signage and plates. Detected faces and text get Gaussian-blurred, EXIF metadata is stripped wholesale, and images are downsized before landing in Google Cloud Storage behind cached signed URLs.",
         "The labeling side is a Konva.js canvas with fuzzy-search label suggestions and abstract label classes for semantic grouping. Because it's a course tool rather than a research demo, it needed real access control: JWT auth with Student/TA/Admin roles and workspace isolation so each semester's data stays scoped to that cohort.",
-        "The backend is FastAPI with SQLAlchemy against Cloud SQL Postgres, deployed on Cloud Run. ML models load as lazy singletons — Cloud Run cold starts are brutal if you initialize three face detectors eagerly on every container — with database pooling tuned to 10 connections and 5 overflow.",
+        "The backend is FastAPI with SQLAlchemy against Cloud SQL Postgres, deployed on Cloud Run. ML models load as lazy singletons. Cloud Run cold starts are brutal if you initialize three face detectors eagerly on every container. Database pooling is tuned to 10 connections and 5 overflow.",
       ],
       outcome: [
         "The platform runs as the studio's actual data pipeline, with a statistics dashboard, a gallery filterable by label, uploader, and date, and a markdown-based instruction system so course staff can update guidance without a deploy.",

@@ -7,7 +7,7 @@ export function ContactSection() {
         <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Let's talk</h1>
         <p className="text-lg text-foreground/80 leading-relaxed">
           I finish my MS at Columbia in December 2026 and I'm looking for software engineering and AI
-          infrastructure work — agentic systems, developer tooling, evaluation, or anything with a genuinely
+          infrastructure work: agentic systems, developer tooling, evaluation, or anything with a genuinely
           hard deployment story behind it.
         </p>
         <p className="text-muted-foreground leading-relaxed mt-4">
@@ -62,7 +62,7 @@ export function ContactSection() {
               <Github className="w-5 h-5 flex-shrink-0" />
               <div>
                 <p className="font-medium group-hover:text-primary transition-colors">GitHub</p>
-                <p className="text-sm text-muted-foreground">@KartikDaGreat — including the source of this site</p>
+                <p className="text-sm text-muted-foreground">@KartikDaGreat, including the source of this site</p>
               </div>
             </a>
             <a
@@ -94,7 +94,7 @@ export function ContactSection() {
 
         <div className="flex items-center gap-3 text-muted-foreground px-1">
           <MapPin className="w-4 h-4 flex-shrink-0" />
-          <span className="text-sm">New York, New York — open to relocating for the right team</span>
+          <span className="text-sm">New York, New York. Open to relocating for the right team</span>
         </div>
       </div>
     </section>

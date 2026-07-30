@@ -75,7 +75,7 @@ export function ResearchSection() {
         <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Research</h1>
         <p className="text-lg text-foreground/80 leading-relaxed max-w-2xl">
           Three peer-reviewed papers across ACM, Springer, and IEEE, and two patent applications. None of it
-          started as a paper — each one began as a thing I was trying to make work, and the write-up came after
+          started as a paper. Each one began as a thing I was trying to make work, and the write-up came after
           it did.
         </p>
       </div>

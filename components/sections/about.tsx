@@ -19,7 +19,7 @@ const currently = [
 const threads = [
   {
     heading: "Can you trust what an agent just wrote?",
-    body: "TAOL scores every LLM-generated patch on four risk signals and routes it to auto-apply, human review, or defer. The ambiguity classifier hits 99.2% accuracy across 500 SWE-bench tasks. Turns out you can predict trustworthiness — you just have to measure the right thing, and an ablation study is what tells you which thing that is.",
+    body: "TAOL scores every LLM-generated patch on four risk signals and routes it to auto-apply, human review, or defer. The ambiguity classifier hits 99.2% accuracy across 500 SWE-bench tasks. Turns out you can predict trustworthiness. You just have to measure the right thing, and an ablation study is what tells you which thing that is.",
     href: "/projects/taol",
     linkLabel: "Read the build",
   },
@@ -36,6 +36,35 @@ const threads = [
     linkLabel: "See the patents",
   },
 ]
+
+/**
+ * Section links must be plain anchors so they fire hashchange; route links
+ * go through next/link for client-side navigation.
+ */
+function ThreadLink({ href, label }: { href: string; label: string }) {
+  const className =
+    "inline-flex items-center gap-1.5 mt-2.5 text-sm font-medium text-primary hover:gap-2.5 transition-all"
+  const content = (
+    <>
+      {label}
+      <ArrowRight className="w-3.5 h-3.5" />
+    </>
+  )
+
+  if (href.startsWith("#")) {
+    return (
+      <a href={href} className={className}>
+        {content}
+      </a>
+    )
+  }
+
+  return (
+    <Link href={href} className={className}>
+      {content}
+    </Link>
+  )
+}
 
 export function AboutSection() {
   return (
@@ -58,7 +87,7 @@ export function AboutSection() {
         </h1>
 
         <p className="text-lg md:text-xl text-foreground/80 leading-relaxed max-w-2xl">
-          Kartik Gounder — software engineer, MS Computer Science at Columbia. I like the problems where the
+          Kartik Gounder, software engineer, MS Computer Science at Columbia. I like the problems where the
           answer has to actually run: on real data, on real hardware, with real users waiting. Lately that's
           been AI agent infrastructure at Vertex and evaluation research at Columbia's aiX Lab.
         </p>
@@ -74,21 +103,26 @@ export function AboutSection() {
         </div>
 
         {/* CTAs */}
+        {/*
+          Plain anchors, not next/link: a Link to a same-page hash uses
+          pushState, which never fires hashchange, so the section would not
+          actually switch.
+        */}
         <div className="flex flex-wrap items-center gap-3 mt-7">
-          <Link
+          <a
             href="#projects"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity"
           >
             See what I've built
             <ArrowRight className="w-4 h-4" />
-          </Link>
-          <Link
+          </a>
+          <a
             href="#terminal"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-card text-sm font-medium hover:border-primary/50 transition-colors"
           >
             <Terminal className="w-4 h-4" />
             Poke at the shell
-          </Link>
+          </a>
           <a
             href="https://drive.google.com/file/d/1RDCJcs4V8BLVaDjqGEFXjoqk6KzF-AXi/view?usp=sharing"
             target="_blank"
@@ -146,13 +180,7 @@ export function AboutSection() {
             <Reveal key={thread.heading} className="group border-l-2 border-border hover:border-primary/60 pl-5 py-1 transition-colors">
               <h3 className="text-lg md:text-xl font-semibold mb-1.5 tracking-tight">{thread.heading}</h3>
               <p className="text-[15px] text-muted-foreground leading-relaxed max-w-2xl">{thread.body}</p>
-              <Link
-                href={thread.href}
-                className="inline-flex items-center gap-1.5 mt-2.5 text-sm font-medium text-primary hover:gap-2.5 transition-all"
-              >
-                {thread.linkLabel}
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
+              <ThreadLink href={thread.href} label={thread.linkLabel} />
             </Reveal>
           ))}
         </div>
@@ -176,7 +204,7 @@ export function AboutSection() {
             <h3 className="font-semibold mb-1.5">Tests are how you go fast</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               78 tests across unit, integration, functional, and e2e layers at Vertex, at 92.65% coverage. 144 on
-              TAOL. Not for the badge — because a suite that catches regressions is what lets you keep changing
+              TAOL. Not for the badge, but because a suite that catches regressions is what lets you keep changing
               things without dread.
             </p>
           </div>
@@ -192,7 +220,7 @@ export function AboutSection() {
             <h3 className="font-semibold mb-1.5">Research should ship</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Three peer-reviewed papers (ACM, Springer, IEEE) and two filed patents, all of them from artifacts I
-              actually built and ran — a 3.7M-parameter on-device classifier, a tri-modal counselling chatbot, a
+              actually built and ran: a 3.7M-parameter on-device classifier, a tri-modal counselling chatbot, a
               CNN ensemble at 96.33%.
             </p>
           </div>
@@ -210,7 +238,7 @@ export function AboutSection() {
             <div key={item.label} className="flex items-start gap-2.5 text-sm">
               <span className={`w-1.5 h-1.5 rounded-full ${item.dot} animate-pulse mt-1.5 flex-shrink-0`} />
               <span className="text-foreground/80">
-                <span className="font-semibold text-foreground">{item.label}</span> — {item.detail}
+                <span className="font-semibold text-foreground">{item.label}</span>: {item.detail}
               </span>
             </div>
           ))}

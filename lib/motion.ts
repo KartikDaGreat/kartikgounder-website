@@ -1,7 +1,7 @@
 import type { Variants } from "motion/react"
 
 /**
- * Shared motion vocabulary. Everything animates transform + opacity only —
+ * Shared motion vocabulary. Everything animates transform + opacity only:
  * colors belong to the 1500ms theme transition in globals.css, and animating
  * them here would fight it.
  */

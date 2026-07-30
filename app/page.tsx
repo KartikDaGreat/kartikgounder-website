@@ -136,17 +136,21 @@ export default function Home() {
   const handleNavigate = useCallback((section: SectionId) => {
     setActiveSection(section)
     trackPageView(section)
-    // replaceState avoids re-triggering hashchange while keeping URLs shareable
-    window.history.replaceState(null, "", `#${section}`)
+    // pushState (not replaceState) so browser back steps through sections
+    // instead of leaving the site.
+    if (window.location.hash !== `#${section}`) {
+      window.history.pushState(null, "", `#${section}`)
+    }
     if (mainRef.current) {
       mainRef.current.scrollTo({ top: 0, behavior: "instant" })
     }
     window.scrollTo({ top: 0, behavior: "instant" })
   }, [])
 
-  // Listen for hash changes (e.g. back button from project pages)
+  // Sync section from the URL. hashchange covers plain <a href="#..."> clicks;
+  // popstate covers browser back/forward and pushState-based navigation.
   useEffect(() => {
-    function onHashChange() {
+    function syncFromHash() {
       const section = resolveSection(window.location.hash.replace("#", ""))
       if (section) {
         setActiveSection(section)
@@ -154,10 +158,14 @@ export default function Home() {
         window.scrollTo({ top: 0, behavior: "instant" })
       }
     }
-    window.addEventListener("hashchange", onHashChange)
+    window.addEventListener("hashchange", syncFromHash)
+    window.addEventListener("popstate", syncFromHash)
     // Also check on mount in case we arrived with a hash
-    onHashChange()
-    return () => window.removeEventListener("hashchange", onHashChange)
+    syncFromHash()
+    return () => {
+      window.removeEventListener("hashchange", syncFromHash)
+      window.removeEventListener("popstate", syncFromHash)
+    }
   }, [])
 
   // Keyboard navigation: j/k for next/prev, 1-8 for direct jump
@@ -182,7 +190,7 @@ export default function Home() {
               : sectionOrder[Math.max(idx - 1, 0)]
           if (next !== prev) {
             trackPageView(next)
-            window.history.replaceState(null, "", `#${next}`)
+            window.history.pushState(null, "", `#${next}`)
           }
           return next
         })

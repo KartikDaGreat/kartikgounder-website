@@ -74,7 +74,7 @@ export function UsesSection() {
       <div className="mb-10">
         <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Setup</h1>
         <p className="text-lg text-foreground/80 leading-relaxed max-w-2xl">
-          The actual tools and hardware I use every day — not aspirational, just what's open on my screen right
+          The actual tools and hardware I use every day, not aspirational, just what's open on my screen right
           now. If something's on this list it's because I reach for it without thinking.
         </p>
         <p className="text-sm text-muted-foreground mt-2 font-mono">{"// inspired by uses.tech"}</p>
