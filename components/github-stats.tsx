@@ -3,8 +3,16 @@
 import { useEffect, useState } from "react"
 import { Github } from "lucide-react"
 
+type GitHubCommit = {
+  sha: string
+  message: string
+  repo: string
+  date: string
+}
+
 type GitHubData = {
   error?: string
+  commits: GitHubCommit[]
   stats: { repos: number; stars: number }
   languages: Record<string, number>
   codeStats: {
@@ -79,6 +87,19 @@ export function GitHubStats() {
         )}
       </div>
 
+      {/* Recent commits */}
+      {data.commits && data.commits.length > 0 && (
+        <div className="mb-3 space-y-1">
+          <div className="text-[10px] text-muted-foreground mb-1.5">Recent commits</div>
+          {data.commits.slice(0, 4).map((commit) => (
+            <div key={commit.sha} className="flex items-start gap-2 text-[11px] font-mono">
+              <span className="text-primary/70 flex-shrink-0">{commit.sha}</span>
+              <span className="text-foreground/70 truncate">{commit.message}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Language bar */}
       {topLangs.length > 0 && (
         <div className="mb-3">
@@ -111,17 +132,19 @@ export function GitHubStats() {
             {data.codeStats.weeklyActivity.map((count, i) => {
               const intensity = count / maxWeekly
               return (
-                <div
-                  key={i}
-                  className="h-3 flex-1 rounded-sm"
-                  style={{
-                    backgroundColor:
-                      count === 0
-                        ? "var(--secondary)"
-                        : `rgba(52, 211, 153, ${0.2 + intensity * 0.8})`,
-                  }}
-                  title={`Week ${i + 1}: ${count} commits`}
-                />
+                <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
+                  <div
+                    className="h-3 w-full rounded-sm"
+                    style={{
+                      backgroundColor:
+                        count === 0
+                          ? "var(--secondary)"
+                          : `rgba(52, 211, 153, ${0.2 + intensity * 0.8})`,
+                    }}
+                    title={`Week ${i + 1}: ${count} commits`}
+                  />
+                  <span className="text-[8px] font-mono text-muted-foreground/60">{count}</span>
+                </div>
               )
             })}
           </div>
