@@ -98,9 +98,9 @@ function CardArt({ project }: { project: Project }) {
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-y-0 right-0 w-2/5 opacity-[0.1] [mask-image:linear-gradient(to_left,black,transparent)]"
+      className="pointer-events-none absolute inset-y-0 right-0 w-2/5 [mask-image:linear-gradient(to_left,black,transparent)]"
     >
-      <Art src={artFor(project)} alt="" width={1408} height={768} cover className="h-full w-full" />
+      <Art src={artFor(project)} alt="" width={1408} height={768} cover weight="texture" className="h-full w-full" />
     </div>
   )
 }
