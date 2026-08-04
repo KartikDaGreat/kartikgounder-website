@@ -9,9 +9,7 @@ import { Reveal } from "@/components/motion/reveal"
 const proof = [
   { value: "2-2.5h", label: "cut off every bug I trace at Vertex" },
   { value: "13%", label: "revenue lift I drove across 15 clients" },
-  { value: "19%", label: "fewer security threats reaching a release" },
   { value: "36.11%", label: "fewer tokens on every agent request" },
-  { value: "28%", label: "faster API calls at SAP" },
   { value: "3 + 2", label: "papers published, patents filed" },
 ]
 
@@ -96,9 +94,9 @@ export function AboutSection() {
         </h1>
 
         <p className="text-lg md:text-xl text-foreground/80 leading-relaxed max-w-2xl text-pretty">
-          Software engineer, currently building AI agent infrastructure at Vertex and finishing my MS in
-          Computer Science at Columbia. I like the problems where the answer has to actually run: on real
-          data, on real hardware, with real users waiting.
+          I build AI agent infrastructure at Vertex, and I'm finishing my MS in Computer Science at Columbia.
+          The problems I like are the ones where the answer has to actually run: on real data, on real
+          hardware, with real users waiting.
         </p>
 
         <div className="flex flex-wrap items-center gap-3 mt-5 text-muted-foreground text-sm">
@@ -186,7 +184,7 @@ export function AboutSection() {
       </div>
 
       {/* Proof strip: the numbers a recruiter skims for, without the reading */}
-      <div className="mb-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px rounded-lg border border-border bg-border overflow-hidden">
+      <div className="mb-10 grid grid-cols-2 lg:grid-cols-4 gap-px rounded-lg border border-border bg-border overflow-hidden">
         {proof.map((stat) => (
           <div key={stat.label} className="bg-card px-4 py-3.5">
             <div className="font-heading text-xl md:text-2xl font-bold tracking-tight">{stat.value}</div>
