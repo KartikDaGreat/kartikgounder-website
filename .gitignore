@@ -26,3 +26,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .claude
+# Source photo for the portrait art. The rendered prints ship; this does not.
+public/art/profile.jpg

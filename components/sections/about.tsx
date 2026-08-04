@@ -7,10 +7,30 @@ import { Reveal } from "@/components/motion/reveal"
 // The receipts, ordered by how much value each one actually produced.
 // Every number already lives elsewhere on this site.
 const proof = [
-  { value: "2-2.5h", label: "cut off every bug I trace at Vertex" },
-  { value: "13%", label: "revenue lift I drove across 15 clients" },
-  { value: "36.11%", label: "fewer tokens on every agent request" },
-  { value: "3 + 2", label: "papers published, patents filed" },
+  {
+    value: "2-2.5h",
+    label: "cut off every bug I trace at Vertex",
+    where: "Vertex · Sherlock",
+    detail: "An AI tracer that checks a reported bug against Datadog logs and Pulsar events before anyone opens an editor.",
+  },
+  {
+    value: "13%",
+    label: "revenue lift I drove across 15 clients",
+    where: "eNova · AI modules",
+    detail: "Scaled three prediction modules across the Python products, tuned against 15 real client deployments.",
+  },
+  {
+    value: "36.11%",
+    label: "fewer tokens on every agent request",
+    where: "Vertex · MCP platform",
+    detail: "Instrumented every tool-discovery call first, then cut the context that measurement proved redundant.",
+  },
+  {
+    value: "3 + 2",
+    label: "papers published, patents filed",
+    where: "ACM · Springer · IEEE",
+    detail: "Three peer-reviewed papers, plus two patents out of $135 of wearable hardware I built and ran.",
+  },
 ]
 
 const currently = [
@@ -186,9 +206,22 @@ export function AboutSection() {
       {/* Proof strip: the numbers a recruiter skims for, without the reading */}
       <div className="mb-10 grid grid-cols-2 lg:grid-cols-4 gap-px rounded-lg border border-border bg-border overflow-hidden">
         {proof.map((stat) => (
-          <div key={stat.label} className="bg-card px-4 py-3.5">
-            <div className="font-heading text-xl md:text-2xl font-bold tracking-tight">{stat.value}</div>
-            <div className="text-[11px] leading-tight text-muted-foreground mt-0.5">{stat.label}</div>
+          <div
+            key={stat.label}
+            tabIndex={0}
+            aria-label={`${stat.value} ${stat.label}. ${stat.where}: ${stat.detail}`}
+            className="flip bg-card h-[124px] outline-none focus-visible:ring-1 focus-visible:ring-primary/50"
+          >
+            <div className="flip-inner">
+              <div className="flip-face bg-card px-4 py-3.5 flex flex-col justify-center">
+                <div className="font-heading text-xl md:text-2xl font-bold tracking-tight">{stat.value}</div>
+                <div className="text-[11px] leading-tight text-muted-foreground mt-0.5">{stat.label}</div>
+              </div>
+              <div className="flip-face flip-back bg-card px-4 py-3 flex flex-col justify-center">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-primary">{stat.where}</div>
+                <p className="text-[11px] leading-snug text-muted-foreground mt-1.5">{stat.detail}</p>
+              </div>
+            </div>
           </div>
         ))}
       </div>
