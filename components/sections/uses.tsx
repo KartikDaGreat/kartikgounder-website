@@ -1,4 +1,5 @@
 import { Monitor, Code2, Terminal, Wrench, Coffee } from "lucide-react"
+import { Art } from "@/components/art"
 
 interface UseItem {
   name: string
@@ -137,6 +138,17 @@ export function UsesSection() {
           Features include an interactive terminal, live systems dashboard, visitor analytics, Arduino integration, and a donut finder.
           Source available on <a href="https://github.com/KartikDaGreat/kartikgounder-website" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">GitHub</a>.
         </p>
+      </div>
+
+      {/* Flat-lay closer */}
+      <div className="mt-12 max-w-lg mx-auto">
+        <Art
+          src="/art/setup-desk.png"
+          alt="Overhead line illustration of a desk with a mechanical keyboard, mouse, headphones, notebook, and coffee"
+          width={1408}
+          height={768}
+          className="w-full"
+        />
       </div>
     </section>
   )

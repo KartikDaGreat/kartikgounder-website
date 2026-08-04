@@ -1,6 +1,8 @@
-import { ExternalLink, FileText, Award, ImageIcon } from "lucide-react"
+import { ExternalLink } from "lucide-react"
 import Image from "next/image"
+import { Art } from "@/components/art"
 import { Reveal } from "@/components/motion/reveal"
+import { MetricChips } from "@/components/metric-chips"
 
 interface Publication {
   title: string
@@ -23,7 +25,7 @@ const publications: Publication[] = [
     type: "paper",
     image: "/DeviceClassificationFramework.PNG",
     description:
-      "Samsung PRISM collaboration. I built a custom CNN with only 3.7M parameters that classifies documents on-device without cloud connectivity. It combines visual layout features with limited OCR text, so it works even when text quality is poor. Designed for mobile and air-gapped deployments.",
+      "A 3.7M-parameter CNN that classifies documents on the phone itself. No cloud, and it still works when the OCR is garbage.",
   },
   {
     title: "A Hybrid-Multimodal Mental Health Chatbot for Psychological Counselling",
@@ -33,7 +35,8 @@ const publications: Publication[] = [
     link: "https://doi.org/10.1007/978-3-031-82706-8_23",
     type: "paper",
     image: "/PsychologicalCounsellingFramework.PNG",
-    description: "I built a chatbot that reads three signals at once: what patients type, how their voice sounds, and what their face shows. When someone says 'I'm fine' but their voice trembles and their expression says otherwise, the system catches it. 87% patient satisfaction in clinical evaluations.",
+    description:
+      "Reads what patients type, how their voice sounds, and what their face shows. It catches the trembling voice behind 'I'm fine'. 87% patient satisfaction.",
   },
   {
     title: "Ensemble Model using Various CNNs for Improved Skin Cancer Diagnosis",
@@ -43,7 +46,8 @@ const publications: Publication[] = [
     link: "https://doi.org/10.1109/ICoICI62503.2024.10696508",
     type: "paper",
     image: "/SkinCancerFramework.PNG",
-    description: "I combined ResNet-50, EfficientNet-B3, and MobileNetV2 into a weighted ensemble that hits 96.33% accuracy on skin lesion classification. Each model brings different strengths; the ensemble outperforms any single one. Designed as a decision-support tool for early malignancy detection.",
+    description:
+      "Three CNNs voting together hit 96.33% on skin lesion classification, beating every individual model in the ensemble.",
   },
 ]
 
@@ -55,7 +59,7 @@ const patents: Publication[] = [
     authors: "K. Gounder",
     type: "patent",
     image: "/SmartGlassPicture.png",
-    description: "A system for assistive smart glasses that fuses ultrasonic and infrared sensors to estimate object distance, then visually scales what the wearer sees. Built the prototype hardware and the sensor fusion pipeline.",
+    description: "Smart glasses that fuse ultrasonic and infrared sensors to estimate distance, then visually scale what the wearer sees.",
   },
   {
     title: "Multimodal Context-Adaptive Keyframe Selection System for Vision Assistive Wearables",
@@ -64,106 +68,81 @@ const patents: Publication[] = [
     authors: "K. Gounder",
     type: "patent",
     image: "/KeyframeSelectionFramework.png",
-    description: "An intelligent system that picks the right video frames to process on vision-assistive wearables, using multimodal context (scene complexity, motion, user gaze) to avoid wasting compute on redundant frames.",
+    description: "Picks which video frames deserve compute on vision-assistive wearables, using scene complexity, motion, and gaze.",
   },
 ]
 
 export function ResearchSection() {
   return (
     <section className="max-w-5xl animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="mb-12">
-        <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Research</h1>
-        <p className="text-lg text-foreground/80 leading-relaxed max-w-2xl">
-          Three peer-reviewed papers across ACM, Springer, and IEEE, and two patent applications. None of it
-          started as a paper. Each one began as a thing I was trying to make work, and the write-up came after
-          it did.
-        </p>
+      <div className="mb-12 lg:grid lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-10 lg:items-center">
+        <div>
+          <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Research</h1>
+          <p className="text-lg text-foreground/80 leading-relaxed max-w-2xl">
+            Three peer-reviewed papers across ACM, Springer, and IEEE, and two patent applications. None of it
+            started as a paper. Each one began as a thing I was trying to make work, and the write-up came after
+            it did.
+          </p>
+        </div>
+        <div className="hidden lg:block">
+          <Art
+            src="/art/research-stack.png"
+            alt="Line illustration of a stack of academic papers with an open journal and a magnifying glass"
+            width={1376}
+            height={768}
+            className="w-full"
+          />
+        </div>
       </div>
 
+      {/* The numbers first, then the papers */}
+      <MetricChips
+        items={["3 papers", "2 patents", "96.33% ensemble accuracy", "87% patient satisfaction", "$135 of hardware"]}
+        className="mb-10"
+      />
+
       <div className="mb-14">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
-            <FileText className="w-4 h-4 text-primary" />
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold">Publications</h2>
-            <p className="text-sm text-muted-foreground">Peer-reviewed research papers</p>
-          </div>
-        </div>
-
-        <div className="space-y-5">
-          {publications.map((pub, index) => (
+        <h2 className="eyebrow mb-5">Publications</h2>
+        <div className="space-y-3">
+          {publications.map((pub) => (
             <Reveal
-              key={index}
-              className="group relative overflow-hidden rounded-xl border border-border bg-card hover:border-primary/50 transition-all duration-300"
+              key={pub.title}
+              className="group flex items-start gap-4 rounded-xl border border-border bg-card p-4 hover:border-primary/50 transition-colors"
             >
-              <div className="flex flex-col lg:flex-row">
-                <div className="lg:w-64 h-44 lg:h-52 flex-shrink-0 bg-secondary/20 flex items-center justify-center border-b lg:border-b-0 lg:border-r border-border relative overflow-hidden">
-                  {pub.image ? (
-                    <Image
-                      src={pub.image}
-                      alt={pub.title}
-                      fill
-                      className="object-contain p-4"
-                    />
-                  ) : (
-                    <div className="text-center p-6">
-                      <div className="w-14 h-14 rounded-full bg-background/50 flex items-center justify-center mx-auto mb-2">
-                        <ImageIcon className="w-7 h-7 text-muted-foreground/50" />
-                      </div>
-                      <span className="text-xs text-muted-foreground">Paper thumbnail</span>
-                    </div>
-                  )}
+              {pub.image && (
+                <div className="hidden sm:block relative w-24 h-24 flex-shrink-0 rounded-md border border-border bg-secondary/20 overflow-hidden">
+                  <Image src={pub.image} alt={pub.title} fill className="object-contain p-1.5" />
                 </div>
-
-                <div className="flex-1 p-5">
-                  <div className="flex items-start justify-between gap-4 mb-3">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="px-2 py-0.5 text-xs font-mono rounded-md bg-primary/10 text-primary">
-                          {pub.venue}
-                        </span>
-                        <span className="text-xs text-muted-foreground">{pub.year}</span>
-                      </div>
-                      <h3 className="text-base font-medium leading-snug mb-1.5 group-hover:text-primary transition-colors">
-                        {pub.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">{pub.authors}</p>
-                    </div>
-                    {pub.link && (
-                      <a
-                        href={pub.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2 rounded-lg bg-secondary hover:bg-primary hover:text-primary-foreground transition-colors flex-shrink-0"
-                        aria-label="View publication"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </a>
-                    )}
-                  </div>
-                  {pub.description && (
-                    <p className="text-sm text-muted-foreground leading-relaxed border-t border-border pt-3 mt-3">
-                      {pub.description}
-                    </p>
-                  )}
+              )}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="px-2 py-0.5 text-xs font-mono rounded-md bg-primary/10 text-primary">
+                    {pub.venue}
+                  </span>
+                  <span className="text-xs text-muted-foreground">{pub.year}</span>
                 </div>
+                <h3 className="font-medium leading-snug group-hover:text-primary transition-colors">{pub.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed mt-1">{pub.description}</p>
               </div>
+              {pub.link && (
+                <a
+                  href={pub.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-lg bg-secondary hover:bg-primary hover:text-primary-foreground transition-colors flex-shrink-0"
+                  aria-label="View publication"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+              )}
             </Reveal>
           ))}
         </div>
       </div>
 
       <div>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Award className="w-4 h-4 text-primary" />
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold">Patents</h2>
-            <p className="text-sm text-muted-foreground">Intellectual property filings. Both came out of wearable hardware I built for ~$135.</p>
-          </div>
-        </div>
+        <h2 className="eyebrow mb-1.5">Patents</h2>
+        <p className="text-sm text-muted-foreground mb-5">Both came out of $135 of wearable hardware.</p>
 
         <div className="grid md:grid-cols-2 gap-5">
           {patents.map((patent, index) => (
@@ -171,8 +150,8 @@ export function ResearchSection() {
               key={index}
               className="group relative overflow-hidden rounded-xl border border-border bg-card hover:border-primary/50 transition-all duration-300"
             >
-              <div className="h-36 bg-secondary/20 flex items-center justify-center border-b border-border relative overflow-hidden">
-                {patent.image ? (
+              {patent.image && (
+                <div className="h-36 bg-secondary/20 flex items-center justify-center border-b border-border relative overflow-hidden">
                   <Image
                     src={patent.image}
                     alt={patent.title}
@@ -180,15 +159,8 @@ export function ResearchSection() {
                     height={160}
                     className="object-contain"
                   />
-                ) : (
-                  <div className="text-center">
-                    <div className="w-12 h-12 rounded-full bg-background/50 flex items-center justify-center mx-auto mb-2">
-                      <ImageIcon className="w-6 h-6 text-muted-foreground/50" />
-                    </div>
-                    <span className="text-xs text-muted-foreground">Patent diagram</span>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
 
               <div className="p-5">
                 <div className="flex items-center gap-2 mb-2">
@@ -200,11 +172,8 @@ export function ResearchSection() {
                 <h3 className="font-medium leading-snug mb-1.5 group-hover:text-primary transition-colors">
                   {patent.title}
                 </h3>
-                <p className="text-sm text-muted-foreground mb-2">{patent.authors}</p>
                 {patent.description && (
-                  <p className="text-sm text-muted-foreground leading-relaxed border-t border-border pt-3">
-                    {patent.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{patent.description}</p>
                 )}
               </div>
             </article>

@@ -1,4 +1,5 @@
-import { GraduationCap, ShieldCheck, Trophy } from "lucide-react"
+import { Art } from "@/components/art"
+import { Expander } from "@/components/expander"
 import { Reveal } from "@/components/motion/reveal"
 
 type Degree = {
@@ -23,7 +24,7 @@ type LeadershipItem = {
   title: string
   org: string
   period: string
-  highlights: string[]
+  highlight: string
 }
 
 type AccoladeItem = {
@@ -81,31 +82,19 @@ const leadership: LeadershipItem[] = [
     title: "Member Secretary, Student Council",
     org: "VIT",
     period: "Sep 2023 – Aug 2024",
-    highlights: [
-      "Ran 15+ concurrent events during Yantra and campus hackathons",
-      "Represented 12,000+ students in Academic Council meetings",
-      "Managed event budgets and treasury for council programs",
-    ],
+    highlight: "Represented 12,000+ students in Academic Council meetings and ran 15+ concurrent events during Yantra.",
   },
   {
     title: "Technical Board Member",
     org: "IEEE Computer Society",
     period: "Aug 2023 – May 2024",
-    highlights: [
-      "Mentored project teams across AI, IoT, web, and ML tracks",
-      "Led weekly technical workshops and build sessions",
-      "Built speed-detection system and ticketing framework for NHAI",
-    ],
+    highlight: "Mentored project teams across AI, IoT, web, and ML tracks; built a speed-detection system for NHAI.",
   },
   {
     title: "Guest Speaker",
     org: "KV Institute of Management",
     period: "Jun 2019 – May 2020",
-    highlights: [
-      "Delivered 12 sessions on emerging tech niches",
-      "Designed AI/ML workshops tailored for business cohorts",
-      "Launched outreach with hackathons and co-op programs",
-    ],
+    highlight: "12 sessions on emerging tech, with AI/ML workshops designed for business cohorts.",
   },
 ]
 
@@ -135,18 +124,29 @@ const accolades: AccoladeItem[] = [
 export function AcademicsSection() {
   return (
     <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="mb-12">
-        <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Education</h1>
-        <p className="text-lg text-foreground/80 leading-relaxed max-w-2xl">
-          Columbia MS in Computer Science, finishing December 2026. Before that, a B.Tech at VIT where I
-          graduated 11th out of 4,000, plus student council, an IEEE technical board seat, and a few trophies
-          that were mostly an excuse to build things on a deadline.
-        </p>
+      <div className="mb-12 lg:grid lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-10 lg:items-center">
+        <div>
+          <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Education</h1>
+          <p className="text-lg text-foreground/80 leading-relaxed max-w-2xl">
+            Columbia MS in Computer Science, finishing December 2026. Before that, a B.Tech at VIT where I
+            graduated 11th out of 4,000, plus student council, an IEEE technical board seat, and a few trophies
+            that were mostly an excuse to build things on a deadline.
+          </p>
+        </div>
+        <div className="hidden lg:block">
+          <Art
+            src="/art/education-campus.png"
+            alt="Line illustration of a university building beneath a giant open notebook of study diagrams"
+            width={1408}
+            height={768}
+            className="w-full"
+          />
+        </div>
       </div>
 
       {/* Degrees */}
       <div className="mb-14">
-        <SectionHeading icon={GraduationCap} label="Degrees" />
+        <h2 className="eyebrow mb-5">Degrees</h2>
         <div className="space-y-4">
           {degrees.map((degree) => (
             <Reveal key={degree.school}>
@@ -170,61 +170,45 @@ export function AcademicsSection() {
         </div>
       </div>
 
-      {/* Leadership */}
+      {/* Leadership: one line per role, the single strongest fact */}
       <div className="mb-14">
-        <SectionHeading icon={ShieldCheck} label="Leadership" />
-        <div className="grid md:grid-cols-3 gap-4">
+        <h2 className="eyebrow mb-5">Leadership</h2>
+        <div className="space-y-2">
           {leadership.map((item) => (
-            <Reveal key={item.title} className="h-full">
-              <article className="h-full p-5 rounded-lg border border-border bg-card hover:border-primary/50 transition-colors">
-                <h3 className="font-semibold text-sm leading-snug">{item.title}</h3>
-                <p className="text-xs text-primary mt-1.5">{item.org}</p>
-                <p className="text-xs text-muted-foreground font-mono mt-0.5">{item.period}</p>
-                <ul className="mt-3 space-y-1.5">
-                  {item.highlights.map((highlight, i) => (
-                    <li key={i} className="text-xs text-muted-foreground flex items-start gap-2 leading-relaxed">
-                      <span className="w-1 h-1 rounded-full bg-muted-foreground mt-1.5 flex-shrink-0" />
-                      <span>{highlight}</span>
-                    </li>
-                  ))}
-                </ul>
-              </article>
+            <Reveal
+              key={item.title}
+              className="rounded-lg border border-border bg-card px-4 py-3 hover:border-primary/50 transition-colors"
+            >
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
+                <h3 className="font-semibold text-sm">{item.title}</h3>
+                <span className="text-xs text-primary">{item.org}</span>
+                <span className="text-xs text-muted-foreground font-mono ml-auto">{item.period}</span>
+              </div>
+              <p className="text-sm text-muted-foreground mt-1">{item.highlight}</p>
             </Reveal>
           ))}
         </div>
       </div>
 
-      {/* Awards & community */}
+      {/* Awards & community: a badge wall, not more cards */}
       <div>
-        <SectionHeading icon={Trophy} label="Awards & community" />
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <h2 className="eyebrow mb-5">Awards & community</h2>
+        <div className="flex flex-wrap gap-2">
           {accolades.map((item) => (
-            <article
+            <span
               key={item.title}
-              className="p-4 rounded-lg border border-border bg-card/40 hover:border-primary/40 transition-colors"
+              className="inline-flex flex-wrap items-baseline gap-x-2 px-3 py-1.5 rounded-full border border-border bg-card text-sm hover:border-primary/50 transition-colors"
             >
-              <h3 className="font-medium text-sm leading-snug">{item.title}</h3>
-              <div className="flex items-baseline gap-2 mt-1.5">
-                <span className="text-xs text-primary">{item.org}</span>
-                <span className="text-xs text-muted-foreground font-mono">{item.period}</span>
-              </div>
-              {item.detail && <p className="text-xs text-muted-foreground mt-2">{item.detail}</p>}
-            </article>
+              <span className="font-medium">{item.title}</span>
+              <span className="text-xs text-muted-foreground">
+                {item.org}
+                {item.detail ? ` · ${item.detail}` : ""} · {item.period}
+              </span>
+            </span>
           ))}
         </div>
       </div>
     </section>
-  )
-}
-
-function SectionHeading({ icon: Icon, label }: { icon: React.ElementType; label: string }) {
-  return (
-    <div className="flex items-center gap-2.5 mb-5">
-      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-        <Icon className="w-4 h-4 text-primary" />
-      </div>
-      <h2 className="text-lg font-semibold">{label}</h2>
-    </div>
   )
 }
 
@@ -274,25 +258,26 @@ function DegreeCard({ degree }: { degree: Degree }) {
       )}
 
       {degree.coursework && (
-        <div className="mt-4 pt-4 border-t border-border">
-          <p className="eyebrow mb-3">Coursework</p>
-          <div className="space-y-3">
-            {degree.coursework.map((term) => (
-              <div key={term.label} className="grid md:grid-cols-[160px_1fr] gap-x-4 gap-y-1.5 items-baseline">
-                <p className="text-xs font-mono text-muted-foreground">{term.label}</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {term.items.map((course) => (
-                    <span
-                      key={course}
-                      className="text-[11px] px-2 py-1 rounded-md bg-secondary text-secondary-foreground border border-border"
-                    >
-                      {course}
-                    </span>
-                  ))}
+        <div className="mt-4 pt-3 border-t border-border">
+          <Expander label="coursework">
+            <div className="space-y-3 mb-1">
+              {degree.coursework.map((term) => (
+                <div key={term.label} className="grid md:grid-cols-[160px_1fr] gap-x-4 gap-y-1.5 items-baseline">
+                  <p className="text-xs font-mono text-muted-foreground">{term.label}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {term.items.map((course) => (
+                      <span
+                        key={course}
+                        className="text-[11px] px-2 py-1 rounded-md bg-secondary text-secondary-foreground border border-border"
+                      >
+                        {course}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </Expander>
         </div>
       )}
     </article>

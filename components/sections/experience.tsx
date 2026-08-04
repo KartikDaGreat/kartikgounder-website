@@ -1,6 +1,13 @@
 import { Award } from "lucide-react"
 import { PopupLink } from "@/components/popup-link"
 import { Reveal } from "@/components/motion/reveal"
+import { MetricChips } from "@/components/metric-chips"
+import { Expander } from "@/components/expander"
+
+interface Highlight {
+  lead: string
+  text: string
+}
 
 interface Experience {
   title: string
@@ -8,10 +15,14 @@ interface Experience {
   period: string
   year: number
   location: string
-  highlights: string[]
+  metrics?: string[]
+  highlights: Highlight[]
   type: "internship" | "research"
   certificate?: string
 }
+
+/** Bullets shown before the "+n more" fold kicks in. */
+const VISIBLE_HIGHLIGHTS = 2
 
 const experiences: Experience[] = [
   {
@@ -21,10 +32,24 @@ const experiences: Experience[] = [
     year: 2026,
     location: "Pennsylvania, US",
     type: "internship",
+    metrics: ["2-2.5h saved per bug", "36.11% fewer tokens per request"],
     highlights: [
-      "Built a production-grade MCP platform that connects 105 enterprise tools via an Electron desktop app with 10 providers. It routes real requests across Jira, Slack, GitHub, Confluence, and more.",
-      "Wrote 78 automated tests across unit, integration, functional, and e2e layers, reaching 92.65% coverage. The test suite catches regressions before they hit users.",
-      "Instrumented every tool-discovery call to collect token usage data, then cut redundant context to achieve 36.11% improved token efficiency. Real cost savings on every request.",
+      {
+        lead: "MCP platform",
+        text: "connects 105 enterprise tools through one Electron app, routing real requests across Jira, Slack, GitHub, Confluence, and more.",
+      },
+      {
+        lead: "Sherlock",
+        text: "AI bug tracer that validates issues against Datadog logs and Pulsar events with chain-of-thought reasoning. Cuts 2 to 2.5 hours off every debugging cycle.",
+      },
+      {
+        lead: "78 tests",
+        text: "across unit, integration, functional, and e2e layers, at 92.65% coverage.",
+      },
+      {
+        lead: "Token instrumentation",
+        text: "measured every tool-discovery call, then cut redundant context for a 36.11% saving.",
+      },
     ],
   },
   {
@@ -35,9 +60,18 @@ const experiences: Experience[] = [
     location: "New York, NY",
     type: "internship",
     highlights: [
-      "Supporting a multi-year AI literacy initiative with Prof. Anthony Vanky, building tools that help students and educators work with AI in course design.",
-      "Built a privacy-preserving image labeling platform with ensemble face detection (MTCNN + RetinaFace + MediaPipe) that automatically blurs PII before storage.",
-      "Developing evaluation metrics for Data Science agents with Prof. Tian Zheng. The goal: measure whether an AI agent actually helps students learn, not just whether it answers correctly.",
+      {
+        lead: "Privacy pipeline",
+        text: "image labeling platform with ensemble face detection (MTCNN + RetinaFace + MediaPipe) that blurs PII before anything hits storage.",
+      },
+      {
+        lead: "Agent evaluation",
+        text: "metrics with Prof. Tian Zheng for whether a data-science agent actually helps students learn, not just whether it answers correctly.",
+      },
+      {
+        lead: "AI literacy",
+        text: "multi-year initiative with Prof. Anthony Vanky, building tools for students and educators working with AI in course design.",
+      },
     ],
     certificate: "https://drive.google.com/file/d/1XNSc5r4Z2FpBkPpxfL4F7uuOdVi5_0Mb/view?usp=sharing",
   },
@@ -48,9 +82,10 @@ const experiences: Experience[] = [
     year: 2025,
     location: "Coimbatore, Tamil Nadu, India",
     type: "internship",
+    metrics: ["23% faster releases", "8+ hrs/week of reporting saved"],
     highlights: [
-      "Built automated deployment scripts with CI/CD pipelines, reducing release time by 23%",
-      "Designed data visualization dashboards for internal teams, cutting manual reporting by 8+ hours/week",
+      { lead: "CI/CD", text: "automated deployment scripts that cut release time by 23%." },
+      { lead: "Dashboards", text: "data visualization for internal teams, saving 8+ hours of manual reporting a week." },
     ],
     certificate: "https://drive.google.com/file/d/1kL7yFm7ALNFfT2R6YdrNCYVFRnZWNI_z/view?usp=sharing",
   },
@@ -61,9 +96,10 @@ const experiences: Experience[] = [
     year: 2024,
     location: "Bangalore, India",
     type: "internship",
+    metrics: ["28% faster API calls"],
     highlights: [
-      "Designed and built the Farmbot software platform, cutting API call time by 28% by restructuring how the frontend batched requests to SAP backend services.",
-      "Integrated XSUAA authentication using JWT access tokens, locking down every endpoint in the service layer.",
+      { lead: "Farmbot", text: "designed and built the platform, cutting API call time 28% by restructuring frontend request batching." },
+      { lead: "XSUAA auth", text: "JWT access tokens locking down every endpoint in the service layer." },
     ],
     certificate: "https://drive.google.com/file/d/1P6tKBze3g_Ph-Tz2fRZoHEUmEasikRZn/view?usp=sharing",
   },
@@ -74,9 +110,10 @@ const experiences: Experience[] = [
     year: 2024,
     location: "Bangalore, India",
     type: "internship",
+    metrics: ["shipped on-device, no cloud", "published at ISEC-2025"],
     highlights: [
-      "Developed a custom CNN framework for on-device document classification",
-      "Co-authored and published a research paper at ISEC-2025",
+      { lead: "On-device CNN", text: "custom framework for document classification that runs on the phone, not a server." },
+      { lead: "ISEC-2025", text: "co-authored and published the research paper behind it." },
     ],
     certificate: "https://drive.google.com/file/d/1xpLRjU5B9Chpf3GpxL4jeNGbhm4g0_5B/view?usp=sharing",
   },
@@ -88,8 +125,8 @@ const experiences: Experience[] = [
     location: "Coimbatore, Tamil Nadu, India",
     type: "internship",
     highlights: [
-      "Developed key web assets including email landing pages and server status monitoring",
-      "Contributed to the update and enhancement of the internship training syllabus",
+      { lead: "Web assets", text: "email landing pages and server status monitoring." },
+      { lead: "Training syllabus", text: "updated and enhanced the internship curriculum." },
     ],
     certificate: "https://drive.google.com/file/d/1kL7yFm7ALNFfT2R6YdrNCYVFRnZWNI_z/view?usp=sharing",
   },
@@ -103,8 +140,7 @@ export function ExperienceSection() {
       <div className="mb-12">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">Building</h1>
         <p className="text-muted-foreground">
-          Six internships across three countries: enterprise AI at Vertex, research tooling at Columbia,
-          Samsung R&D, SAP. Every bullet below shipped to real users or real benchmarks.
+          Six internships, three countries. Every bullet below shipped to real users or real benchmarks.
         </p>
       </div>
 
@@ -179,23 +215,45 @@ export function ExperienceSection() {
   )
 }
 
+function HighlightItem({ highlight }: { highlight: Highlight }) {
+  return (
+    <li className="text-sm text-muted-foreground flex items-start gap-2">
+      <span className="w-1 h-1 rounded-full bg-primary/60 mt-2 flex-shrink-0" />
+      <span>
+        <span className="font-semibold text-foreground">{highlight.lead}</span>: {highlight.text}
+      </span>
+    </li>
+  )
+}
+
 function ExperienceCard({ experience }: { experience: Experience }) {
+  const visible = experience.highlights.slice(0, VISIBLE_HIGHLIGHTS)
+  const folded = experience.highlights.slice(VISIBLE_HIGHLIGHTS)
+
   return (
     <article className="p-5 rounded-lg border border-border hover:border-primary/50 transition-colors bg-card">
-      <div className="flex flex-wrap items-baseline justify-between gap-2 mb-1">
-        <h3 className="font-semibold">{experience.title}</h3>
+      <div className="flex flex-wrap items-baseline justify-between gap-2 mb-0.5">
+        <h3 className="font-semibold">
+          {experience.company} <span className="font-normal text-muted-foreground">· {experience.title}</span>
+        </h3>
         <span className="text-xs text-muted-foreground font-mono">{experience.period}</span>
       </div>
-      <p className="text-sm text-primary mb-0.5">{experience.company}</p>
       <p className="text-xs text-muted-foreground mb-3">{experience.location}</p>
+      {experience.metrics && <MetricChips items={experience.metrics} className="mb-3" />}
       <ul className="space-y-1.5">
-        {experience.highlights.map((highlight, i) => (
-          <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-            <span className="w-1 h-1 rounded-full bg-muted-foreground mt-2 flex-shrink-0" />
-            {highlight}
-          </li>
+        {visible.map((highlight) => (
+          <HighlightItem key={highlight.lead} highlight={highlight} />
         ))}
       </ul>
+      {folded.length > 0 && (
+        <Expander label={`+${folded.length} more`}>
+          <ul className="space-y-1.5 mt-1.5">
+            {folded.map((highlight) => (
+              <HighlightItem key={highlight.lead} highlight={highlight} />
+            ))}
+          </ul>
+        </Expander>
+      )}
       {experience.certificate && (
         <div className="mt-3">
           <PopupLink

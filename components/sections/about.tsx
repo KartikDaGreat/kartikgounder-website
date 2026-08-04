@@ -1,13 +1,25 @@
 import Link from "next/link"
+import { Art } from "@/components/art"
 import { ArrowRight, Download, Github, Linkedin, Mail, MapPin, Terminal } from "lucide-react"
 import { GitHubStats } from "@/components/github-stats"
 import { Reveal } from "@/components/motion/reveal"
+
+// The receipts, ordered by how much value each one actually produced.
+// Every number already lives elsewhere on this site.
+const proof = [
+  { value: "2-2.5h", label: "cut off every bug I trace at Vertex" },
+  { value: "8+ hrs", label: "of manual reporting killed per week" },
+  { value: "36.11%", label: "fewer tokens on every agent request" },
+  { value: "28%", label: "faster API calls at SAP" },
+  { value: "23%", label: "faster releases from CI/CD I built" },
+  { value: "3 + 2", label: "papers published, patents filed" },
+]
 
 const currently = [
   {
     dot: "bg-emerald-400",
     label: "Vertex Inc.",
-    detail: "MCP platform giving AI agents working access to 105 enterprise tools",
+    detail: "MCP platform connecting AI agents to 105 enterprise tools across 10 providers, 36.11% leaner on tokens",
   },
   {
     dot: "bg-blue-400",
@@ -77,19 +89,16 @@ export function AboutSection() {
       </div>
 
       {/* Hero */}
-      <div className="mb-10">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight leading-[1.05]">
-          I build systems that
-          <br />
-          have to survive contact
-          <br />
-          <span className="text-primary">with production.</span>
+      <div className="mb-10 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12 lg:items-center">
+        <div>
+        <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight leading-[1.08] text-balance">
+          I build systems that <span className="text-primary">survive contact with production</span>.
         </h1>
 
-        <p className="text-lg md:text-xl text-foreground/80 leading-relaxed max-w-2xl">
-          Kartik Gounder, software engineer, MS Computer Science at Columbia. I like the problems where the
-          answer has to actually run: on real data, on real hardware, with real users waiting. Lately that's
-          been AI agent infrastructure at Vertex and evaluation research at Columbia's aiX Lab.
+        <p className="text-lg md:text-xl text-foreground/80 leading-relaxed max-w-2xl text-pretty">
+          Software engineer, currently building AI agent infrastructure at Vertex and finishing my MS in
+          Computer Science at Columbia. I like the problems where the answer has to actually run: on real
+          data, on real hardware, with real users waiting.
         </p>
 
         <div className="flex flex-wrap items-center gap-3 mt-5 text-muted-foreground text-sm">
@@ -162,6 +171,28 @@ export function AboutSection() {
             <Mail className="w-5 h-5" />
           </a>
         </div>
+        </div>
+
+        {/* Workshop line art, desktop only so the copy stays first on mobile */}
+        <div className="hidden lg:block">
+          <Art
+            src="/art/hero-workshop.png"
+            alt="Line illustration of a builder's desk: laptop, LED matrix, microcontroller, and tangled wires"
+            width={1408}
+            height={768}
+            className="w-full"
+          />
+        </div>
+      </div>
+
+      {/* Proof strip: the numbers a recruiter skims for, without the reading */}
+      <div className="mb-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px rounded-lg border border-border bg-border overflow-hidden">
+        {proof.map((stat) => (
+          <div key={stat.label} className="bg-card px-4 py-3.5">
+            <div className="font-heading text-xl md:text-2xl font-bold tracking-tight">{stat.value}</div>
+            <div className="text-[11px] leading-tight text-muted-foreground mt-0.5">{stat.label}</div>
+          </div>
+        ))}
       </div>
 
       <div className="rule-accent mb-10" />
@@ -175,12 +206,20 @@ export function AboutSection() {
           Most of my work starts as a question I couldn't stop poking at. Three that turned into something:
         </p>
 
-        <div className="space-y-5">
-          {threads.map((thread) => (
-            <Reveal key={thread.heading} className="group border-l-2 border-border hover:border-primary/60 pl-5 py-1 transition-colors">
-              <h3 className="text-lg md:text-xl font-semibold mb-1.5 tracking-tight">{thread.heading}</h3>
-              <p className="text-[15px] text-muted-foreground leading-relaxed max-w-2xl">{thread.body}</p>
-              <ThreadLink href={thread.href} label={thread.linkLabel} />
+        <div className="grid md:grid-cols-3 gap-4">
+          {threads.map((thread, i) => (
+            <Reveal
+              key={thread.heading}
+              className="group flex flex-col rounded-xl border border-border bg-card p-5 hover:border-primary/50 transition-colors"
+            >
+              <span className="font-mono text-xs text-muted-foreground/60 mb-3">{String(i + 1).padStart(2, "0")}</span>
+              <h3 className="text-base md:text-lg font-semibold mb-2 tracking-tight leading-snug text-balance">
+                {thread.heading}
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">{thread.body}</p>
+              <div className="mt-auto pt-1">
+                <ThreadLink href={thread.href} label={thread.linkLabel} />
+              </div>
             </Reveal>
           ))}
         </div>
@@ -191,39 +230,33 @@ export function AboutSection() {
         <h2 className="eyebrow mb-1.5">
           <span className="eyebrow-index">02 / </span>How I work
         </h2>
-        <div className="mt-5 grid md:grid-cols-2 gap-x-8 gap-y-5">
-          <div>
-            <h3 className="font-semibold mb-1.5">Measure before you claim</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              At Vertex I instrumented every tool-discovery call before touching the prompt, then cut redundant
-              context for a 36.11% token-efficiency gain. Same instinct behind TAOL's ablation study: knowing
-              which signal is load-bearing beats knowing that the whole thing works.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold mb-1.5">Tests are how you go fast</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              78 tests across unit, integration, functional, and e2e layers at Vertex, at 92.65% coverage. 144 on
-              TAOL. Not for the badge, but because a suite that catches regressions is what lets you keep changing
-              things without dread.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold mb-1.5">Hardware keeps you honest</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              A Raspberry Pi file server and an Arduino on my desk both report into the Live Systems page on this
-              site. Nothing is mocked. When the Pi goes down, you see it go down, which is a useful thing to have
-              built into your own portfolio.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold mb-1.5">Research should ship</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Three peer-reviewed papers (ACM, Springer, IEEE) and two filed patents, all of them from artifacts I
-              actually built and ran: a 3.7M-parameter on-device classifier, a tri-modal counselling chatbot, a
-              CNN ensemble at 96.33%.
-            </p>
-          </div>
+        <div className="mt-5 grid sm:grid-cols-2 gap-3">
+          {[
+            {
+              title: "Measure before you claim",
+              line: "Instrumented every tool-discovery call at Vertex before touching a prompt. That's where the 36.11% token cut came from.",
+            },
+            {
+              title: "Tests are how you go fast",
+              line: "78 tests at Vertex, 144 on TAOL. A suite that catches regressions is what lets you keep changing things.",
+            },
+            {
+              title: "Hardware keeps you honest",
+              line: "The Pi and Arduino on my desk report live into this site. When they go down, you watch them go down.",
+            },
+            {
+              title: "Research should ship",
+              line: "Three papers and two patents, every one from an artifact I actually built and ran.",
+            },
+          ].map((principle) => (
+            <div
+              key={principle.title}
+              className="border-l-2 border-primary/40 pl-4 py-1"
+            >
+              <h3 className="font-semibold text-[15px] mb-0.5">{principle.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{principle.line}</p>
+            </div>
+          ))}
         </div>
       </div>
 

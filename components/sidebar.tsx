@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 import {
   Home,
@@ -51,8 +51,25 @@ const navGroups: NavGroup[] = [
   },
 ]
 
+// One of these lands in the footer per visit. All true, none load-bearing.
+const footerQuips = [
+  "Theme changes on reload",
+  "Press j / k to move around",
+  "Ctrl+K knows where everything is",
+  "A Raspberry Pi is serving part of this",
+  "The terminal actually works, try it",
+  "Nothing on the Lab page is mocked",
+]
+
 export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
+
+  // Server-render the first quip, shuffle after mount to dodge hydration
+  // mismatches: Math.random during render would differ between server and client.
+  const [quip, setQuip] = useState(footerQuips[0])
+  useEffect(() => {
+    setQuip(footerQuips[Math.floor(Math.random() * footerQuips.length)])
+  }, [])
 
   return (
     <>
@@ -92,12 +109,15 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             </span>
           </div>
 
-          {/* Navigation groups */}
-          <div className="flex-1 space-y-6">
+          {/* Navigation groups. min-h-0 + overflow lets this list scroll on
+              short viewports instead of spilling into the footer. */}
+          <div className="flex-1 min-h-0 overflow-y-auto space-y-6">
             {navGroups.map((navGroup) => (
               <div key={navGroup.label}>
-                <div className="px-3 mb-1.5 h-4">
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 lg:opacity-100 transition-opacity">
+                {/* leading-none: the label must not inherit the body's 28px
+                    line-height, which overflowed the row onto the first item. */}
+                <div className="px-3 mb-2">
+                  <span className="block text-[10px] leading-none font-mono uppercase tracking-widest text-muted-foreground whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 lg:opacity-100 transition-opacity">
                     {navGroup.label}
                   </span>
                 </div>
@@ -135,9 +155,9 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
           </div>
 
           {/* Footer */}
-          <div className="pt-3 border-t border-sidebar-border">
-            <div className="px-3 text-[11px] text-muted-foreground whitespace-nowrap overflow-hidden md:opacity-0 md:group-hover:opacity-100 lg:opacity-100 transition-opacity">
-              Theme changes on reload
+          <div className="flex-shrink-0 pt-3 border-t border-sidebar-border">
+            <div className="px-3 text-[11px] leading-tight text-muted-foreground whitespace-nowrap overflow-hidden md:opacity-0 md:group-hover:opacity-100 lg:opacity-100 transition-opacity">
+              {quip}
             </div>
           </div>
         </nav>

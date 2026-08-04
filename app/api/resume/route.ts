@@ -28,6 +28,7 @@ const resume = {
       startDate: "2026-06",
       highlights: [
         "Built a production-grade MCP platform that connects 105 enterprise tools via an Electron desktop app (10 providers)",
+        "Built Sherlock, an internal AI bug-tracing system that validates issues against Datadog logs and Pulsar events using chain-of-thought reasoning, reducing developer debugging and resolution time by 2 to 2.5 hours",
         "Implemented 78 automated tests across unit, integration, functional and e2e layers reaching a 92.65% coverage rate",
         "Integrated data collection for token optimization in tool discovery and reaching 36.11% improved token efficiency",
       ],
@@ -122,11 +123,22 @@ const resume = {
       keywords: ["React", "TypeScript", "ElevenLabs", "Gemini Flash", "Supabase"],
       url: "https://github.com/KartikDaGreat/NightmareBot",
     },
+    {
+      name: "125th Street Departure Board",
+      description:
+        "32x16 LED matrix showing live MTA subway and bus arrivals, driven by a Raspberry Pi with ultrasonic gesture control",
+      keywords: ["Python", "Raspberry Pi", "WS2812B", "GTFS-Realtime", "OneBusAway"],
+      url: "https://kartikgounder.com/projects/departure-board",
+    },
   ],
   publications: [
     { name: "On-Device Document Classification Framework", publisher: "ISEC-2025 (IEEE)" },
     { name: "Psychological Counselling Chatbot", publisher: "BITMDM-2024 (ACM)" },
-    { name: "Healthcare Technology Research", publisher: "ICoICI-2024" },
+    {
+      name: "Ensemble Model using Various CNNs for Improved Skin Cancer Diagnosis",
+      publisher: "ICoICI-2024 (IEEE)",
+      url: "https://ieeexplore.ieee.org/abstract/document/10696508",
+    },
   ],
   meta: {
     version: "v1.0.0",

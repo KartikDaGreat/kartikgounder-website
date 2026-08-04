@@ -5,6 +5,7 @@ import Link from "next/link"
 import { ArrowUpRight, FileText, Github, Play } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { projects, type Project } from "@/lib/projects"
+import { Art } from "@/components/art"
 import { Reveal, StaggerItem, StaggerRoot } from "@/components/motion/reveal"
 
 type Filter = "all" | "swe" | "ml"
@@ -27,7 +28,7 @@ export function ProjectsSection() {
       <div className="mb-12">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">Projects</h1>
         <p className="text-muted-foreground max-w-2xl">
-          Eleven builds, from trust middleware for AI coding agents to smart glasses held together with
+          Thirteen builds, from trust middleware for AI coding agents to smart glasses held together with
           3D-printed parts. Three shipped as peer-reviewed papers. Each page tells the story: the problem,
           the decisions, and what I'd do differently.
         </p>
@@ -81,19 +82,54 @@ export function ProjectsSection() {
   )
 }
 
+// The departure board has dedicated art; other hardware builds share the
+// hardware illustration, and everything else splits on the ml tag.
+const HARDWARE_SLUGS = new Set(["traffic-speed-detection-system"])
+
+function artFor(project: Project): string {
+  if (project.slug === "departure-board") return "/art/project-departure-board.png"
+  if (HARDWARE_SLUGS.has(project.slug)) return "/art/cat-hardware.png"
+  if (project.category.includes("ml")) return "/art/cat-ml.png"
+  return "/art/cat-systems.png"
+}
+
+/** Faint category illustration bleeding off the card's right edge. */
+function CardArt({ project }: { project: Project }) {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-y-0 right-0 w-2/5 opacity-[0.1] [mask-image:linear-gradient(to_left,black,transparent)]"
+    >
+      <Art src={artFor(project)} alt="" width={1408} height={768} cover className="h-full w-full" />
+    </div>
+  )
+}
+
 function FeaturedCard({ project, index }: { project: Project; index: number }) {
   const hook = project.description.split(". ")[0].replace(/\.$/, "") + "."
 
   return (
     <Link href={`/projects/${project.slug}`} className="block group">
       <article className="relative rounded-xl border border-border bg-card p-6 md:p-7 hover:border-primary/50 transition-all duration-300 overflow-hidden">
+        <CardArt project={project} />
         <div className="absolute top-5 right-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all">
           <ArrowUpRight className="w-5 h-5" />
         </div>
 
         <div className="flex items-baseline gap-3 mb-3">
           <span className="text-xs font-mono text-muted-foreground/60">{String(index + 1).padStart(2, "0")}</span>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5">
+            {project.status && (
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground">
+                <span
+                  className={cn(
+                    "w-1.5 h-1.5 rounded-full",
+                    project.status === "active" ? "bg-emerald-400 animate-pulse" : "bg-primary/70",
+                  )}
+                />
+                {project.status}
+              </span>
+            )}
             {project.category.map((cat) => (
               <span
                 key={cat}
@@ -132,7 +168,8 @@ function FeaturedCard({ project, index }: { project: Project; index: number }) {
 function CompactCard({ project }: { project: Project }) {
   return (
     <Link href={`/projects/${project.slug}`} className="block group">
-      <article className="h-full p-4 rounded-lg border border-border group-hover:border-primary/50 transition-colors bg-card">
+      <article className="relative h-full p-4 rounded-lg border border-border group-hover:border-primary/50 transition-colors bg-card overflow-hidden">
+        <CardArt project={project} />
         <div className="flex items-center gap-1.5 mb-2 text-[11px] font-mono">
           {project.category.map((cat) => (
             <span

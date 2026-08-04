@@ -4,6 +4,7 @@ import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { ThemeProvider } from "@/components/theme-provider"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { ThemeDice } from "@/components/theme-dice"
 import { MotionRoot } from "@/components/motion/motion-root"
 import "./globals.css"
 
@@ -41,11 +42,20 @@ export const metadata: Metadata = {
     title: "Kartik Gounder | Software Engineer",
     description: DESCRIPTION,
     locale: "en_US",
+    images: [
+      {
+        url: "/art/og-texture.png",
+        width: 1200,
+        height: 630,
+        alt: "Line illustration of a workbench with tools, circuits, and code",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Kartik Gounder | Software Engineer",
     description: DESCRIPTION,
+    images: ["/art/og-texture.png"],
   },
   robots: {
     index: true,
@@ -79,7 +89,10 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <MotionRoot>
-            <ThemeToggle />
+            <div className="fixed top-4 right-4 z-40 flex items-center gap-2">
+              <ThemeDice />
+              <ThemeToggle />
+            </div>
             {children}
             {/* Cmd+K hint */}
             <div className="fixed bottom-4 right-4 hidden lg:flex items-center gap-1.5 px-3 py-1.5 text-xs text-muted-foreground bg-card/80 backdrop-blur-sm border border-border rounded-full shadow-sm">

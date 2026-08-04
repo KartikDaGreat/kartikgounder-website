@@ -1,19 +1,18 @@
 import { Mail, Github, Linkedin, MapPin, FileJson } from "lucide-react"
+import { Art } from "@/components/art"
 
 export function ContactSection() {
   return (
     <section className="max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="mb-10">
         <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Let's talk</h1>
-        <p className="text-lg text-foreground/80 leading-relaxed">
-          I finish my MS at Columbia in December 2026 and I'm looking for software engineering and AI
-          infrastructure work: agentic systems, developer tooling, evaluation, or anything with a genuinely
-          hard deployment story behind it.
+        <p className="text-lg text-foreground/80 leading-relaxed text-pretty">
+          <span className="font-semibold text-foreground">Graduating December 2026.</span> If you're building
+          agentic systems, developer tooling, or evaluation, tell me what's broken on your side. I'd rather
+          hear about the problem than the job description.
         </p>
-        <p className="text-muted-foreground leading-relaxed mt-4">
-          The fastest way to get my attention is to tell me what's broken or unsolved on your side. I'd rather
-          hear about the problem than the job description. If you've read one of the project pages and think I
-          got something wrong, that's an even better email.
+        <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+          If you've read one of the project pages and think I got something wrong, that's an even better email.
         </p>
       </div>
 
@@ -91,6 +90,14 @@ export function ContactSection() {
             </a>
           </div>
         </div>
+
+        <Art
+          src="/art/contact-signal.png"
+          alt="Line illustration of a radio tower broadcasting a signal across a city skyline"
+          width={1584}
+          height={672}
+          className="w-full"
+        />
 
         <div className="flex items-center gap-3 text-muted-foreground px-1">
           <MapPin className="w-4 h-4 flex-shrink-0" />

@@ -31,8 +31,15 @@ function trackPageView(section: string) {
   } catch { /* ignore errors */ }
 }
 
-// Privacy-respecting visitor info: anonymous visit count only
+// Landing beacon: logs the visit to the Sheet and pings the Pi's LED panel.
 function collectAndSendVisitorInfo() {
+  // Fire-and-forget: the route resolves location server-side and forwards it
+  // to the Pi. Runs first and independently, since the Sheet block below
+  // returns early when no sheet URL is configured.
+  try {
+    fetch("/api/greet", { method: "POST", keepalive: true });
+  } catch { /* ignore errors */ }
+
   try {
     const sheetUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEET_URL;
     if (!sheetUrl) return;
@@ -124,13 +131,10 @@ export default function Home() {
         fetch("/api/visitors/count", { method: "POST" }).catch(() => {});
       }
     }, []);
-  const [activeSection, setActiveSection] = useState<SectionId>(() => {
-    if (typeof window !== "undefined") {
-      const section = resolveSection(window.location.hash.replace("#", ""))
-      if (section) return section
-    }
-    return "home"
-  })
+  // Always start at "home" so server and client render the same tree; the
+  // hash-sync effect below corrects to the URL's section right after mount.
+  // Reading window.location.hash in the initializer caused hydration errors.
+  const [activeSection, setActiveSection] = useState<SectionId>("home")
   const mainRef = useRef<HTMLDivElement>(null)
 
   const handleNavigate = useCallback((section: SectionId) => {

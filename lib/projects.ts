@@ -162,6 +162,82 @@ export const projects: Project[] = [
     ],
   },
   {
+    title: "125th Street Departure Board",
+    slug: "departure-board",
+    description:
+      "A 32x16 LED matrix on my desk that shows live southbound arrivals for the 4/5/6, the 2/3, and three bus routes at 125th Street, plus a dual-timezone clock and a generative art mode, switched by waving at an ultrasonic sensor.",
+    technologies: ["Python", "Raspberry Pi", "WS2812B", "GTFS-Realtime", "Pillow", "OneBusAway", "HC-SR04"],
+    period: "July 2026",
+    year: 2026,
+    role: "Solo build, hardware and software",
+    status: "active",
+    category: ["swe"],
+    metrics: [
+      { value: "512", label: "addressable pixels" },
+      { value: "2", label: "live transit feeds" },
+      { value: "20s", label: "feed poll interval" },
+    ],
+    story: {
+      problem: [
+        "I live near 125th Street. The 4/5/6 runs out of one station, the 2/3 out of another a block away, and the M60, M101, and M125 all stop on the same street. Deciding which one to walk toward meant pulling out my phone, opening an app, waiting for it to load, and doing that every single time I left the apartment.",
+        "That is a small problem. It is also a problem I have roughly twice a day, every day, which is exactly the shape of problem worth spending a weekend on. I wanted the answer to be ambient: something I glance at on the way to the door, with no interaction at all.",
+      ],
+      approach: [
+        "The panel is two 8x32 WS2812B matrices stacked into a single 32x16 logical display, 512 pixels driven off GPIO18 on a Raspberry Pi. GPIO18 is not optional: WS2812B timing needs hardware PWM, and anything else produces flicker.",
+        "Subway arrivals come from the MTA's GTFS-Realtime feed, filtered to stop 621 (125 St on the Lexington Av line) and stop 225 (125 St on the Lenox Av line), southbound only. Buses come from a completely separate OneBusAway feed with its own API key and its own ID conventions. Both sit behind a TTL cache that refreshes every 20 seconds, since the upstream feeds only update about every 30.",
+        "Nothing renders text legibly at 8 pixels tall, so I drew two bitmap fonts by hand: a 3x5 for arrival countdowns and a 4x6 for the clock. The route row layout is adaptive. It tries normal digit spacing first, then a tighter packing, and only keeps the tighter version if compressing the label actually buys room for one more arrival on screen. A route like the 60 compacts when it earns something and stays readable when it does not.",
+        "The board auto-cycles through three modes: transit, a generative art mode, and a clock. An HC-SR04 ultrasonic sensor sits on the front. A quick wave under 20cm jumps to the next mode and pauses auto-cycling for two minutes so browsing does not get interrupted. Holding your hand there for a second and a half instead toggles the display off entirely, which is what I actually use at night.",
+      ],
+      outcome: [
+        "It has been running on my desk continuously since July. I do not check a transit app at home anymore, which was the entire point.",
+        "The clock mode shows New York and India side by side, which is the real reason it is a clock and not just a countdown timer.",
+        "Every MTA bullet color on the board is darker than the official one. The official 4/5/6 green and 2/3 red are specified for print, and at LED brightness they blow out into white-ish blobs. Rendering them faithfully made them less recognizable, not more.",
+      ],
+      lessons: [
+        "I assumed the panels were wired row-major, built the whole renderer on that assumption, and got scrambled output. They are actually column-major serpentine: column 0 runs top to bottom, column 1 bottom to top, alternating. I only found it by writing calibrate.py to light one pixel at a time and watching where it landed. The fix was four lines. Finding it took an evening, and the comment explaining it is now the longest comment in the file.",
+        "Physical output is an unforgiving reviewer. A web UI lets you hide a layout bug behind responsive breakpoints. A 32-pixel-wide panel either fits the text or it does not, and the failure is sitting on your desk where you have to look at it.",
+      ],
+    },
+    architecture: `MTA GTFS-RT ──┐
+              ├─→ TTLCache(20s) ─→ layout.build_frame ─┐
+OneBusAway  ──┘                                        │
+                                                       ├─→ crossfade ─→ Display
+art.build_frame ───────────────────────────────────────┤     (8 steps)      │
+clock.build_frame ─────────────────────────────────────┘                    │
+                                                                            ▼
+HC-SR04 ─→ wave: next mode                              xy_to_index() serpentine map
+           hold 1.5s: display on/off                    32x16 logical → 512-px chain`,
+    highlights: [
+      "Two 8x32 WS2812B panels driven as one 32x16 logical display, 512 pixels on GPIO18",
+      "Live southbound arrivals for the 4/5/6 and 2/3 from MTA GTFS-Realtime, plus M60-SBS, M101, and M125 from OneBusAway",
+      "Two hand-drawn bitmap fonts (3x5 and 4x6) because nothing off the shelf is legible at this size",
+      "Adaptive route-label spacing that compacts only when it fits an extra arrival on screen",
+      "Ultrasonic gesture control: wave to change mode, hold to toggle the panel off",
+      "Serpentine pixel mapping found empirically with a calibration script after the row-major assumption failed",
+    ],
+    codeSnippet: {
+      language: "python",
+      filename: "display.py",
+      code: `def xy_to_index(x, y):
+    """Map a logical (x, y) pixel to its index in the DIN->DOUT chain.
+
+    Verified empirically (calibrate.py): each panel is wired
+    column-major serpentine -- column 0 runs top->bottom
+    (indices 0-7), column 1 bottom->top (8-15), and so on.
+    """
+    panel_index, row_in_panel = divmod(y, config.PANEL_ROWS)
+    if config.PANEL1_POSITION == "bottom":
+        panel_index = config.NUM_PANELS - 1 - panel_index
+
+    col_y = row_in_panel
+    if config.SERPENTINE_COLUMNS and x % 2 == 1:
+        col_y = config.PANEL_ROWS - 1 - row_in_panel
+
+    panel_offset = panel_index * config.PANEL_ROWS * config.PANEL_COLS
+    return panel_offset + x * config.PANEL_ROWS + col_y`,
+    },
+  },
+  {
     title: "Brandeis: Privacy Technology Advisor",
     slug: "brandeis",
     featured: true,
@@ -475,6 +551,7 @@ export const projects: Project[] = [
     accuracy: "96.33%",
     status: "published",
     role: "Published at ICoICI-2024 (IEEE)",
+    paper: "https://ieeexplore.ieee.org/abstract/document/10696508",
     metrics: [
       { value: "96.33%", label: "ensemble accuracy" },
       { value: "3", label: "CNN architectures combined" },

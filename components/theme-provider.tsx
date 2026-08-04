@@ -66,6 +66,15 @@ const MIDNIGHT_THEMES = [
 
 const BASE_THEMES = ["default", "warm", "ocean", "mono", "forest"] as const
 
+/** Every palette the roulette can land on; "default" means no data-theme. */
+export const ALL_PALETTES: string[] = [
+  ...SUNRISE_THEMES,
+  ...DAYLIGHT_THEMES,
+  ...SUNSET_THEMES,
+  ...MIDNIGHT_THEMES,
+  ...BASE_THEMES,
+]
+
 interface ThemeProviderProps {
   children: React.ReactNode
 }

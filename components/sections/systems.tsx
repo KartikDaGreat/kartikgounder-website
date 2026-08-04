@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react"
 import { cn } from "@/lib/utils"
 import { DonutFinder } from "@/components/lab/donut-finder"
+import { Art } from "@/components/art"
 
 // --- Types ---
 
@@ -942,13 +943,26 @@ export function SystemsSection() {
 
   return (
     <section>
-      <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Live Systems</h1>
-      <p className="text-lg text-foreground/80 leading-relaxed max-w-2xl mb-10">
-        Real telemetry from real machines. A Raspberry Pi file server in my apartment, an Arduino on my desk,
-        this site's deploy pipeline, and the repos behind all of it. Nothing on this page is mocked or seeded,
-        which means when the Pi goes down, you watch it go down. That felt like the honest way to build a
-        dashboard about yourself.
-      </p>
+      <div className="mb-10 lg:grid lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-10 lg:items-center">
+        <div>
+          <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Live Systems</h1>
+          <p className="text-lg text-foreground/80 leading-relaxed max-w-2xl">
+            Real telemetry from real machines. A Raspberry Pi file server in my apartment, an Arduino on my desk,
+            this site's deploy pipeline, and the repos behind all of it. Nothing on this page is mocked or seeded,
+            which means when the Pi goes down, you watch it go down. That felt like the honest way to build a
+            dashboard about yourself.
+          </p>
+        </div>
+        <div className="hidden lg:block">
+          <Art
+            src="/art/lab-telemetry.png"
+            alt="Line illustration of a workbench with a single-board computer, oscilloscope, and LED matrix wired together"
+            width={1408}
+            height={768}
+            className="w-full"
+          />
+        </div>
+      </div>
 
       <div className="space-y-8">
         {/* Hardware */}

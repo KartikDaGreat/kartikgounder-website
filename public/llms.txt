@@ -6,7 +6,7 @@
 Kartik Gounder is a software engineer and machine learning researcher pursuing an MS in Computer Science at Columbia University. He builds production-grade systems, AI platforms, and developer tools.
 
 ## Current Roles
-- Software Development Intern at Vertex Inc. (Pennsylvania, US): Building an MCP platform connecting 105 enterprise tools via Electron, with 92.65% test coverage and 36.11% improved token efficiency.
+- Software Development Intern at Vertex Inc. (Pennsylvania, US): Building an MCP platform connecting 105 enterprise tools via Electron, with 92.65% test coverage and 36.11% improved token efficiency. Also built Sherlock, an internal AI bug-tracing system that validates issues against Datadog logs and Pulsar events using chain-of-thought reasoning, cutting 2 to 2.5 hours off debugging and resolution time.
 - aiX Convergence Design Studio Intern at Columbia University: Supporting AI literacy research with Prof. Anthony Vanky and evaluating data science agents with Prof. Tian Zheng.
 
 ## Previous Experience
@@ -22,7 +22,8 @@ Kartik Gounder is a software engineer and machine learning researcher pursuing a
 - FuelForm: Adaptive fitness planner on Snapdragon S25 Elite (Snapdragon Hackathon)
 - Mind Duelist: Real-time voice-based AI adversarial interviewer with bluff detection
 - On-Device Document Classification: 3.7M param CNN, published at ISEC-2025
-- Skin Cancer Detection Ensemble: ResNet + EfficientNet + MobileNet (96.33%)
+- Skin Cancer Detection Ensemble: ResNet + EfficientNet + MobileNet (96.33%, published at ICoICI-2024)
+- 125th Street Departure Board: 32x16 LED matrix showing live MTA subway and bus arrivals on a Raspberry Pi, with ultrasonic gesture control
 
 ## Technical Skills
 Languages & Frameworks: TypeScript, Python, Java, C++, React, Next.js, Flask, Kotlin
