@@ -3,17 +3,34 @@ import { Art } from "@/components/art"
 
 export function ContactSection() {
   return (
-    <section className="max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="mb-10">
-        <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Let's talk</h1>
-        <p className="text-lg text-foreground/80 leading-relaxed text-pretty">
-          <span className="font-semibold text-foreground">Graduating December 2026.</span> If you're building
-          agentic systems, developer tooling, or evaluation, tell me what's broken on your side. I'd rather
-          hear about the problem than the job description.
-        </p>
-        <p className="text-sm text-muted-foreground leading-relaxed mt-3">
-          If you've read one of the project pages and think I got something wrong, that's an even better email.
-        </p>
+    <section className="max-w-3xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="mb-10 sm:grid sm:grid-cols-[minmax(0,1fr)_220px] sm:gap-8 sm:items-start">
+        <div>
+          <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Let's talk</h1>
+          <p className="text-lg text-foreground/80 leading-relaxed text-pretty">
+            <span className="font-semibold text-foreground">Graduating December 2026.</span> If you're building
+            agentic systems, developer tooling, or evaluation, tell me what's broken on your side. I'd rather
+            hear about the problem than the job description.
+          </p>
+          <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+            If you've read one of the project pages and think I got something wrong, that's an even better email.
+          </p>
+        </div>
+
+        {/* Drawn from a real photo, run through the same mask pipeline as the
+            rest of the art so it takes on whichever palette is active. */}
+        <div className="mt-8 sm:mt-0 max-w-[220px]">
+          <Art
+            src="/art/portrait.png"
+            alt="Line-drawn portrait of Kartik Gounder with the Manhattan skyline behind him"
+            width={1000}
+            height={800}
+            className="w-full"
+          />
+          <p className="mt-1 text-[11px] font-mono text-muted-foreground text-center">
+            {"// hi, that's me"}
+          </p>
+        </div>
       </div>
 
       <div className="rule-accent mb-10" />
