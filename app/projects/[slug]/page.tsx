@@ -1,7 +1,8 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowRight, ExternalLink, Github, FileText } from "lucide-react"
-import { getProjectBySlug, getAllProjectSlugs, projects, type Project } from "@/lib/projects"
+import { artFor, getProjectBySlug, getAllProjectSlugs, projects, type Project } from "@/lib/projects"
+import { Art } from "@/components/art"
 import { PopupLink } from "@/components/popup-link"
 import { BackButton } from "@/components/back-button"
 import { ImageLightbox } from "@/components/image-lightbox"
@@ -70,13 +71,21 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                 {categories.map((cat) => (
                   <span
                     key={cat}
-                    className={`px-2.5 py-1 text-xs font-mono rounded-md ${
+                    className={`px-2.5 py-1 text-xs font-mono rounded-md border ${
                       cat === "ml"
-                        ? "bg-primary/10 text-primary border border-primary/20"
-                        : "bg-secondary text-secondary-foreground border border-border"
+                        ? "bg-primary/10 text-primary border-primary/20"
+                        : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
                     }`}
                   >
                     {cat === "ml" ? "ML/AI" : "SWE"}
+                  </span>
+                ))}
+                {project.tags?.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-2.5 py-1 text-xs font-mono rounded-md border border-border text-muted-foreground"
+                  >
+                    {tag}
                   </span>
                 ))}
                 {project.status && (
@@ -114,6 +123,20 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                 )
               )}
             </div>
+
+            {/* Project illustration. Skipped when real screenshots already
+                carry the page, so the two never compete. */}
+            {!hasImages && (
+              <div className="mb-10">
+                <Art
+                  src={artFor(project)}
+                  alt={`Line illustration for ${project.title}`}
+                  width={1376}
+                  height={768}
+                  className="w-full max-w-2xl mx-auto"
+                />
+              </div>
+            )}
 
             {/* Links */}
             {(project.github || project.paper || project.demo) && (

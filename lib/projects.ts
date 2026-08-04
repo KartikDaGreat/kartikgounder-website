@@ -45,6 +45,31 @@ export interface Project {
   architecture?: string
 }
 
+/**
+ * One line illustration per project, so the shelf stops repeating the same
+ * three drawings across thirteen cards. Slugs missing from this map fall back
+ * to the category art.
+ */
+const PROJECT_ART: Record<string, string> = {
+  taol: "/art/project-taol.png",
+  "departure-board": "/art/project-departure-board.png",
+  brandeis: "/art/project-brandeis.png",
+  "fuelform-snapdragon-hack-": "/art/project-fuelform.png",
+  "mind-duelist-ai-adversarial-interviewer": "/art/project-mind-duelist.png",
+  "on-device-document-classification": "/art/project-document-classification.png",
+  "psychological-counselling-chatbot": "/art/project-counselling-chatbot.png",
+  "skin-cancer-detection-ensemble": "/art/project-skin-cancer.png",
+  "fake-news-origin-detection": "/art/project-fake-news.png",
+  "traffic-speed-detection-system": "/art/project-traffic-speed.png",
+  urbanistai: "/art/project-urbanistai.png",
+}
+
+export function artFor(project: Pick<Project, "slug" | "category">): string {
+  const own = PROJECT_ART[project.slug]
+  if (own) return own
+  return project.category.includes("ml") ? "/art/cat-ml.png" : "/art/cat-systems.png"
+}
+
 function toSlug(title: string): string {
   return title
     .toLowerCase()

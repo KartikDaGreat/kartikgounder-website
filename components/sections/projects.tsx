@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { ArrowUpRight, FileText, Github, Play } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { projects, type Project } from "@/lib/projects"
+import { artFor, projects, type Project } from "@/lib/projects"
 import { Art } from "@/components/art"
 import { Reveal, StaggerItem, StaggerRoot } from "@/components/motion/reveal"
 
@@ -118,16 +118,6 @@ function TagChips({ tags }: { tags?: string[] }) {
   )
 }
 
-// The departure board has dedicated art; other hardware builds share the
-// hardware illustration, and everything else splits on the ml tag.
-const HARDWARE_SLUGS = new Set(["traffic-speed-detection-system"])
-
-function artFor(project: Project): string {
-  if (project.slug === "departure-board") return "/art/project-departure-board.png"
-  if (HARDWARE_SLUGS.has(project.slug)) return "/art/cat-hardware.png"
-  if (project.category.includes("ml")) return "/art/cat-ml.png"
-  return "/art/cat-systems.png"
-}
 
 /** Faint category illustration bleeding off the card's right edge. */
 function CardArt({ project }: { project: Project }) {
