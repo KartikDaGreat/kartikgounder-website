@@ -12,6 +12,11 @@ export interface Project {
   highlights?: string[]
   accuracy?: string
   category: Array<"swe" | "ml">
+  /**
+   * Domain labels shown beside the swe/ml chip. Two or three per project, and
+   * specific enough to tell two ML projects apart at a glance.
+   */
+  tags?: string[]
   longDescription?: string[]
   codeSnippet?: {
     language: string
@@ -51,6 +56,7 @@ export const projects: Project[] = [
   {
     title: "TAOL: Trust-Aware Orchestration Layer",
     slug: "taol",
+    tags: ["Agent Infrastructure", "Trust & Safety", "Benchmarks"],
     featured: true,
     description:
       "Trust-aware middleware layer for LLM-powered coding agents that quantifies generation reliability using composite risk scoring and automated human-in-the-loop decision routing.",
@@ -164,6 +170,8 @@ export const projects: Project[] = [
   {
     title: "125th Street Departure Board",
     slug: "departure-board",
+    tags: ["Hardware", "Transit Data", "Embedded"],
+    github: "https://github.com/KartikDaGreat/MTA-Board",
     description:
       "A 32x16 LED matrix on my desk that shows live southbound arrivals for the 4/5/6, the 2/3, and three bus routes at 125th Street, plus a dual-timezone clock and a generative art mode, switched by waving at an ultrasonic sensor.",
     technologies: ["Python", "Raspberry Pi", "WS2812B", "GTFS-Realtime", "Pillow", "OneBusAway", "HC-SR04"],
@@ -240,6 +248,7 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
   {
     title: "Brandeis: Privacy Technology Advisor",
     slug: "brandeis",
+    tags: ["Privacy Tech", "Rule Engine", "Policy"],
     featured: true,
     description:
       "Interactive decision-support tool that analyzes 11 user-defined constraints across privacy goals, data sensitivity, trust models, and regulatory regimes to recommend optimal privacy-enhancing technologies with explainable reasoning.",
@@ -329,6 +338,7 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
   {
     title: "FuelForm (Snapdragon Hack)",
     slug: "fuelform-snapdragon-hack-",
+    tags: ["Mobile", "On-Device AI", "Hackathon"],
     description:
       "Adaptive fitness and nutrition planning system that automates workout and dietary decisions using three AI/ML agents across an Android app and laptop compute node, synced via Firebase.",
     technologies: ["Android", "Kotlin", "Firebase", "Python", "AI/ML", "Snapdragon S25 Elite", "Health Connect"],
@@ -383,6 +393,7 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
   {
     title: "Mind Duelist: AI Adversarial Interviewer",
     slug: "mind-duelist-ai-adversarial-interviewer",
+    tags: ["Voice AI", "Real-Time", "Hackathon"],
     description:
       "Real-time voice-based technical interviewer that detects bluffing, maps knowledge gaps, and dynamically escalates follow-up questions using LLM-driven gap analysis and live scoring.",
     technologies: ["React", "TypeScript", "ElevenLabs", "Gemini Flash", "Supabase", "Edge Functions", "AI/ML"],
@@ -434,6 +445,7 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
   {
     title: "On-Device Document Classification",
     slug: "on-device-document-classification",
+    tags: ["On-Device AI", "Computer Vision", "Published"],
     description:
       "Lightweight CNN framework for classifying documents based on visual layout and limited text, designed for on-device deployment with only 3.7M parameters. Published at IEEE ISEC-2025.",
     technologies: ["Python", "TensorFlow", "CNN", "Computer Vision", "On-Device ML"],
@@ -487,6 +499,8 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
   {
     title: "Psychological Counselling Chatbot",
     slug: "psychological-counselling-chatbot",
+    tags: ["Multimodal", "Healthcare", "Published"],
+    github: "https://github.com/KartikDaGreat/Psychological-Counselling-Chatbot",
     description:
       "Tri-modal chatbot for assessing patients' mental states through text, voice, and facial expression analysis, achieving 87% user satisfaction in clinical evaluations. Published at ACM ICAISS-2024.",
     technologies: ["Python", "Flask", "AngularJS", "NLP", "Speech Analysis", "Computer Vision", "AI/ML"],
@@ -542,6 +556,7 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
   {
     title: "Skin Cancer Detection Ensemble",
     slug: "skin-cancer-detection-ensemble",
+    tags: ["Medical Imaging", "Model Ensemble", "Published"],
     description:
       "Ensemble deep learning model combining ResNet-50, EfficientNet-B3, and MobileNetV2 for dermatological image classification, achieving 96.33% accuracy on skin lesion detection.",
     technologies: ["Python", "PyTorch", "ResNet", "EfficientNet", "MobileNet", "Transfer Learning"],
@@ -616,6 +631,8 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
   {
     title: "Fake News Origin Detection",
     slug: "fake-news-origin-detection",
+    tags: ["NLP", "Multilingual", "Research"],
+    github: "https://github.com/KartikDaGreat/Fake-News-Other-Langs",
     description:
       "NLP-based machine learning system for detecting the origins and propagation patterns of misinformation, achieving 96.3% accuracy using linguistic feature analysis and source credibility scoring.",
     technologies: ["Python", "NLP", "Scikit-learn", "NLTK", "TF-IDF", "Feature Engineering"],
@@ -671,6 +688,7 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
   {
     title: "Traffic Speed Detection System",
     slug: "traffic-speed-detection-system",
+    tags: ["Computer Vision", "Civic Tech", "Hardware"],
     description:
       "Automated speeding ticket framework for NHAI (National Highways Authority of India) using computer vision for vehicle detection, speed estimation, and license plate recognition.",
     technologies: ["Python", "OpenCV", "YOLO", "Computer Vision", "IoT", "OCR"],
@@ -715,6 +733,7 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
   {
     title: "Chota-Dhobi Mobile App",
     slug: "chota-dhobi-mobile-app",
+    tags: ["Mobile", "Local Services"],
     description:
       "On-demand laundry services mobile application with real-time order tracking, dynamic pricing, scheduling, and multi-vendor management built with Firebase backend.",
     technologies: ["Firebase", "Android", "Java", "Firestore", "Cloud Functions", "Google Maps API"],
@@ -739,6 +758,8 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
   {
     title: "UrbanistAI: ML Data Labeling Platform",
     slug: "urbanistai",
+    tags: ["Privacy Tech", "Computer Vision", "Platform"],
+    github: "https://github.com/KartikDaGreat/UrbanistAI-public",
     featured: true,
     description:
       "Full-stack ML data collection and labeling platform with privacy-preserving image processing, interactive bounding box annotation, and role-based workspace management for university courses.",
@@ -841,6 +862,7 @@ Konva.js labeling canvas ──▶ Cloud SQL (Postgres)
   {
     title: "Personal Portfolio Website",
     slug: "personal-portfolio-website",
+    tags: ["Full-Stack", "Design", "This Site"],
     description:
       "Interactive developer portfolio featuring a fully functional terminal emulator, encrypted file management system, dynamic theming, and real-time integrations with GitHub, Vercel, and Arduino IoT.",
     technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Supabase", "Arduino", "Vercel API"],

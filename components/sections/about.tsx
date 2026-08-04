@@ -8,10 +8,10 @@ import { Reveal } from "@/components/motion/reveal"
 // Every number already lives elsewhere on this site.
 const proof = [
   { value: "2-2.5h", label: "cut off every bug I trace at Vertex" },
-  { value: "8+ hrs", label: "of manual reporting killed per week" },
+  { value: "13%", label: "revenue lift I drove across 15 clients" },
+  { value: "19%", label: "fewer security threats reaching a release" },
   { value: "36.11%", label: "fewer tokens on every agent request" },
   { value: "28%", label: "faster API calls at SAP" },
-  { value: "23%", label: "faster releases from CI/CD I built" },
   { value: "3 + 2", label: "papers published, patents filed" },
 ]
 

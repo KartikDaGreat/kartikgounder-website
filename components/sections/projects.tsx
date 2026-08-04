@@ -82,6 +82,42 @@ export function ProjectsSection() {
   )
 }
 
+const chipBase = "px-2 py-0.5 text-[11px] font-mono rounded-md border whitespace-nowrap"
+
+/**
+ * Literal emerald rather than a theme variable: --primary already belongs to
+ * ML/AI, and every other palette slot is a surface color. Emerald 500 is one
+ * of the few shades that reads on both the 53 dark palettes and the light one.
+ */
+function CategoryChip({ cat }: { cat: "swe" | "ml" }) {
+  return (
+    <span
+      className={cn(
+        chipBase,
+        cat === "ml"
+          ? "bg-primary/10 text-primary border-primary/20"
+          : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
+      )}
+    >
+      {cat === "ml" ? "ML/AI" : "SWE"}
+    </span>
+  )
+}
+
+/** Domain labels. Outlined, not filled, so they stay behind the category chip. */
+function TagChips({ tags }: { tags?: string[] }) {
+  if (!tags || tags.length === 0) return null
+  return (
+    <>
+      {tags.map((tag) => (
+        <span key={tag} className={cn(chipBase, "border-border text-muted-foreground")}>
+          {tag}
+        </span>
+      ))}
+    </>
+  )
+}
+
 // The departure board has dedicated art; other hardware builds share the
 // hardware illustration, and everything else splits on the ml tag.
 const HARDWARE_SLUGS = new Set(["traffic-speed-detection-system"])
@@ -131,16 +167,9 @@ function FeaturedCard({ project, index }: { project: Project; index: number }) {
               </span>
             )}
             {project.category.map((cat) => (
-              <span
-                key={cat}
-                className={cn(
-                  "px-2 py-0.5 text-[11px] font-mono rounded-md",
-                  cat === "ml" ? "bg-primary/10 text-primary" : "bg-secondary text-secondary-foreground",
-                )}
-              >
-                {cat === "ml" ? "ML/AI" : "SWE"}
-              </span>
+              <CategoryChip key={cat} cat={cat} />
             ))}
+            <TagChips tags={project.tags} />
             {project.period && <span className="text-[11px] font-mono text-muted-foreground">{project.period}</span>}
           </div>
         </div>
@@ -170,24 +199,11 @@ function CompactCard({ project }: { project: Project }) {
     <Link href={`/projects/${project.slug}`} className="block group">
       <article className="relative h-full p-4 rounded-lg border border-border group-hover:border-primary/50 transition-colors bg-card overflow-hidden">
         <CardArt project={project} />
-        <div className="flex items-center gap-1.5 mb-2 text-[11px] font-mono">
+        <div className="flex flex-wrap items-center gap-1.5 mb-2 text-[11px] font-mono">
           {project.category.map((cat) => (
-            <span
-              key={cat}
-              className={cn(
-                "px-2 py-0.5 rounded-md",
-                cat === "ml" ? "bg-primary/10 text-primary" : "bg-secondary text-secondary-foreground",
-              )}
-            >
-              {cat === "ml" ? "ML/AI" : "SWE"}
-            </span>
+            <CategoryChip key={cat} cat={cat} />
           ))}
-          {project.paper && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400">
-              <FileText className="w-3 h-3" />
-              Published
-            </span>
-          )}
+          <TagChips tags={project.tags} />
           <span className="ml-auto text-muted-foreground">{project.year}</span>
         </div>
         <h3 className="font-medium group-hover:text-primary transition-colors mb-1.5">{project.title}</h3>

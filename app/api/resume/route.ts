@@ -51,8 +51,9 @@ const resume = {
       startDate: "2025-01",
       endDate: "2025-06",
       highlights: [
-        "Built automated deployment scripts with CI/CD pipelines, reducing release time by 23%",
-        "Designed data visualization dashboards for internal teams, cutting manual reporting by 8+ hours/week",
+        "Improved the CI/CD pipeline by parallelizing testing and security checks, reducing release time from about 45 to 35 minutes per production push",
+        "Scaled up 3 AI modules across Python-based products, working with 15 clients to predictively improve revenue by 13%",
+        "Redesigned the security scanner around local server-based agentic monitoring, reducing threats in releases by 19%",
       ],
     },
     {

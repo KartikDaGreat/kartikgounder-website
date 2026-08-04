@@ -10,7 +10,7 @@ Kartik Gounder is a software engineer and machine learning researcher pursuing a
 - aiX Convergence Design Studio Intern at Columbia University: Supporting AI literacy research with Prof. Anthony Vanky and evaluating data science agents with Prof. Tian Zheng.
 
 ## Previous Experience
-- Software Development Intern at eNova Software (Jan 2025 - Jun 2025): CI/CD pipelines, data visualization dashboards
+- Software Development Intern at eNova Software (Jan 2025 - Jun 2025): Cut release time from ~45 to ~35 minutes by parallelizing CI/CD testing and security checks, scaled 3 AI modules across Python products with 15 clients for a 13% revenue improvement, and cut release threats 19% with an agentic security scanner
 - iXp Intern at SAP Labs India (Jun 2024 - Aug 2024): Farmbot software, XSUAA authentication
 - R&D Intern at Samsung PRISM (Jan 2024 - May 2024): CNN framework for on-device document classification, published at ISEC-2025
 - Software Engineer Intern at eNova (Aug 2023 - Dec 2023): Web assets, server monitoring

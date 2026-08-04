@@ -59,6 +59,7 @@ const experiences: Experience[] = [
     year: 2026,
     location: "New York, NY",
     type: "internship",
+    metrics: ["PII blurred before storage", "agent evaluation metrics"],
     highlights: [
       {
         lead: "Privacy pipeline",
@@ -82,10 +83,20 @@ const experiences: Experience[] = [
     year: 2025,
     location: "Coimbatore, Tamil Nadu, India",
     type: "internship",
-    metrics: ["23% faster releases", "8+ hrs/week of reporting saved"],
+    metrics: ["45 to 35 min releases", "13% revenue lift", "19% fewer threats"],
     highlights: [
-      { lead: "CI/CD", text: "automated deployment scripts that cut release time by 23%." },
-      { lead: "Dashboards", text: "data visualization for internal teams, saving 8+ hours of manual reporting a week." },
+      {
+        lead: "CI/CD",
+        text: "parallelized the testing and security checks, taking a production release from about 45 minutes down to 35.",
+      },
+      {
+        lead: "3 AI modules",
+        text: "scaled up across the Python products, working with 15 clients to predictively improve revenue by 13%.",
+      },
+      {
+        lead: "Security scanner",
+        text: "redesigned around local server-based agentic monitoring, cutting threats that reached a release by 19%.",
+      },
     ],
     certificate: "https://drive.google.com/file/d/1kL7yFm7ALNFfT2R6YdrNCYVFRnZWNI_z/view?usp=sharing",
   },
@@ -96,7 +107,7 @@ const experiences: Experience[] = [
     year: 2024,
     location: "Bangalore, India",
     type: "internship",
-    metrics: ["28% faster API calls"],
+    metrics: ["28% faster API calls", "JWT auth on every endpoint"],
     highlights: [
       { lead: "Farmbot", text: "designed and built the platform, cutting API call time 28% by restructuring frontend request batching." },
       { lead: "XSUAA auth", text: "JWT access tokens locking down every endpoint in the service layer." },
@@ -124,6 +135,7 @@ const experiences: Experience[] = [
     year: 2023,
     location: "Coimbatore, Tamil Nadu, India",
     type: "internship",
+    metrics: ["shipped server monitoring", "rewrote the training syllabus"],
     highlights: [
       { lead: "Web assets", text: "email landing pages and server status monitoring." },
       { lead: "Training syllabus", text: "updated and enhanced the internship curriculum." },
