@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { Mail, Github, Linkedin, MapPin, FileJson } from "lucide-react"
 import { Art } from "@/components/art"
 
@@ -17,17 +18,24 @@ export function ContactSection() {
           </p>
         </div>
 
-        {/* Drawn from a real photo, run through the same mask pipeline as the
-            rest of the art so it takes on whichever palette is active. */}
-        <div className="mt-8 sm:mt-0 max-w-[220px]">
-          <Art
-            src="/art/portrait.png"
-            alt="Line-drawn portrait of Kartik Gounder with the Manhattan skyline behind him"
-            width={1000}
-            height={800}
-            className="w-full"
-          />
-          <p className="mt-1 text-[11px] font-mono text-muted-foreground text-center">
+        {/*
+          Unlike the line-art masks, this one ships opaque and carries its own
+          paper. Stippling encodes brightness as ink density, so painting it in
+          the palette's foreground over a dark background would render it as a
+          photographic negative: dark hair bright, white shirt black. Framed as
+          a print instead, it reads the same in all 54 palettes.
+        */}
+        <div className="mt-8 sm:mt-0 max-w-[240px]">
+          <div className="rounded-lg border border-border bg-card p-2 shadow-sm">
+            <Image
+              src="/art/portrait.png"
+              alt="Stippled portrait of Kartik Gounder with the Manhattan skyline behind him"
+              width={900}
+              height={900}
+              className="w-full rounded-sm"
+            />
+          </div>
+          <p className="mt-2 text-[11px] font-mono text-muted-foreground text-center">
             {"// hi, that's me"}
           </p>
         </div>
