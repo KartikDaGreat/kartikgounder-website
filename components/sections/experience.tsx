@@ -1,7 +1,7 @@
 import { Award } from "lucide-react"
 import { PopupLink } from "@/components/popup-link"
 import { Reveal } from "@/components/motion/reveal"
-import { MetricChips } from "@/components/metric-chips"
+import { ImpactStrip, type Impact } from "@/components/impact-strip"
 import { Expander } from "@/components/expander"
 
 interface Highlight {
@@ -15,7 +15,7 @@ interface Experience {
   period: string
   year: number
   location: string
-  metrics?: string[]
+  impact?: Impact[]
   highlights: Highlight[]
   type: "internship" | "research"
   certificate?: string
@@ -32,7 +32,10 @@ const experiences: Experience[] = [
     year: 2026,
     location: "Pennsylvania, US",
     type: "internship",
-    metrics: ["2-2.5h saved per bug", "36.11% fewer tokens per request"],
+    impact: [
+      { icon: "bug-trace", value: "2-2.5h", label: "saved per bug" },
+      { icon: "token-funnel", value: "36.11%", label: "fewer tokens" },
+    ],
     highlights: [
       {
         lead: "MCP platform",
@@ -59,7 +62,10 @@ const experiences: Experience[] = [
     year: 2026,
     location: "New York, NY",
     type: "internship",
-    metrics: ["PII blurred before storage", "agent evaluation metrics"],
+    impact: [
+      { icon: "blur-shield", value: "Blur-first", label: "PII never reaches storage" },
+      { icon: "gauge", value: "Eval metrics", label: "for data-science agents" },
+    ],
     highlights: [
       {
         lead: "Privacy pipeline",
@@ -83,7 +89,11 @@ const experiences: Experience[] = [
     year: 2025,
     location: "Coimbatore, Tamil Nadu, India",
     type: "internship",
-    metrics: ["45 to 35 min releases", "13% revenue lift", "19% fewer threats"],
+    impact: [
+      { icon: "pipeline-clock", value: "45→35 min", label: "production release" },
+      { icon: "revenue-curve", value: "13%", label: "revenue, 15 clients" },
+      { icon: "threat-shield", value: "19%", label: "fewer threats shipped" },
+    ],
     highlights: [
       {
         lead: "CI/CD",
@@ -107,7 +117,10 @@ const experiences: Experience[] = [
     year: 2024,
     location: "Bangalore, India",
     type: "internship",
-    metrics: ["28% faster API calls", "JWT auth on every endpoint"],
+    impact: [
+      { icon: "api-speed", value: "28%", label: "faster API calls" },
+      { icon: "auth-key", value: "JWT", label: "on every endpoint" },
+    ],
     highlights: [
       { lead: "Farmbot", text: "designed and built the platform, cutting API call time 28% by restructuring frontend request batching." },
       { lead: "XSUAA auth", text: "JWT access tokens locking down every endpoint in the service layer." },
@@ -121,7 +134,10 @@ const experiences: Experience[] = [
     year: 2024,
     location: "Bangalore, India",
     type: "internship",
-    metrics: ["shipped on-device, no cloud", "published at ISEC-2025"],
+    impact: [
+      { icon: "on-device-chip", value: "On-device", label: "classification, no server" },
+      { icon: "paper-stack", value: "ISEC-2025", label: "paper published" },
+    ],
     highlights: [
       { lead: "On-device CNN", text: "custom framework for document classification that runs on the phone, not a server." },
       { lead: "ISEC-2025", text: "co-authored and published the research paper behind it." },
@@ -135,7 +151,10 @@ const experiences: Experience[] = [
     year: 2023,
     location: "Coimbatore, Tamil Nadu, India",
     type: "internship",
-    metrics: ["shipped server monitoring", "rewrote the training syllabus"],
+    impact: [
+      { icon: "server-pulse", value: "Uptime pages", label: "server status monitoring" },
+      { icon: "syllabus", value: "Syllabus", label: "intern curriculum rewritten" },
+    ],
     highlights: [
       { lead: "Web assets", text: "email landing pages and server status monitoring." },
       { lead: "Training syllabus", text: "updated and enhanced the internship curriculum." },
@@ -232,7 +251,10 @@ function HighlightItem({ highlight }: { highlight: Highlight }) {
     <li className="text-sm text-muted-foreground flex items-start gap-2">
       <span className="w-1 h-1 rounded-full bg-primary/60 mt-2 flex-shrink-0" />
       <span>
-        <span className="font-semibold text-foreground">{highlight.lead}</span>: {highlight.text}
+        {/* The keyword is set in mono so it reads as a label, not just bold prose. */}
+        <span className="font-mono text-[13px] text-foreground">{highlight.lead}</span>
+        <span className="text-muted-foreground/50"> / </span>
+        {highlight.text}
       </span>
     </li>
   )
@@ -251,7 +273,9 @@ function ExperienceCard({ experience }: { experience: Experience }) {
         <span className="text-xs text-muted-foreground font-mono">{experience.period}</span>
       </div>
       <p className="text-xs text-muted-foreground mb-3">{experience.location}</p>
-      {experience.metrics && <MetricChips items={experience.metrics} className="mb-3" />}
+      {experience.impact && (
+        <ImpactStrip items={experience.impact} className="mb-4 pb-4 border-b border-border/60" />
+      )}
       <ul className="space-y-1.5">
         {visible.map((highlight) => (
           <HighlightItem key={highlight.lead} highlight={highlight} />
