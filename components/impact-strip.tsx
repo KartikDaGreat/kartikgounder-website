@@ -23,11 +23,14 @@ export function ImpactStrip({ items, className }: { items: Impact[]; className?:
   if (items.length === 0) return null
 
   return (
-    <div className={cn("flex flex-wrap items-center gap-y-3", className)}>
+    // Stacked on phones, a row with hairline dividers from sm up. The dividers
+    // are gated behind sm because a wrapped row leaves the first item of the
+    // second line with a rule dangling off its left edge.
+    <div className={cn("flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-y-3", className)}>
       {items.map((item, i) => (
         <div
           key={item.label}
-          className={cn("flex items-center gap-2.5 pr-5", i > 0 && "pl-5 border-l border-border")}
+          className={cn("flex items-center gap-2.5 sm:pr-5", i > 0 && "sm:pl-5 sm:border-l sm:border-border")}
         >
           {item.icon && (
             <Art

@@ -25,7 +25,7 @@ export function Expander({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-1 mt-1.5 text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
+        className="inline-flex items-center gap-1 mt-1 min-h-9 pr-3 text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
       >
         <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", open && "rotate-180")} />
         {open ? "show less" : label}

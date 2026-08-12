@@ -801,7 +801,7 @@ export function TerminalSection() {
 
         <div
           ref={terminalRef}
-          className="p-4 h-[420px] md:h-[520px] overflow-y-auto font-mono text-sm"
+          className="p-3 sm:p-4 h-[420px] md:h-[520px] overflow-y-auto font-mono text-sm break-words"
           onClick={() => inputRef.current?.focus()}
         >
           {history.map((cmd, index) => (
@@ -838,7 +838,8 @@ export function TerminalSection() {
                   }
                 }}
                 onKeyDown={handleKeyDown}
-                className="w-full bg-transparent outline-none caret-primary"
+                /* 16px on mobile: iOS auto-zooms the page on any input below that. */
+                className="w-full bg-transparent outline-none caret-primary text-base sm:text-sm"
                 spellCheck={false}
                 autoComplete="off"
                 disabled={uploadingFile !== null}
@@ -872,7 +873,10 @@ export function TerminalSection() {
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground mt-4">Tip: Use arrow keys for command history</p>
+      <p className="text-xs text-muted-foreground mt-4">
+        <span className="hidden sm:inline">Tip: Use arrow keys for command history</span>
+        <span className="sm:hidden">Tip: type help to see everything it knows</span>
+      </p>
 
       {uploadProgress !== null && (
         <div className="mt-3 text-xs text-muted-foreground">

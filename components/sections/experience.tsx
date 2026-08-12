@@ -294,7 +294,7 @@ function ExperienceCard({ experience }: { experience: Experience }) {
         <div className="mt-3">
           <PopupLink
             href={experience.certificate}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
+            className="inline-flex items-center gap-1.5 min-h-9 px-3 text-xs font-medium rounded-md bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
           >
             <Award className="w-3 h-3" />
             Certificate

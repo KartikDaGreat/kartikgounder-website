@@ -103,7 +103,7 @@ export function UsesSection() {
                             href={item.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="font-medium hover:text-primary transition-colors"
+                            className="inline-flex items-center min-h-9 font-medium hover:text-primary transition-colors"
                           >
                             {item.name}
                           </a>

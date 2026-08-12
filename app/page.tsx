@@ -240,12 +240,17 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-dvh flex">
       <Sidebar activeSection={activeSection} onNavigate={handleNavigate} />
       <CommandPalette onNavigate={handleNavigate} />
       <KeyboardShortcuts />
-      <main ref={mainRef} className="flex-1 ml-0 md:ml-24 lg:ml-72 transition-all duration-300">
-        <div className="min-h-screen p-6 pt-20 md:p-12 md:pt-12 lg:p-16 lg:pl-24 max-w-5xl mx-auto">
+      {/*
+        min-w-0 is load-bearing: a flex item defaults to min-width:auto, so any
+        single wide descendant (a long commit message, a code block) stretches
+        main past the viewport and scrolls the whole page sideways on a phone.
+      */}
+      <main ref={mainRef} className="flex-1 min-w-0 ml-0 md:ml-24 lg:ml-72 transition-all duration-300">
+        <div className="min-h-dvh p-5 pt-20 sm:p-6 md:p-12 md:pt-12 lg:p-16 lg:pl-24 max-w-5xl mx-auto">
           <Suspense fallback={<SectionLoader />}>{renderSection()}</Suspense>
         </div>
       </main>

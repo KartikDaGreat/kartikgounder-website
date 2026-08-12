@@ -29,25 +29,31 @@ export function ContactSection() {
           <div className="grid gap-3">
             <a
               href="mailto:hello@kartikgounder.com"
-              className="inline-flex items-center gap-3 p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-card transition-all group"
+              className="flex items-center gap-3 p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-card transition-all group"
             >
               <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                 <Mail className="w-4 h-4 text-primary" />
               </div>
-              <div>
-                <p className="font-medium group-hover:text-primary transition-colors">hello@kartikgounder.com</p>
+              {/* min-w-0 + break-all: an email address is one unbreakable token
+                  and would otherwise widen the card past a narrow phone. */}
+              <div className="min-w-0">
+                <p className="font-medium group-hover:text-primary transition-colors break-all">
+                  hello@kartikgounder.com
+                </p>
                 <p className="text-sm text-muted-foreground">Best for work, collaborations, and this site</p>
               </div>
             </a>
             <a
               href="mailto:kartikgounder@gmail.com"
-              className="inline-flex items-center gap-3 p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-card transition-all group"
+              className="flex items-center gap-3 p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-card transition-all group"
             >
               <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                 <Mail className="w-4 h-4 text-primary" />
               </div>
-              <div>
-                <p className="font-medium group-hover:text-primary transition-colors">kartikgounder@gmail.com</p>
+              <div className="min-w-0">
+                <p className="font-medium group-hover:text-primary transition-colors break-all">
+                  kartikgounder@gmail.com
+                </p>
                 <p className="text-sm text-muted-foreground">Personal inbox, also reliable</p>
               </div>
             </a>

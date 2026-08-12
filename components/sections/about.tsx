@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Art } from "@/components/art"
 import { ArrowRight, Download, Github, Linkedin, Mail, MapPin, Terminal } from "lucide-react"
 import { GitHubStats } from "@/components/github-stats"
+import { FlipCard } from "@/components/flip-card"
 import { Reveal } from "@/components/motion/reveal"
 
 // The receipts, ordered by how much value each one actually produced.
@@ -73,7 +74,7 @@ const threads = [
  */
 function ThreadLink({ href, label }: { href: string; label: string }) {
   const className =
-    "inline-flex items-center gap-1.5 mt-2.5 text-sm font-medium text-primary hover:gap-2.5 transition-all"
+    "inline-flex items-center gap-1.5 mt-1 min-h-9 text-sm font-medium text-primary hover:gap-2.5 transition-all"
   const content = (
     <>
       {label}
@@ -206,23 +207,23 @@ export function AboutSection() {
       {/* Proof strip: the numbers a recruiter skims for, without the reading */}
       <div className="mb-10 grid grid-cols-2 lg:grid-cols-4 gap-px rounded-lg border border-border bg-border overflow-hidden">
         {proof.map((stat) => (
-          <div
+          <FlipCard
             key={stat.label}
-            tabIndex={0}
-            aria-label={`${stat.value} ${stat.label}. ${stat.where}: ${stat.detail}`}
-            className="flip bg-card h-[124px] outline-none focus-visible:ring-1 focus-visible:ring-primary/50"
-          >
-            <div className="flip-inner">
-              <div className="flip-face bg-card px-4 py-3.5 flex flex-col justify-center">
+            label={`${stat.value} ${stat.label}. ${stat.where}: ${stat.detail}`}
+            className="h-[150px] sm:h-[132px] lg:h-[124px]"
+            front={
+              <>
                 <div className="font-heading text-xl md:text-2xl font-bold tracking-tight">{stat.value}</div>
                 <div className="text-[11px] leading-tight text-muted-foreground mt-0.5">{stat.label}</div>
-              </div>
-              <div className="flip-face flip-back bg-card px-4 py-3 flex flex-col justify-center">
+              </>
+            }
+            back={
+              <>
                 <div className="text-[10px] font-mono uppercase tracking-wider text-primary">{stat.where}</div>
                 <p className="text-[11px] leading-snug text-muted-foreground mt-1.5">{stat.detail}</p>
-              </div>
-            </div>
-          </div>
+              </>
+            }
+          />
         ))}
       </div>
 

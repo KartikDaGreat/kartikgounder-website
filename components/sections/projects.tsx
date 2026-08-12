@@ -56,7 +56,7 @@ export function ProjectsSection() {
                 key={f.id}
                 onClick={() => setFilter(f.id)}
                 className={cn(
-                  "px-3 py-1 rounded-full text-xs font-medium border transition-colors",
+                  "inline-flex items-center min-h-8 px-3.5 rounded-full text-xs font-medium border transition-colors",
                   filter === f.id
                     ? "bg-primary/10 text-primary border-primary/40"
                     : "text-muted-foreground border-border hover:border-primary/30 hover:text-foreground",

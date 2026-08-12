@@ -64,7 +64,8 @@ export function PortraitSwitcher({ className }: { className?: string }) {
             aria-pressed={s.id === style}
             title={s.note}
             className={cn(
-              "px-2 py-0.5 rounded-full text-[11px] font-mono border transition-colors",
+              // min-h-8 + px-3: a 19px pill was too small to hit on a phone.
+              "inline-flex items-center min-h-8 px-3 rounded-full text-[11px] font-mono border transition-colors",
               s.id === style
                 ? "bg-primary/10 text-primary border-primary/40"
                 : "text-muted-foreground border-border hover:text-foreground hover:border-primary/30",

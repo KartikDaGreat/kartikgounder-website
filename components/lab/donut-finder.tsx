@@ -102,7 +102,7 @@ export function DonutFinder() {
             onClick={handleOpen}
             disabled={loading}
             className={cn(
-              "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs transition",
+              "inline-flex items-center gap-1.5 min-h-9 px-3.5 rounded-full border text-xs transition",
               loading
                 ? "bg-muted text-muted-foreground border-border"
                 : "bg-rose-500/15 text-rose-300 border-rose-400/40 hover:bg-rose-500/25",

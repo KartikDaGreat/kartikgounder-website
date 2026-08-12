@@ -63,7 +63,7 @@ export function GitHubStats() {
           href="https://github.com/KartikDaGreat"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-primary hover:underline"
+          className="inline-flex items-center min-h-8 text-xs text-primary hover:underline"
         >
           @KartikDaGreat
         </a>
@@ -92,9 +92,11 @@ export function GitHubStats() {
         <div className="mb-3 space-y-1">
           <div className="text-[10px] text-muted-foreground mb-1.5">Recent commits</div>
           {data.commits.slice(0, 4).map((commit) => (
-            <div key={commit.sha} className="flex items-start gap-2 text-[11px] font-mono">
+            /* min-w-0 on both: without it the un-wrapping message sets a
+               min-content width that pushes the whole page wider than a phone. */
+            <div key={commit.sha} className="flex items-start gap-2 text-[11px] font-mono min-w-0">
               <span className="text-primary/70 flex-shrink-0">{commit.sha}</span>
-              <span className="text-foreground/70 truncate">{commit.message}</span>
+              <span className="text-foreground/70 truncate min-w-0">{commit.message}</span>
             </div>
           ))}
         </div>
