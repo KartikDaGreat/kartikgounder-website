@@ -8,8 +8,10 @@ export interface Project {
   github?: string
   /** The DOI as https://doi.org/..., never a publisher page. */
   paper?: string
-  /** A live site (no trailing slash) or a YouTube walkthrough. */
+  /** The live, deployed app (no trailing slash). */
   demo?: string
+  /** A recorded walkthrough, for projects that have one. */
+  video?: string
   period?: string
   year: number
   highlights?: string[]
@@ -85,16 +87,11 @@ export interface ProjectLink {
  * A project's outbound links in the one order every surface shows them:
  * live site, demo video, code, paper.
  */
-export function projectLinks(project: Pick<Project, "demo" | "github" | "paper">): ProjectLink[] {
+export function projectLinks(project: Pick<Project, "demo" | "video" | "github" | "paper">): ProjectLink[] {
   const links: ProjectLink[] = []
-  const { demo, github, paper } = project
-  if (demo) {
-    links.push(
-      /youtu\.?be/.test(demo)
-        ? { kind: "video", href: demo, label: "Demo video" }
-        : { kind: "live", href: demo, label: "Live site" },
-    )
-  }
+  const { demo, video, github, paper } = project
+  if (demo) links.push({ kind: "live", href: demo, label: "Live site" })
+  if (video) links.push({ kind: "video", href: video, label: "Demo video" })
   if (github) links.push({ kind: "code", href: github, label: "GitHub" })
   if (paper) links.push({ kind: "paper", href: paper, label: "Paper" })
   return links
@@ -215,7 +212,8 @@ export function applyBatch(doc: Doc, batch: Batch): { doc: Doc; outcome: Outcome
     description:
       "Trust-aware middleware layer for LLM-powered coding agents that quantifies generation reliability using composite risk scoring and automated human-in-the-loop decision routing.",
     technologies: ["Python", "FastAPI", "Ollama", "AST", "Scikit-learn", "SQLite", "tree-sitter", "Rich"],
-    demo: "https://youtu.be/sOJtzGffaYA",
+    demo: "https://taol-demo.vercel.app",
+    video: "https://youtu.be/sOJtzGffaYA",
     period: "January - May 2026",
     year: 2026,
     category: ["ml", "swe"],
@@ -623,6 +621,7 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
     description:
       "Real-time voice-based technical interviewer that detects bluffing, maps knowledge gaps, and dynamically escalates follow-up questions using LLM-driven gap analysis and live scoring.",
     technologies: ["React", "TypeScript", "ElevenLabs", "Gemini Flash", "Supabase", "Edge Functions", "AI/ML"],
+    demo: "https://mind-duelist.lovable.app",
     period: "February 2026",
     year: 2026,
     category: ["ml", "swe"],
