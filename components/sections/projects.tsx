@@ -2,10 +2,11 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowUpRight, ExternalLink, FileText, Github, Play } from "lucide-react"
+import { ArrowUpRight } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { artFor, liveSiteFor, projects, type Project } from "@/lib/projects"
+import { artFor, projectLinks, projects, type Project } from "@/lib/projects"
 import { Art } from "@/components/art"
+import { ProjectLinks } from "@/components/project-links"
 import { Reveal, StaggerItem, StaggerRoot } from "@/components/motion/reveal"
 
 type Filter = "all" | "swe" | "ml"
@@ -134,94 +135,80 @@ function CardArt({ project }: { project: Project }) {
 function FeaturedCard({ project, index }: { project: Project; index: number }) {
   const hook = project.description.split(". ")[0].replace(/\.$/, "") + "."
 
-  const liveSite = liveSiteFor(project)
-
-  // Stretched link: the title's ::after covers the card, so the live-site
-  // anchor can sit on top without nesting <a> inside <a>.
+  // Both cards use a stretched link: the title's ::after covers the card, so
+  // the outbound links can sit on top without nesting <a> inside <a>.
   return (
     <article className="group relative rounded-xl border border-border bg-card p-6 md:p-7 hover:border-primary/50 transition-all duration-300 overflow-hidden">
-        <CardArt project={project} />
-        <div className="absolute top-5 right-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all">
-          <ArrowUpRight className="w-5 h-5" />
-        </div>
+      <CardArt project={project} />
+      <div className="absolute top-5 right-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all">
+        <ArrowUpRight className="w-5 h-5" />
+      </div>
 
-        <div className="flex items-baseline gap-3 mb-3">
-          <span className="text-xs font-mono text-muted-foreground/60">{String(index + 1).padStart(2, "0")}</span>
-          <div className="flex flex-wrap items-center gap-1.5">
-            {project.status && (
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground">
-                <span
-                  className={cn(
-                    "w-1.5 h-1.5 rounded-full",
-                    project.status === "active" ? "bg-emerald-400 animate-pulse" : "bg-primary/70",
-                  )}
-                />
-                {project.status}
-              </span>
-            )}
-            {project.category.map((cat) => (
-              <CategoryChip key={cat} cat={cat} />
-            ))}
-            <TagChips tags={project.tags} />
-            {project.period && <span className="text-[11px] font-mono text-muted-foreground">{project.period}</span>}
-          </div>
-        </div>
-
-        <h3 className="text-xl md:text-2xl font-bold mb-2 group-hover:text-primary transition-colors pr-8">
-          <Link href={`/projects/${project.slug}`} className="after:absolute after:inset-0 after:content-['']">
-            {project.title}
-          </Link>
-        </h3>
-        <p className="text-sm md:text-[15px] text-muted-foreground leading-relaxed max-w-3xl mb-4">{hook}</p>
-
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          {project.accuracy && (
-            <span className="px-2.5 py-1 text-xs font-medium rounded-md bg-primary/10 text-primary border border-primary/20">
-              {project.accuracy}
+      <div className="flex items-baseline gap-3 mb-3">
+        <span className="text-xs font-mono text-muted-foreground/60">{String(index + 1).padStart(2, "0")}</span>
+        <div className="flex flex-wrap items-center gap-1.5">
+          {project.status && (
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground">
+              <span
+                className={cn(
+                  "w-1.5 h-1.5 rounded-full",
+                  project.status === "active" ? "bg-emerald-400 animate-pulse" : "bg-primary/70",
+                )}
+              />
+              {project.status}
             </span>
           )}
-          <span className="text-xs font-mono text-muted-foreground">
-            {project.technologies.slice(0, 5).join(" · ")}
-          </span>
-          {liveSite && (
-            <a
-              href={liveSite}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="relative z-10 inline-flex items-center gap-1.5 min-h-8 px-3 rounded-md border border-primary/40 bg-primary/10 text-xs font-medium text-primary hover:bg-primary/15 transition-colors sm:ml-auto"
-            >
-              Visit live site
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-          )}
+          {project.category.map((cat) => (
+            <CategoryChip key={cat} cat={cat} />
+          ))}
+          <TagChips tags={project.tags} />
+          {project.period && <span className="text-[11px] font-mono text-muted-foreground">{project.period}</span>}
         </div>
+      </div>
+
+      <h3 className="text-xl md:text-2xl font-bold mb-2 group-hover:text-primary transition-colors pr-8">
+        <Link href={`/projects/${project.slug}`} className="after:absolute after:inset-0 after:content-['']">
+          {project.title}
+        </Link>
+      </h3>
+      <p className="text-sm md:text-[15px] text-muted-foreground leading-relaxed max-w-3xl mb-4">{hook}</p>
+
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        {project.accuracy && (
+          <span className="px-2.5 py-1 text-xs font-medium rounded-md bg-primary/10 text-primary border border-primary/20">
+            {project.accuracy}
+          </span>
+        )}
+        <span className="text-xs font-mono text-muted-foreground">
+          {project.technologies.slice(0, 5).join(" · ")}
+        </span>
+        <ProjectLinks links={projectLinks(project)} size="sm" className="sm:ml-auto" />
+      </div>
     </article>
   )
 }
 
 function CompactCard({ project }: { project: Project }) {
   return (
-    <Link href={`/projects/${project.slug}`} className="block group">
-      <article className="relative h-full p-4 rounded-lg border border-border group-hover:border-primary/50 transition-colors bg-card overflow-hidden">
-        <CardArt project={project} />
-        <div className="flex flex-wrap items-center gap-1.5 mb-2 text-[11px] font-mono">
-          {project.category.map((cat) => (
-            <CategoryChip key={cat} cat={cat} />
-          ))}
-          <TagChips tags={project.tags} />
-          <span className="ml-auto text-muted-foreground">{project.year}</span>
-        </div>
-        <h3 className="font-medium group-hover:text-primary transition-colors mb-1.5">{project.title}</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed mb-3 line-clamp-3">{project.description}</p>
-        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-          {project.accuracy && <span className="text-primary font-medium">{project.accuracy}</span>}
-          <span className="flex items-center gap-2 ml-auto">
-            {project.github && <Github className="w-3.5 h-3.5" />}
-            {project.demo && <Play className="w-3.5 h-3.5" />}
-            {project.paper && <FileText className="w-3.5 h-3.5" />}
-          </span>
-        </div>
-      </article>
-    </Link>
+    <article className="group relative h-full p-4 rounded-lg border border-border hover:border-primary/50 transition-colors bg-card overflow-hidden">
+      <CardArt project={project} />
+      <div className="flex flex-wrap items-center gap-1.5 mb-2 text-[11px] font-mono">
+        {project.category.map((cat) => (
+          <CategoryChip key={cat} cat={cat} />
+        ))}
+        <TagChips tags={project.tags} />
+        <span className="ml-auto text-muted-foreground">{project.year}</span>
+      </div>
+      <h3 className="font-medium group-hover:text-primary transition-colors mb-1.5">
+        <Link href={`/projects/${project.slug}`} className="after:absolute after:inset-0 after:content-['']">
+          {project.title}
+        </Link>
+      </h3>
+      <p className="text-sm text-muted-foreground leading-relaxed mb-3 line-clamp-3">{project.description}</p>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-muted-foreground">
+        {project.accuracy && <span className="text-primary font-medium">{project.accuracy}</span>}
+        <ProjectLinks links={projectLinks(project)} size="sm" className="ml-auto" />
+      </div>
+    </article>
   )
 }

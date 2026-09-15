@@ -4,8 +4,11 @@ export interface Project {
   featured?: boolean
   description: string
   technologies: string[]
+  /** A public repo. Private repos 404 for visitors, so leave them out. */
   github?: string
+  /** The DOI as https://doi.org/..., never a publisher page. */
   paper?: string
+  /** A live site (no trailing slash) or a YouTube walkthrough. */
   demo?: string
   period?: string
   year: number
@@ -72,14 +75,29 @@ export function artFor(project: Pick<Project, "slug" | "category">): string {
   return project.category.includes("ml") ? "/art/cat-ml.png" : "/art/cat-systems.png"
 }
 
+export interface ProjectLink {
+  kind: "live" | "video" | "code" | "paper"
+  href: string
+  label: string
+}
+
 /**
- * The demo URL when it's a site you can visit, not a video walkthrough. Live
- * sites open in a normal tab; videos keep the popup player.
+ * A project's outbound links in the one order every surface shows them:
+ * live site, demo video, code, paper.
  */
-export function liveSiteFor(project: Pick<Project, "demo">): string | undefined {
-  const demo = project.demo
-  if (!demo || /youtu\.?be/.test(demo)) return undefined
-  return demo
+export function projectLinks(project: Pick<Project, "demo" | "github" | "paper">): ProjectLink[] {
+  const links: ProjectLink[] = []
+  const { demo, github, paper } = project
+  if (demo) {
+    links.push(
+      /youtu\.?be/.test(demo)
+        ? { kind: "video", href: demo, label: "Demo video" }
+        : { kind: "live", href: demo, label: "Live site" },
+    )
+  }
+  if (github) links.push({ kind: "code", href: github, label: "GitHub" })
+  if (paper) links.push({ kind: "paper", href: paper, label: "Paper" })
+  return links
 }
 
 function toSlug(title: string): string {
@@ -197,7 +215,6 @@ export function applyBatch(doc: Doc, batch: Batch): { doc: Doc; outcome: Outcome
     description:
       "Trust-aware middleware layer for LLM-powered coding agents that quantifies generation reliability using composite risk scoring and automated human-in-the-loop decision routing.",
     technologies: ["Python", "FastAPI", "Ollama", "AST", "Scikit-learn", "SQLite", "tree-sitter", "Rich"],
-    github: "https://github.com/KartikDaGreat/trust-orchestrator",
     demo: "https://youtu.be/sOJtzGffaYA",
     period: "January - May 2026",
     year: 2026,
@@ -462,7 +479,7 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
     description:
       "Interactive decision-support tool that analyzes 11 user-defined constraints across privacy goals, data sensitivity, trust models, and regulatory regimes to recommend optimal privacy-enhancing technologies with explainable reasoning.",
     technologies: ["React 19", "Vite", "Tailwind CSS", "JavaScript", "Rule Engine", "Privacy Engineering"],
-    demo: "https://brandeis-two.vercel.app/",
+    demo: "https://brandeis-two.vercel.app",
     period: "March - April 2026",
     year: 2026,
     category: ["swe"],
@@ -606,7 +623,6 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
     description:
       "Real-time voice-based technical interviewer that detects bluffing, maps knowledge gaps, and dynamically escalates follow-up questions using LLM-driven gap analysis and live scoring.",
     technologies: ["React", "TypeScript", "ElevenLabs", "Gemini Flash", "Supabase", "Edge Functions", "AI/ML"],
-    github: "https://github.com/KartikDaGreat/NightmareBot",
     period: "February 2026",
     year: 2026,
     category: ["ml", "swe"],
@@ -660,7 +676,7 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
     technologies: ["Python", "TensorFlow", "CNN", "Computer Vision", "On-Device ML"],
     period: "January - May 2024",
     year: 2024,
-    paper: "https://dl.acm.org/doi/10.1145/3717383.3717387",
+    paper: "https://doi.org/10.1145/3717383.3717387",
     category: ["ml"],
     accuracy: "3.7M parameters | Published at ISEC-2025",
     longDescription: [
@@ -775,7 +791,7 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
     accuracy: "96.33%",
     status: "published",
     role: "Published at ICoICI-2024 (IEEE)",
-    paper: "https://ieeexplore.ieee.org/abstract/document/10696508",
+    paper: "https://doi.org/10.1109/ICoICI62503.2024.10696508",
     metrics: [
       { value: "96.33%", label: "ensemble accuracy" },
       { value: "3", label: "CNN architectures combined" },
@@ -946,7 +962,6 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
     description:
       "On-demand laundry services mobile application with real-time order tracking, dynamic pricing, scheduling, and multi-vendor management built with Firebase backend.",
     technologies: ["Firebase", "Android", "Java", "Firestore", "Cloud Functions", "Google Maps API"],
-    github: "https://github.com/KartikDaGreat",
     period: "June - August 2023",
     year: 2023,
     category: ["swe"],

@@ -1,9 +1,9 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ArrowRight, ExternalLink, Github, FileText } from "lucide-react"
-import { artFor, getProjectBySlug, getAllProjectSlugs, liveSiteFor, projects, type Project } from "@/lib/projects"
+import { ArrowRight } from "lucide-react"
+import { artFor, getProjectBySlug, getAllProjectSlugs, projectLinks, projects, type Project } from "@/lib/projects"
 import { Art } from "@/components/art"
-import { PopupLink } from "@/components/popup-link"
+import { ProjectLinks } from "@/components/project-links"
 import { BackButton } from "@/components/back-button"
 import { ImageLightbox } from "@/components/image-lightbox"
 
@@ -40,13 +40,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
   const categories = project.category.length > 0 ? project.category : ["swe"]
   const hasImages = project.images && project.images.length > 0
-  const liveSite = liveSiteFor(project)
+  const links = projectLinks(project)
 
   const index = projects.findIndex((p) => p.slug === project.slug)
   const next = projects[(index + 1) % projects.length]
-
-  const linkClass =
-    "inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-border bg-card hover:border-primary/50 transition-colors"
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -140,40 +137,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             )}
 
             {/* Links */}
-            {(project.github || project.paper || project.demo) && (
-              <div className="flex flex-wrap gap-3 mb-10 pb-10 border-b border-border">
-                {project.github && (
-                  <PopupLink href={project.github} className={linkClass}>
-                    <Github className="w-4 h-4" />
-                    GitHub
-                  </PopupLink>
-                )}
-                {project.paper && project.paper !== "#" && (
-                  <PopupLink href={project.paper} className={linkClass}>
-                    <FileText className="w-4 h-4" />
-                    Paper
-                  </PopupLink>
-                )}
-                {liveSite ? (
-                  <a
-                    href={liveSite}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`${linkClass} border-primary/40 bg-primary/10 text-primary hover:bg-primary/15`}
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    Visit {new URL(liveSite).host}
-                  </a>
-                ) : (
-                  project.demo && (
-                    <PopupLink href={project.demo} className={linkClass}>
-                      <ExternalLink className="w-4 h-4" />
-                      Demo
-                    </PopupLink>
-                  )
-                )}
-              </div>
-            )}
+            <ProjectLinks links={links} className="mb-10 pb-10 border-b border-border" />
 
             {/* ---- The story, when there is one ---- */}
             {project.story ? (

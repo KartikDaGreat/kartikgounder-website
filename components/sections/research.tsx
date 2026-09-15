@@ -21,7 +21,7 @@ const publications: Publication[] = [
     venue: "ISEC 2025 (ACM)",
     year: "2025",
     authors: "K. Gounder et al.",
-    link: "https://dl.acm.org/doi/10.1145/3717383.3717387",
+    link: "https://doi.org/10.1145/3717383.3717387",
     type: "paper",
     image: "/DeviceClassificationFramework.PNG",
     description:
