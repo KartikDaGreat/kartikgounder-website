@@ -2,9 +2,9 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowUpRight, FileText, Github, Play } from "lucide-react"
+import { ArrowUpRight, ExternalLink, FileText, Github, Play } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { artFor, projects, type Project } from "@/lib/projects"
+import { artFor, liveSiteFor, projects, type Project } from "@/lib/projects"
 import { Art } from "@/components/art"
 import { Reveal, StaggerItem, StaggerRoot } from "@/components/motion/reveal"
 
@@ -134,9 +134,12 @@ function CardArt({ project }: { project: Project }) {
 function FeaturedCard({ project, index }: { project: Project; index: number }) {
   const hook = project.description.split(". ")[0].replace(/\.$/, "") + "."
 
+  const liveSite = liveSiteFor(project)
+
+  // Stretched link: the title's ::after covers the card, so the live-site
+  // anchor can sit on top without nesting <a> inside <a>.
   return (
-    <Link href={`/projects/${project.slug}`} className="block group">
-      <article className="relative rounded-xl border border-border bg-card p-6 md:p-7 hover:border-primary/50 transition-all duration-300 overflow-hidden">
+    <article className="group relative rounded-xl border border-border bg-card p-6 md:p-7 hover:border-primary/50 transition-all duration-300 overflow-hidden">
         <CardArt project={project} />
         <div className="absolute top-5 right-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all">
           <ArrowUpRight className="w-5 h-5" />
@@ -165,7 +168,9 @@ function FeaturedCard({ project, index }: { project: Project; index: number }) {
         </div>
 
         <h3 className="text-xl md:text-2xl font-bold mb-2 group-hover:text-primary transition-colors pr-8">
-          {project.title}
+          <Link href={`/projects/${project.slug}`} className="after:absolute after:inset-0 after:content-['']">
+            {project.title}
+          </Link>
         </h3>
         <p className="text-sm md:text-[15px] text-muted-foreground leading-relaxed max-w-3xl mb-4">{hook}</p>
 
@@ -178,9 +183,19 @@ function FeaturedCard({ project, index }: { project: Project; index: number }) {
           <span className="text-xs font-mono text-muted-foreground">
             {project.technologies.slice(0, 5).join(" · ")}
           </span>
+          {liveSite && (
+            <a
+              href={liveSite}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative z-10 inline-flex items-center gap-1.5 min-h-8 px-3 rounded-md border border-primary/40 bg-primary/10 text-xs font-medium text-primary hover:bg-primary/15 transition-colors sm:ml-auto"
+            >
+              Visit live site
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          )}
         </div>
-      </article>
-    </Link>
+    </article>
   )
 }
 

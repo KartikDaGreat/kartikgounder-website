@@ -72,6 +72,16 @@ export function artFor(project: Pick<Project, "slug" | "category">): string {
   return project.category.includes("ml") ? "/art/cat-ml.png" : "/art/cat-systems.png"
 }
 
+/**
+ * The demo URL when it's a site you can visit, not a video walkthrough. Live
+ * sites open in a normal tab; videos keep the popup player.
+ */
+export function liveSiteFor(project: Pick<Project, "demo">): string | undefined {
+  const demo = project.demo
+  if (!demo || /youtu\.?be/.test(demo)) return undefined
+  return demo
+}
+
 function toSlug(title: string): string {
   return title
     .toLowerCase()

@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowRight, ExternalLink, Github, FileText } from "lucide-react"
-import { artFor, getProjectBySlug, getAllProjectSlugs, projects, type Project } from "@/lib/projects"
+import { artFor, getProjectBySlug, getAllProjectSlugs, liveSiteFor, projects, type Project } from "@/lib/projects"
 import { Art } from "@/components/art"
 import { PopupLink } from "@/components/popup-link"
 import { BackButton } from "@/components/back-button"
@@ -40,6 +40,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
   const categories = project.category.length > 0 ? project.category : ["swe"]
   const hasImages = project.images && project.images.length > 0
+  const liveSite = liveSiteFor(project)
 
   const index = projects.findIndex((p) => p.slug === project.slug)
   const next = projects[(index + 1) % projects.length]
@@ -153,11 +154,23 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                     Paper
                   </PopupLink>
                 )}
-                {project.demo && (
-                  <PopupLink href={project.demo} className={linkClass}>
+                {liveSite ? (
+                  <a
+                    href={liveSite}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${linkClass} border-primary/40 bg-primary/10 text-primary hover:bg-primary/15`}
+                  >
                     <ExternalLink className="w-4 h-4" />
-                    Demo
-                  </PopupLink>
+                    Visit {new URL(liveSite).host}
+                  </a>
+                ) : (
+                  project.demo && (
+                    <PopupLink href={project.demo} className={linkClass}>
+                      <ExternalLink className="w-4 h-4" />
+                      Demo
+                    </PopupLink>
+                  )
                 )}
               </div>
             )}
