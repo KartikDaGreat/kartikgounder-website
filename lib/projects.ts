@@ -62,6 +62,8 @@ const PROJECT_ART: Record<string, string> = {
   "fake-news-origin-detection": "/art/project-fake-news.png",
   "traffic-speed-detection-system": "/art/project-traffic-speed.png",
   urbanistai: "/art/project-urbanistai.png",
+  boxr: "/art/project-boxr.png",
+  "skill-optimizer": "/art/project-skill-optimizer.png",
 }
 
 export function artFor(project: Pick<Project, "slug" | "category">): string {
@@ -78,6 +80,105 @@ function toSlug(title: string): string {
 }
 
 export const projects: Project[] = [
+  {
+    title: "boxr: Architecture Diagrams From a Conversation",
+    slug: "boxr",
+    tags: ["LLM Tooling", "System Design", "Evaluation"],
+    featured: true,
+    description:
+      "Describe a software system and boxr interviews you until twelve core requirements are known, draws the components, connections and data flows, checks its own drawing, and exports a build prompt a coding model can implement.",
+    technologies: ["TypeScript", "React", "Vite", "React Flow", "ELK", "Groq", "IndexedDB", "Vercel"],
+    demo: "https://boxr.kartikgounder.com",
+    period: "September 2026",
+    year: 2026,
+    category: ["swe", "ml"],
+    accuracy: "14 of 14 drawings problem-free vs 4 of 14",
+    role: "Solo build",
+    status: "active",
+    metrics: [
+      { value: "14/14", label: "drawings problem-free, vs 4/14 from a plain prompt" },
+      { value: "66%", label: "spec-only parts drawn after the interview, vs 6%" },
+      { value: "62/64", label: "build-pack questions answered correctly" },
+      { value: "12", label: "requirement slots per design" },
+    ],
+    architecture: `description
+  │
+  ├─▶ 1. INTERVIEW         12 requirement slots
+  │      │                  a slot stays filled only if it quotes you
+  │      ▼
+  ├─▶ 2. PLAN              optional, written as prose
+  │      ▼
+  ├─▶ 3. SKETCH            typed JSON edits, never raw drawing
+  │      │                  outline → connect (2 calls, 2 keys) → fill gaps
+  │      ▼
+  ├─▶ 4. GUARDRAILS        each batch applies all or nothing
+  │      │                  edits naming unbuilt boxes wait in a queue
+  │      ▼
+  ├─▶ 5. CHECKS + REPAIR   code fixes first, then up to 3 AI passes
+  │      ▼                  a pass is kept only if problems drop
+  ├─▶ 6. LAYOUT            ELK positions, React Flow draws, IndexedDB saves
+  │      ▼
+  └─▶ 7. HANDOFF           build pack for Claude Code, Codex, Cursor`,
+    story: {
+      problem: [
+        "Ask a chat model to design a system and you get a confident wall of boxes. Some of them connect to nothing, a database gets drawn that nothing ever writes to, and half the requirements behind it were guessed rather than asked. It looks finished, which makes it worse than a blank page.",
+        "I wanted a planner that behaves like a good senior engineer at a whiteboard: asks what it doesn't know, draws in front of you, checks its own work, and hands off something a coding agent can actually build from.",
+      ],
+      approach: [
+        "The model never draws directly. It streams typed edits (\"add node\", \"connect\") against a strict JSON schema, and each batch of edits applies completely or not at all. An edit that names a box that doesn't exist yet waits in a queue and is settled at the end of the turn, so a model that writes connections before components doesn't corrupt the document.",
+        "Drawing happens in passes. First every layer and component, with a checklist of parts the description implies. Then connections and key flows, split into two parallel calls on two Groq keys once there are six or more components. Then one edit adds any checklist item still missing.",
+        "Before any of that, a small fast model interviews you against twelve requirement slots. Every filled slot has to quote your own words, and plain code drops any that don't, so a guessed requirement turns into a question instead of a silent assumption.",
+        "After drawing, plain code counts problems (unconnected boxes, stores nothing writes, queues nothing reads) and fixes the ones with one right answer. Anything left goes to up to three AI repair passes, and each pass is kept only if the problem count actually drops. The whole app runs in the browser with no backend, routing across seven providers with per-role model preferences and timeouts.",
+      ],
+      outcome: [
+        "Against a plain prompt on the same model, across 14 paired briefs, boxr drew 14 problem-free diagrams to the plain prompt's 4 (McNemar p = 0.002). Measured against a hidden spec with a simulated user answering only from it, drawings held 66% of the parts only the spec implies, against 6% from the one-line brief alone.",
+        "The exported build pack answered 62 of 64 comprehension questions across four models, against 54 for the Mermaid export, while using 28% fewer tokens than the JSON export.",
+        "It is not better on every axis, and the eval says so: boxr's drawings are smaller (8.5 components against 10.6), it takes 7.1 seconds against 1.5, and it spends 2.7 times the tokens. Expected-part coverage was 76% against 82%, not a significant difference.",
+      ],
+      lessons: [
+        "The interview eval found that every miss had the same cause: the interview model filled a requirement by guessing instead of asking. The fix wasn't a better prompt. It was a rule enforced in code, that a slot only counts if it quotes the user.",
+        "Running a paired evaluation against the plain-prompt baseline kept me honest. It confirmed the guardrails work, and it also showed the costs (smaller drawings, slower, more tokens) that I would never have noticed by eyeballing my own demos.",
+      ],
+    },
+    longDescription: [
+      "boxr turns a description of a software system into an architecture diagram. It interviews you until twelve core requirements are known, optionally writes a plan, draws components, connections and data flows, checks its own drawing, and exports a build prompt for Claude Code, Codex or Cursor.",
+      "The model edits the diagram through typed, atomic operations rather than drawing directly, and plain code checks the result and fixes structural problems before any AI repair runs. ELK lays out the graph, React Flow renders it, and sessions persist to IndexedDB.",
+    ],
+    highlights: [
+      "Twelve-slot requirements interview where every filled slot must quote the user, so guesses become questions",
+      "Typed JSON edit operations that apply atomically, with a queue for edits that reference boxes not drawn yet",
+      "Multi-pass drawing with parallel connect calls across two Groq keys",
+      "Code checks plus up to three AI repair passes, each kept only if the problem count drops",
+      "Paired evaluation against a plain prompt: 14/14 problem-free drawings vs 4/14 (p = 0.002)",
+      "Build pack export answered 62/64 comprehension questions, with 28% fewer tokens than JSON",
+    ],
+    codeSnippet: {
+      language: "typescript",
+      filename: "ops.ts",
+      code: `/**
+ * Validate and apply a whole batch. The live doc is never touched until every op has
+ * succeeded against a draft. That is the atomicity guarantee.
+ */
+export function applyBatch(doc: Doc, batch: Batch): { doc: Doc; outcome: Outcome } {
+  const draft = clone(doc);
+  const missing = new Set<NodeId>();
+  const errors: string[] = [];
+
+  for (const op of batch.ops) {
+    const problem = applyOne(draft, op);
+    if (!problem) continue;
+    if (problem.error) errors.push(problem.error);
+    for (const id of problem.missing ?? []) missing.add(id);
+  }
+
+  // Structural errors are never retryable. Check them first: a batch that is both
+  // malformed and forward-referencing should be rejected, not parked in the queue forever.
+  if (errors.length) return { doc, outcome: { status: 'rejected', errors } };
+  if (missing.size) return { doc, outcome: { status: 'queued', missing: [...missing] } };
+  return { doc: draft, outcome: { status: 'applied' } };
+}`,
+    },
+  },
   {
     title: "TAOL: Trust-Aware Orchestration Layer",
     slug: "taol",
@@ -191,6 +292,79 @@ export const projects: Project[] = [
       "/projects/taol/taol_results.png",
       "/projects/taol/taol_5.png",
     ],
+  },
+  {
+    title: "skill-optimizer: Pick the Right Claude Code Skill",
+    slug: "skill-optimizer",
+    tags: ["Claude Code", "Agent Skills", "Developer Tooling"],
+    github: "https://github.com/KartikDaGreat/skill-optimize",
+    description:
+      "A Claude Code plugin that searches your local skills, plugin marketplaces and 12 GitHub skill collections, picks the best skill for your task in a cheap Haiku subagent, asks before installing anything, does the task, and reports the tokens each phase used.",
+    technologies: ["Claude Code", "Bash", "GitHub CLI", "Subagents", "Markdown"],
+    period: "September 2026",
+    year: 2026,
+    category: ["swe"],
+    role: "Solo build",
+    status: "shipped",
+    metrics: [
+      { value: "12", label: "GitHub skill collections searched" },
+      { value: "~520k → ~1k", label: "tokens of skill data read vs returned" },
+      { value: "10.6k", label: "tokens of search context kept out of the main session" },
+    ],
+    architecture: `/skill-optimizer <task>
+  │
+  ├─▶ main session            starts the selector, nothing else
+  │      ▼
+  ├─▶ selector subagent       Haiku
+  │      ├── discover.sh       local + marketplaces + 12 GitHub collections
+  │      ├── score             fit×4 · depth×2 · trust×2 · friction · cost
+  │      └── safety check      remote picks only
+  │      ▼
+  ├─▶ approval                install · use once · stay local
+  ├─▶ task                    done with the winning skill
+  └─▶ usage.sh                per-phase tokens from the session log`,
+    story: {
+      problem: [
+        "There are now thousands of Claude Code skills spread across official repos, community collections and plugin marketplaces. The right one for a task often exists, but finding it means knowing where to look, and pulling every catalog into the main session burns context you need for the actual work.",
+        "Installing a random SKILL.md from GitHub is also a trust problem. A skill is instructions your agent will follow, so it can carry download-and-run commands, credential reads or hooks just as easily as good advice.",
+      ],
+      approach: [
+        "All discovery happens in one bundled script call: local skills, every registered marketplace ranked by install count, and 12 well-known GitHub collections, with each repo's file list cached for 24 hours. It prints a short ranked shortlist instead of raw catalogs.",
+        "Picking runs in a Haiku subagent, so the search results never enter the main session's context. It scores candidates on a weighted rubric (task fit ×4, depth ×2, trust ×2, friction, cost). Your best local skill is the baseline, and a remote skill has to beat it by at least five points to be recommended.",
+        "Nothing gets installed, enabled or run from the internet without approval. Remote picks are checked first for download-and-run commands, credential access, hooks and instructions to skip confirmations. You can install, use it once without installing, or stay with your local skill.",
+      ],
+      outcome: [
+        "A typical run reads about 520k tokens of catalogs and skill files and hands back about 1k. In the example run (an Excel budget with the xlsx skill from anthropics/skills), the subagent kept about 10.6k tokens of search context out of the main session, an estimated 95.6k tokens not re-read over the rest of the run.",
+        "Every run ends with an exact per-phase token report, read from Claude Code's own session log, so the cost of the search is visible instead of assumed.",
+      ],
+      lessons: [
+        "A skill installed mid-session can't be called by name until Claude Code restarts. Rather than asking for a restart, skill-optimizer reads the new SKILL.md and follows it directly, so the task still gets done.",
+        "Skills built into Claude Code have no file on disk, so a search that only looks at the filesystem misses them. The main session now passes its own list of plausible skills to the selector.",
+      ],
+    },
+    highlights: [
+      "One-call discovery across local skills, plugin marketplaces and 12 GitHub skill collections",
+      "Selection in a Haiku subagent so search results stay out of the main context",
+      "Weighted scoring rubric where remote skills must beat the best local skill by 5 points",
+      "Safety check on remote picks for download-and-run commands, credential access and hooks",
+      "Exact per-phase token report parsed from the Claude Code session log",
+    ],
+    codeSnippet: {
+      language: "markdown",
+      filename: "selector.md",
+      code: `| Criterion | Weight | What earns a high score |
+|---|---|---|
+| Task fit | 4 | Directly covers this deliverable and its requirements |
+| Depth    | 2 | A concrete workflow with checks and examples |
+| Trust    | 2 | local or official > 10k+ star collection > unknown |
+| Friction | 1 | enabled > disabled > available; no API keys |
+| Cost     | 1 | Focused and reasonably sized |
+
+Rules:
+- The best local or session skill is the **baseline**.
+  A remote skill has to beat it by **at least 5 points**.
+- If nothing scores at least 3 on task fit, the pick is \`none\`.`,
+    },
   },
   {
     title: "125th Street Departure Board",
@@ -472,11 +646,11 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
     slug: "on-device-document-classification",
     tags: ["On-Device AI", "Computer Vision", "Published"],
     description:
-      "Lightweight CNN framework for classifying documents based on visual layout and limited text, designed for on-device deployment with only 3.7M parameters. Published at IEEE ISEC-2025.",
+      "Lightweight CNN framework for classifying documents based on visual layout and limited text, designed for on-device deployment with only 3.7M parameters. Published at ACM ISEC-2025.",
     technologies: ["Python", "TensorFlow", "CNN", "Computer Vision", "On-Device ML"],
     period: "January - May 2024",
     year: 2024,
-    paper: "https://ieeexplore.ieee.org/abstract/document/10696508",
+    paper: "https://dl.acm.org/doi/10.1145/3717383.3717387",
     category: ["ml"],
     accuracy: "3.7M parameters | Published at ISEC-2025",
     longDescription: [
@@ -527,11 +701,11 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
     tags: ["Multimodal", "Healthcare", "Published"],
     github: "https://github.com/KartikDaGreat/Psychological-Counselling-Chatbot",
     description:
-      "Tri-modal chatbot for assessing patients' mental states through text, voice, and facial expression analysis, achieving 87% user satisfaction in clinical evaluations. Published at ACM ICAISS-2024.",
+      "Tri-modal chatbot for assessing patients' mental states through text, voice, and facial expression analysis, achieving 87% user satisfaction in clinical evaluations. Published at Springer BITMDM-2024.",
     technologies: ["Python", "Flask", "AngularJS", "NLP", "Speech Analysis", "Computer Vision", "AI/ML"],
     period: "January - March 2024",
     year: 2024,
-    paper: "https://dl.acm.org/doi/10.1145/3717383.3717387",
+    paper: "https://doi.org/10.1007/978-3-031-82706-8_23",
     category: ["ml"],
     accuracy: "87% satisfaction",
     longDescription: [

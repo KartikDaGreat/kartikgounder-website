@@ -28,7 +28,7 @@ export function ProjectsSection() {
       <div className="mb-12">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">Projects</h1>
         <p className="text-muted-foreground max-w-2xl">
-          Thirteen builds, from trust middleware for AI coding agents to smart glasses held together with
+          Fifteen builds, from trust middleware for AI coding agents to smart glasses held together with
           3D-printed parts. Three shipped as peer-reviewed papers. Each page tells the story: the problem,
           the decisions, and what I'd do differently.
         </p>
