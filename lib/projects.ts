@@ -10,6 +10,11 @@ export interface Project {
   paper?: string
   /** The live, deployed app (no trailing slash). */
   demo?: string
+  /**
+   * Use instead of `demo` when a project has more than one thing you can open,
+   * each with its own label and a note on what a visitor can do there.
+   */
+  demos?: { href: string; label: string; note?: string }[]
   /** A recorded walkthrough, for projects that have one. */
   video?: string
   period?: string
@@ -81,15 +86,20 @@ export interface ProjectLink {
   kind: "live" | "video" | "code" | "paper"
   href: string
   label: string
+  /** What a visitor can do there, when that isn't obvious from the label. */
+  note?: string
 }
 
 /**
  * A project's outbound links in the one order every surface shows them:
  * live site, demo video, code, paper.
  */
-export function projectLinks(project: Pick<Project, "demo" | "video" | "github" | "paper">): ProjectLink[] {
+export function projectLinks(
+  project: Pick<Project, "demo" | "demos" | "video" | "github" | "paper">,
+): ProjectLink[] {
   const links: ProjectLink[] = []
-  const { demo, video, github, paper } = project
+  const { demo, demos, video, github, paper } = project
+  for (const d of demos ?? []) links.push({ kind: "live", href: d.href, label: d.label, note: d.note })
   if (demo) links.push({ kind: "live", href: demo, label: "Live site" })
   if (video) links.push({ kind: "video", href: video, label: "Demo video" })
   if (github) links.push({ kind: "code", href: github, label: "GitHub" })
@@ -987,6 +997,18 @@ HC-SR04 ─→ wave: next mode                              xy_to_index() serpen
     description:
       "Full-stack ML data collection and labeling platform with privacy-preserving image processing, interactive bounding box annotation, and role-based workspace management for university courses.",
     technologies: ["React 18", "FastAPI", "PostgreSQL", "Google Cloud", "MediaPipe", "MTCNN", "RetinaFace", "Konva.js", "EasyOCR"],
+    demos: [
+      {
+        href: "https://anonymize.kartikgounder.com",
+        label: "Try the anonymizer",
+        note: "The privacy processor, in the first version we built. Fully working, so upload a photo and watch the faces blur and the EXIF come off.",
+      },
+      {
+        href: "https://urbanistai2026.netlify.app",
+        label: "Student platform (older demo)",
+        note: "An older demo build of the platform itself. Poke around and look at the processed training data students uploaded, but most of it won't do much.",
+      },
+    ],
     period: "January - May 2026",
     year: 2026,
     category: ["ml", "swe"],
