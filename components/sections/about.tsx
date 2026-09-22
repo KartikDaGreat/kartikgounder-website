@@ -21,10 +21,10 @@ const proof = [
     detail: "Scaled three prediction modules across the Python products, tuned against 15 real client deployments.",
   },
   {
-    value: "36.11%",
-    label: "fewer tokens on every agent request",
-    where: "Vertex · MCP platform",
-    detail: "Instrumented every tool-discovery call first, then cut the context that measurement proved redundant.",
+    value: "14/14",
+    label: "boxr drawings problem-free, vs 4/14",
+    where: "boxr · paired eval",
+    detail: "Same model, 14 paired briefs. The plain prompt drew problem-free diagrams 4 times; boxr's guardrails got all 14.",
   },
   {
     value: "3 + 2",
@@ -36,14 +36,39 @@ const proof = [
 
 const currently = [
   {
+    dot: "bg-amber-400",
+    label: "Exploring Jev",
+    detail:
+      "Building with TypeSafe's System One model, which answers typed questions with calibrated probabilities instead of generating text. A function signature and a Pydantic model become the whole spec.",
+  },
+  {
+    dot: "bg-primary",
+    label: "boxr",
+    detail: "Just shipped: describe a system, get interviewed, get a checked architecture diagram and a build pack for coding agents.",
+    href: "/projects/boxr",
+  },
+  {
     dot: "bg-emerald-400",
     label: "Vertex Inc.",
-    detail: "MCP platform connecting AI agents to 105 enterprise tools across 10 providers, 36.11% leaner on tokens",
+    detail: "AI agent infrastructure, and Sherlock, the tracer that checks a bug against logs before anyone opens an editor",
   },
   {
     dot: "bg-blue-400",
     label: "Columbia aiX Lab",
     detail: "Evaluation metrics for data-science agents, plus AI literacy tooling",
+  },
+]
+
+// Newest first. Short, and only things that actually happened.
+const recently = [
+  {
+    when: "Sep 2026",
+    title: "Sponsored the AI² workshop at graVITas'26",
+    body: [
+      "\"AI²: Building AI Systems with AI\" ran September 18 to 20 at VIT, where I wrote my first research papers, landed my first internships, and figured out I love building things with AI. Supporting it felt like a small way to give back to the place that gave me my start.",
+      "AI is changing how software gets built, fast, and students shouldn't have to wait for their first job to learn to work with it. Using the tools isn't enough. You have to design, test, and build real systems with them, and that only comes from getting your hands dirty.",
+      "Thanks to the graVITas team for putting it together, and to Dr. Shashank Mouli Satapathy for making it happen.",
+    ],
   },
 ]
 
@@ -292,6 +317,30 @@ export function AboutSection() {
         </div>
       </div>
 
+      {/* Recently */}
+      <div className="mb-12">
+        <h2 className="eyebrow mb-5">
+          <span className="eyebrow-index">03 / </span>Recently
+        </h2>
+        <div className="space-y-6">
+          {recently.map((event) => (
+            <Reveal key={event.title} className="grid sm:grid-cols-[88px_minmax(0,1fr)] gap-x-6 gap-y-1">
+              <span className="font-mono text-xs text-muted-foreground pt-1">{event.when}</span>
+              <div className="border-l-2 border-primary/40 pl-4">
+                <h3 className="font-semibold text-[15px] mb-2">{event.title}</h3>
+                <div className="space-y-2 max-w-2xl">
+                  {event.body.map((para) => (
+                    <p key={para.slice(0, 24)} className="text-sm text-muted-foreground leading-relaxed">
+                      {para}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+
       {/* Currently */}
       <div className="mb-12 p-5 rounded-lg border border-border bg-card">
         <div className="flex items-center gap-2 mb-3">
@@ -303,7 +352,14 @@ export function AboutSection() {
             <div key={item.label} className="flex items-start gap-2.5 text-sm">
               <span className={`w-1.5 h-1.5 rounded-full ${item.dot} animate-pulse mt-1.5 flex-shrink-0`} />
               <span className="text-foreground/80">
-                <span className="font-semibold text-foreground">{item.label}</span>: {item.detail}
+                {"href" in item ? (
+                  <Link href={item.href} className="font-semibold text-foreground hover:text-primary underline decoration-primary/40 underline-offset-2 transition-colors">
+                    {item.label}
+                  </Link>
+                ) : (
+                  <span className="font-semibold text-foreground">{item.label}</span>
+                )}
+                : {item.detail}
               </span>
             </div>
           ))}
