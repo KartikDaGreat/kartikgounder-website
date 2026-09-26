@@ -17,8 +17,16 @@ interface Experience {
   location: string
   impact?: Impact[]
   highlights: Highlight[]
-  type: "internship" | "research"
+  type: "internship" | "research" | "teaching"
   certificate?: string
+  /** Pinned above the timeline in the "Right now" group. */
+  current?: boolean
+}
+
+const TYPE_LABEL: Record<Experience["type"], string> = {
+  internship: "Industry",
+  research: "Research",
+  teaching: "Teaching",
 }
 
 /** Bullets shown before the "+n more" fold kicks in. */
@@ -26,9 +34,54 @@ const VISIBLE_HIGHLIGHTS = 2
 
 const experiences: Experience[] = [
   {
+    title: "Forward Deployed Engineer Intern",
+    company: "Rapidflare",
+    period: "September 2026 - Present",
+    year: 2026,
+    location: "New York, NY",
+    type: "internship",
+    current: true,
+    highlights: [
+      {
+        lead: "Customer-facing",
+        text: "working directly with customers to get the product running on their real problems.",
+      },
+    ],
+  },
+  {
+    title: "Teaching Assistant, Policy for Privacy Technologies",
+    company: "Columbia University",
+    period: "Fall 2026",
+    year: 2026,
+    location: "New York, NY",
+    type: "teaching",
+    current: true,
+    highlights: [
+      {
+        lead: "Course support",
+        text: "for the class I took in Spring 2026, covering privacy-enhancing technologies, regulatory frameworks, and applied privacy engineering.",
+      },
+    ],
+  },
+  {
+    title: "Research Assistant",
+    company: "Columbia University",
+    period: "September 2026 - Present",
+    year: 2026,
+    location: "New York, NY",
+    type: "research",
+    current: true,
+    highlights: [
+      {
+        lead: "Paper distillation",
+        text: "with Prof. Tian Zheng, turning research papers into a form an AI agent can build a project from, and a reader can chat with to understand the paper.",
+      },
+    ],
+  },
+  {
     title: "Software Development Intern",
     company: "Vertex Inc.",
-    period: "June 2026 - Present",
+    period: "June 2026 - August 2026",
     year: 2026,
     location: "Pennsylvania, US",
     type: "internship",
@@ -58,7 +111,7 @@ const experiences: Experience[] = [
   {
     title: "aiX Convergence Design Studio Intern",
     company: "Columbia University",
-    period: "Jan 2026 - Present",
+    period: "Jan 2026 - May 2026",
     year: 2026,
     location: "New York, NY",
     type: "internship",
@@ -163,7 +216,12 @@ const experiences: Experience[] = [
   },
 ]
 
-const years = [...new Set(experiences.map((e) => e.year))].sort((a, b) => b - a)
+const CURRENT_ORDER: Experience["type"][] = ["internship", "research", "teaching"]
+const current = experiences
+  .filter((e) => e.current)
+  .sort((a, b) => CURRENT_ORDER.indexOf(a.type) - CURRENT_ORDER.indexOf(b.type))
+const past = experiences.filter((e) => !e.current)
+const years = [...new Set(past.map((e) => e.year))].sort((a, b) => b - a)
 
 export function ExperienceSection() {
   return (
@@ -171,10 +229,41 @@ export function ExperienceSection() {
       <div className="mb-12">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">Building</h1>
         <p className="text-muted-foreground">
-          Six internships, three countries. Every bullet below shipped to real users or real benchmarks.
+          Seven internships, plus research and teaching at Columbia. Every bullet in the timeline shipped to real users or real benchmarks.
         </p>
       </div>
 
+      {/* Right now: pinned above the timeline so current roles are never a scroll away */}
+      <div className="mb-14">
+        <h2 className="flex items-center gap-2 font-heading text-xl font-bold tracking-tight mb-4">
+          <span className="relative flex w-2 h-2" aria-hidden>
+            <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-60 motion-reduce:hidden" />
+            <span className="relative w-2 h-2 rounded-full bg-emerald-400" />
+          </span>
+          Right now
+        </h2>
+        <div className="rounded-xl border border-border bg-card divide-y divide-border">
+          {current.map((exp) => (
+            <article key={exp.title} className="grid sm:grid-cols-[96px_minmax(0,1fr)] gap-x-5 gap-y-1 p-5">
+              <p className="text-xs font-medium text-primary pt-1">{TYPE_LABEL[exp.type]}</p>
+              <div>
+                <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                  <h3 className="font-heading font-bold tracking-tight">{exp.title}</h3>
+                  <span className="text-xs text-muted-foreground font-mono">{exp.period}</span>
+                </div>
+                <p className="text-sm text-foreground/80">{exp.company}</p>
+                <ul className="space-y-1.5 mt-2.5">
+                  {exp.highlights.map((highlight) => (
+                    <HighlightItem key={highlight.lead} highlight={highlight} />
+                  ))}
+                </ul>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <h2 className="font-heading text-xl font-bold tracking-tight mb-6">Before this</h2>
       <div className="relative border-l-2 border-border ml-3 md:ml-6 space-y-10 pb-2">
         {years.map((year) => (
           <div key={year}>
@@ -183,7 +272,7 @@ export function ExperienceSection() {
               <span className="text-lg font-bold">{year}</span>
             </div>
             <div className="space-y-4 pl-6 md:pl-8">
-              {experiences
+              {past
                 .filter((e) => e.year === year)
                 .map((exp, i) => (
                   <Reveal key={i}>

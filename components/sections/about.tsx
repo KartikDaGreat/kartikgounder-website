@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Art } from "@/components/art"
-import { ArrowRight, Download, Github, Linkedin, Mail, MapPin, Terminal } from "lucide-react"
+import { ArrowRight, ArrowUpRight, Download, Github, Linkedin, Mail, MapPin, Terminal } from "lucide-react"
+import { getProjectBySlug } from "@/lib/projects"
 import { GitHubStats } from "@/components/github-stats"
 import { FlipCard } from "@/components/flip-card"
 import { Reveal } from "@/components/motion/reveal"
@@ -10,7 +11,7 @@ import { Reveal } from "@/components/motion/reveal"
 const proof = [
   {
     value: "2-2.5h",
-    label: "cut off every bug I trace at Vertex",
+    label: "cut off every bug traced at Vertex",
     where: "Vertex · Sherlock",
     detail: "An AI tracer that checks a reported bug against Datadog logs and Pulsar events before anyone opens an editor.",
   },
@@ -34,30 +35,43 @@ const proof = [
   },
 ]
 
-const currently = [
+// The three hats this semester, in the order a visitor most likely cares about.
+const now = [
   {
-    dot: "bg-amber-400",
-    label: "Exploring Jev",
-    detail:
-      "Building with TypeSafe's System One model, which answers typed questions with calibrated probabilities instead of generating text. A function signature and a Pydantic model become the whole spec.",
+    kind: "Industry",
+    org: "Rapidflare",
+    role: "Forward Deployed Engineer Intern",
+    detail: "Working directly with customers to get the product running on their real problems.",
   },
   {
-    dot: "bg-primary",
-    label: "boxr",
-    detail: "Just shipped: describe a system, get interviewed, get a checked architecture diagram and a build pack for coding agents.",
-    href: "/projects/boxr",
+    kind: "Research",
+    org: "Columbia, with Prof. Tian Zheng",
+    role: "Research Assistant",
+    detail: "Distilling papers into a form an AI agent can build from, and a reader can chat with to understand.",
   },
   {
-    dot: "bg-emerald-400",
-    label: "Vertex Inc.",
-    detail: "AI agent infrastructure, and Sherlock, the tracer that checks a bug against logs before anyone opens an editor",
-  },
-  {
-    dot: "bg-blue-400",
-    label: "Columbia aiX Lab",
-    detail: "Evaluation metrics for data-science agents, plus AI literacy tooling",
+    kind: "Teaching",
+    org: "Columbia",
+    role: "TA, Policy for Privacy Technologies",
+    detail: "Helping run the course I took last spring: privacy-enhancing tech, regulation, and where they meet.",
   },
 ]
+
+// Hand-picked, with the one number that best says what each project does.
+// The metric index skips numbers already shown in the proof strip above.
+const selected: { slug: string; metric: number }[] = [
+  { slug: "boxr", metric: 2 },
+  { slug: "skill-optimizer", metric: 0 },
+  { slug: "taol", metric: 0 },
+  { slug: "urbanistai", metric: 1 },
+]
+
+const selectedProjects = selected.flatMap(({ slug, metric }) => {
+  const project = getProjectBySlug(slug)
+  if (!project) return []
+  const [name, tagline] = project.title.split(/:\s+/, 2)
+  return [{ slug, name, tagline: tagline ?? project.description, metric: project.metrics?.[metric] }]
+})
 
 // Newest first. Short, and only things that actually happened.
 const recently = [
@@ -72,55 +86,6 @@ const recently = [
   },
 ]
 
-const threads = [
-  {
-    heading: "Can you trust what an agent just wrote?",
-    body: "TAOL scores every LLM-generated patch on four risk signals and routes it to auto-apply, human review, or defer. The ambiguity classifier hits 99.2% accuracy across 500 SWE-bench tasks. Turns out you can predict trustworthiness. You just have to measure the right thing, and an ablation study is what tells you which thing that is.",
-    href: "/projects/taol",
-    linkLabel: "Read the build",
-  },
-  {
-    heading: "What if privacy were structural instead of procedural?",
-    body: "UrbanistAI blurs faces and text before an image ever reaches storage, using three face detectors in a union ensemble because a false positive costs an over-blurred photo and a false negative costs someone's face. There is no code path that stores an unprocessed upload.",
-    href: "/projects/urbanistai",
-    linkLabel: "Read the build",
-  },
-  {
-    heading: "How cheap can assistive hardware get?",
-    body: "Smart glasses for the visually impaired, 3D-printed parts, about $135 in materials. Sensor fusion for distance estimation and context-adaptive keyframe selection so the thing isn't burning compute on redundant frames. Two filed patents came out of it.",
-    href: "#research",
-    linkLabel: "See the patents",
-  },
-]
-
-/**
- * Section links must be plain anchors so they fire hashchange; route links
- * go through next/link for client-side navigation.
- */
-function ThreadLink({ href, label }: { href: string; label: string }) {
-  const className =
-    "inline-flex items-center gap-1.5 mt-1 min-h-9 text-sm font-medium text-primary hover:gap-2.5 transition-all"
-  const content = (
-    <>
-      {label}
-      <ArrowRight className="w-3.5 h-3.5" />
-    </>
-  )
-
-  if (href.startsWith("#")) {
-    return (
-      <a href={href} className={className}>
-        {content}
-      </a>
-    )
-  }
-
-  return (
-    <Link href={href} className={className}>
-      {content}
-    </Link>
-  )
-}
 
 export function AboutSection() {
   return (
@@ -140,8 +105,7 @@ export function AboutSection() {
         </h1>
 
         <p className="text-lg md:text-xl text-foreground/80 leading-relaxed max-w-2xl text-pretty">
-          I build AI agent infrastructure at Vertex, and I'm finishing my MS in Computer Science at Columbia.
-          The problems I like are the ones where the answer has to actually run: on real data, on real
+          I'm finishing my MS in Computer Science at Columbia. The problems I like are the ones where the answer has to actually run: on real data, on real
           hardware, with real users waiting.
         </p>
 
@@ -229,6 +193,31 @@ export function AboutSection() {
         </div>
       </div>
 
+      {/* Right now: the three current roles, promoted from the old footer box
+          because they are the first thing a visitor should learn. */}
+      <div className="mb-10 rounded-xl border border-border bg-card overflow-hidden">
+        <div className="flex items-center justify-between gap-3 px-5 py-3 border-b border-border">
+          <h2 className="flex items-center gap-2 font-heading text-sm font-semibold">
+            <span className="relative flex w-2 h-2" aria-hidden>
+              <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-60 motion-reduce:hidden" />
+              <span className="relative w-2 h-2 rounded-full bg-emerald-400" />
+            </span>
+            Right now
+          </h2>
+          <span className="text-xs text-muted-foreground">Fall 2026, New York</span>
+        </div>
+        <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
+          {now.map((item) => (
+            <div key={item.role} className="p-5">
+              <p className="text-xs font-medium text-primary mb-2">{item.kind}</p>
+              <h3 className="font-heading text-lg font-bold tracking-tight leading-snug">{item.role}</h3>
+              <p className="text-sm text-foreground/80 mt-0.5">{item.org}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed mt-3">{item.detail}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Proof strip: the numbers a recruiter skims for, without the reading */}
       <div className="mb-10 grid grid-cols-2 lg:grid-cols-4 gap-px rounded-lg border border-border bg-border overflow-hidden">
         {proof.map((stat) => (
@@ -252,46 +241,48 @@ export function AboutSection() {
         ))}
       </div>
 
-      <div className="rule-accent mb-10" />
-
-      {/* Three questions I've been chasing */}
+      {/* Selected work: one line and one number per project, the detail lives on each page */}
       <div className="mb-12">
-        <h2 className="eyebrow mb-1.5">
-          <span className="eyebrow-index">01 / </span>What I've been chasing
-        </h2>
-        <p className="text-muted-foreground text-sm mb-6 max-w-2xl">
-          Most of my work starts as a question I couldn't stop poking at. Three that turned into something:
-        </p>
-
-        <div className="grid md:grid-cols-3 gap-4">
-          {threads.map((thread, i) => (
-            <Reveal
-              key={thread.heading}
-              className="group flex flex-col rounded-xl border border-border bg-card p-5 hover:border-primary/50 transition-colors"
-            >
-              <span className="font-mono text-xs text-muted-foreground/60 mb-3">{String(i + 1).padStart(2, "0")}</span>
-              <h3 className="text-base md:text-lg font-semibold mb-2 tracking-tight leading-snug text-balance">
-                {thread.heading}
-              </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">{thread.body}</p>
-              <div className="mt-auto pt-1">
-                <ThreadLink href={thread.href} label={thread.linkLabel} />
-              </div>
-            </Reveal>
-          ))}
+        <div className="flex items-baseline justify-between gap-4 mb-4">
+          <h2 className="font-heading text-xl font-bold tracking-tight">Selected work</h2>
+          <a href="#projects" className="text-sm font-medium text-primary hover:underline underline-offset-4">
+            All projects
+          </a>
         </div>
+        <ul className="border-t border-border">
+          {selectedProjects.map((project) => (
+            <li key={project.slug} className="border-b border-border">
+              <Link
+                href={`/projects/${project.slug}`}
+                className="group grid grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[minmax(0,1fr)_200px_auto] items-center gap-x-6 gap-y-1 py-4 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded-sm"
+              >
+                <div className="min-w-0">
+                  <h3 className="font-heading text-base font-bold tracking-tight group-hover:text-primary transition-colors">
+                    {project.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-snug mt-0.5">{project.tagline}</p>
+                </div>
+                {project.metric && (
+                  <div className="hidden sm:block">
+                    <div className="font-heading text-lg font-bold leading-none">{project.metric.value}</div>
+                    <div className="text-xs text-muted-foreground leading-snug mt-1">{project.metric.label}</div>
+                  </div>
+                )}
+                <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* How I work */}
       <div className="mb-12">
-        <h2 className="eyebrow mb-1.5">
-          <span className="eyebrow-index">02 / </span>How I work
-        </h2>
+        <h2 className="font-heading text-xl font-bold tracking-tight">How I work</h2>
         <div className="mt-5 grid sm:grid-cols-2 gap-3">
           {[
             {
               title: "Measure before you claim",
-              line: "Instrumented every tool-discovery call at Vertex before touching a prompt. That's where the 36.11% token cut came from.",
+              line: "Instrumented every tool-discovery call at Vertex before touching a prompt. That is where the 36.11% token cut came from.",
             },
             {
               title: "Tests are how you go fast",
@@ -319,9 +310,7 @@ export function AboutSection() {
 
       {/* Recently */}
       <div className="mb-12">
-        <h2 className="eyebrow mb-5">
-          <span className="eyebrow-index">03 / </span>Recently
-        </h2>
+        <h2 className="font-heading text-xl font-bold tracking-tight mb-5">Recently</h2>
         <div className="space-y-6">
           {recently.map((event) => (
             <Reveal key={event.title} className="grid sm:grid-cols-[88px_minmax(0,1fr)] gap-x-6 gap-y-1">
@@ -341,33 +330,9 @@ export function AboutSection() {
         </div>
       </div>
 
-      {/* Currently */}
-      <div className="mb-12 p-5 rounded-lg border border-border bg-card">
-        <div className="flex items-center gap-2 mb-3">
-          <Terminal className="w-4 h-4 text-muted-foreground" />
-          <span className="eyebrow">Currently</span>
-        </div>
-        <div className="space-y-3">
-          {currently.map((item) => (
-            <div key={item.label} className="flex items-start gap-2.5 text-sm">
-              <span className={`w-1.5 h-1.5 rounded-full ${item.dot} animate-pulse mt-1.5 flex-shrink-0`} />
-              <span className="text-foreground/80">
-                {"href" in item ? (
-                  <Link href={item.href} className="font-semibold text-foreground hover:text-primary underline decoration-primary/40 underline-offset-2 transition-colors">
-                    {item.label}
-                  </Link>
-                ) : (
-                  <span className="font-semibold text-foreground">{item.label}</span>
-                )}
-                : {item.detail}
-              </span>
-            </div>
-          ))}
-        </div>
-        <p className="text-sm text-muted-foreground font-mono mt-4 pt-3 border-t border-border">
-          {"// off-hours: iced mochas, running, tennis, and whatever's half-built on my desk"}
-        </p>
-      </div>
+      <p className="mb-12 text-sm text-muted-foreground font-mono">
+        {"// off-hours: iced mochas, running, tennis, and whatever's half-built on my desk"}
+      </p>
 
       {/* GitHub Stats */}
       <GitHubStats />

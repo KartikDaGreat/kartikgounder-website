@@ -332,57 +332,68 @@ export function applyBatch(doc: Doc, batch: Batch): { doc: Doc; outcome: Outcome
     title: "skill-optimizer: Pick the Right Claude Code Skill",
     slug: "skill-optimizer",
     tags: ["Claude Code", "Agent Skills", "Developer Tooling"],
+    featured: true,
     github: "https://github.com/KartikDaGreat/skill-optimize",
+    demo: "https://pickr.kartikgounder.com",
     description:
-      "A Claude Code plugin that searches your local skills, plugin marketplaces and 12 GitHub skill collections, picks the best skill for your task in a cheap Haiku subagent, asks before installing anything, does the task, and reports the tokens each phase used.",
-    technologies: ["Claude Code", "Bash", "GitHub CLI", "Subagents", "Markdown"],
+      "A Claude Code plugin and web demo (Pickr) that searches local skills, plugin marketplaces and 12 GitHub collections, picks the best skill for your task in a single API call, and shows the retrieval pipeline live. v0.3.0 cut selection to 41k tokens and 5.5 seconds.",
+    technologies: ["Claude Code", "Bash", "Next.js", "BM25", "Jev", "GitHub CLI", "Vercel AI SDK", "Markdown"],
     period: "September 2026",
     year: 2026,
     category: ["swe"],
     role: "Solo build",
-    status: "shipped",
+    status: "active",
     metrics: [
-      { value: "12", label: "GitHub skill collections searched" },
-      { value: "~520k → ~1k", label: "tokens of skill data read vs returned" },
-      { value: "10.6k", label: "tokens of search context kept out of the main session" },
+      { value: "41k", label: "tokens per selection (down from 213k)" },
+      { value: "5.5s", label: "average selection time" },
+      { value: "$0.126", label: "average cost per run" },
+      { value: "1", label: "API call (down from 3)" },
     ],
     architecture: `/skill-optimizer <task>
   │
-  ├─▶ main session            starts the selector, nothing else
+  ├─▶ 1. INVENTORY (load time)    installed skills inlined, ~230 tokens
   │      ▼
-  ├─▶ selector subagent       Haiku
-  │      ├── discover.sh       local + marketplaces + 12 GitHub collections
-  │      ├── score             fit×4 · depth×2 · trust×2 · friction · cost
-  │      └── safety check      remote picks only
+  ├─▶ 2. LOCAL CHECK               best installed skill = baseline
+  │      ▼  (skip network if confident)
+  ├─▶ 3. DISCOVER (if needed)      marketplaces + 12 GitHub collections
+  │      ├── BM25 ranking           lexical scoring with synonym table
+  │      └── confidence verdict     high → stop, low → search wider
   │      ▼
-  ├─▶ approval                install · use once · stay local
-  ├─▶ task                    done with the winning skill
-  └─▶ usage.sh                per-phase tokens from the session log`,
+  ├─▶ 4. SAFETY CHECK              remote picks only
+  │      ▼
+  ├─▶ 5. APPROVAL                  install · use once · stay local
+  └─▶ 6. TASK                      done with the winning skill
+
+Pickr web demo:
+  task → BM25 search → Jev reranking → LLM verdict → recommendation`,
     story: {
       problem: [
         "There are now thousands of Claude Code skills spread across official repos, community collections and plugin marketplaces. The right one for a task often exists, but finding it means knowing where to look, and pulling every catalog into the main session burns context you need for the actual work.",
         "Installing a random SKILL.md from GitHub is also a trust problem. A skill is instructions your agent will follow, so it can carry download-and-run commands, credential reads or hooks just as easily as good advice.",
       ],
       approach: [
-        "All discovery happens in one bundled script call: local skills, every registered marketplace ranked by install count, and 12 well-known GitHub collections, with each repo's file list cached for 24 hours. It prints a short ranked shortlist instead of raw catalogs.",
-        "Picking runs in a Haiku subagent, so the search results never enter the main session's context. It scores candidates on a weighted rubric (task fit ×4, depth ×2, trust ×2, friction, cost). Your best local skill is the baseline, and a remote skill has to beat it by at least five points to be recommended.",
-        "Nothing gets installed, enabled or run from the internet without approval. Remote picks are checked first for download-and-run commands, credential access, hooks and instructions to skip confirmations. You can install, use it once without installing, or stay with your local skill.",
+        "v0.3.0 inlines a compact inventory of every installed skill at load time (about 230 tokens), so choosing among what you already have costs no tool call at all. Discovery only runs when nothing installed fits.",
+        "All discovery happens in one bundled script call: local skills, every registered marketplace ranked by install count, and 12 well-known GitHub collections, with each repo's file list cached for 24 hours. BM25 with a synonym table ranks candidates and produces a confidence verdict.",
+        "Nothing gets installed, enabled or run from the internet without approval. Remote picks are checked first for download-and-run commands, credential access, hooks and instructions to skip confirmations.",
+        "The web demo (Pickr) lets you describe a task and watch the retrieval pipeline live: BM25 lexical search, Jev reranking for typed confidence scores, and an LLM final verdict. It streams each stage so you see the catalog narrow in real time.",
       ],
       outcome: [
-        "A typical run reads about 520k tokens of catalogs and skill files and hands back about 1k. In the example run (an Excel budget with the xlsx skill from anthropics/skills), the subagent kept about 10.6k tokens of search context out of the main session, an estimated 95.6k tokens not re-read over the rest of the run.",
-        "Every run ends with an exact per-phase token report, read from Claude Code's own session log, so the cost of the search is visible instead of assumed.",
+        "Selection costs 41k tokens in a single API call, down from 213k and three calls in v0.2.0: an 81% reduction. Average time is 5.5 seconds, 12x faster, with no loss of accuracy on the benchmark set.",
+        "The cost driver is API calls, not search results. Every call re-reads about 40k of fixed context. Cutting from 3 calls to 1 is what made the difference, not shrinking the discovery output.",
+        "The Pickr web demo makes the pipeline inspectable. Community members can submit skills they built and see how they rank against the catalog.",
       ],
       lessons: [
         "A skill installed mid-session can't be called by name until Claude Code restarts. Rather than asking for a restart, skill-optimizer reads the new SKILL.md and follows it directly, so the task still gets done.",
-        "Skills built into Claude Code have no file on disk, so a search that only looks at the filesystem misses them. The main session now passes its own list of plausible skills to the selector.",
+        "Ranking is lexical (BM25), and research on tool retrieval finds lexical scoring matches or beats embedding models. Thin descriptions are the real bottleneck, not the ranking method.",
       ],
     },
     highlights: [
-      "One-call discovery across local skills, plugin marketplaces and 12 GitHub skill collections",
-      "Selection in a Haiku subagent so search results stay out of the main context",
-      "Weighted scoring rubric where remote skills must beat the best local skill by 5 points",
+      "Single-call selection: 41k tokens, 5.5s, $0.126, down from 213k tokens and 66.5s",
+      "Inventory inlined at load time so local-only picks cost zero tool calls",
+      "BM25 ranking with synonym table and confidence cascade",
+      "Pickr web demo with live pipeline visualization (BM25, Jev reranking, LLM verdict)",
       "Safety check on remote picks for download-and-run commands, credential access and hooks",
-      "Exact per-phase token report parsed from the Claude Code session log",
+      "Community skill submission and catalog browsing",
     ],
     codeSnippet: {
       language: "markdown",
