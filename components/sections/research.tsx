@@ -3,74 +3,7 @@ import Image from "next/image"
 import { Art } from "@/components/art"
 import { Reveal } from "@/components/motion/reveal"
 import { MetricChips } from "@/components/metric-chips"
-
-interface Publication {
-  title: string
-  venue: string
-  year: string
-  authors: string
-  link?: string
-  type: "paper" | "patent"
-  description?: string
-  image?: string
-}
-
-const publications: Publication[] = [
-  {
-    title: "A Lightweight Hybrid CNN-Fuzzy Logic Approach for Real Time On-Device Document Classification",
-    venue: "ISEC 2025 (ACM)",
-    year: "2025",
-    authors: "K. Gounder et al.",
-    link: "https://doi.org/10.1145/3717383.3717387",
-    type: "paper",
-    image: "/DeviceClassificationFramework.PNG",
-    description:
-      "A 3.7M-parameter CNN that classifies documents on the phone itself. No cloud, and it still works when the OCR is garbage.",
-  },
-  {
-    title: "A Hybrid-Multimodal Mental Health Chatbot for Psychological Counselling",
-    venue: "BITMDM-2024 (Springer)",
-    year: "2024",
-    authors: "K. Gounder et al.",
-    link: "https://doi.org/10.1007/978-3-031-82706-8_23",
-    type: "paper",
-    image: "/PsychologicalCounsellingFramework.PNG",
-    description:
-      "Reads what patients type, how their voice sounds, and what their face shows. It catches the trembling voice behind 'I'm fine'. 87% patient satisfaction.",
-  },
-  {
-    title: "Ensemble Model using Various CNNs for Improved Skin Cancer Diagnosis",
-    venue: "ICoICI-2024 (IEEE)",
-    year: "2024",
-    authors: "K. Gounder et al.",
-    link: "https://doi.org/10.1109/ICoICI62503.2024.10696508",
-    type: "paper",
-    image: "/SkinCancerFramework.PNG",
-    description:
-      "Three CNNs voting together hit 96.33% on skin lesion classification, beating every individual model in the ensemble.",
-  },
-]
-
-const patents: Publication[] = [
-  {
-    title: "Sensor-Fused Object Distance Estimation And Visual Scaling For Wearable Electronic System",
-    venue: "Patent Application",
-    year: "2024",
-    authors: "K. Gounder",
-    type: "patent",
-    image: "/SmartGlassPicture.png",
-    description: "Smart glasses that fuse ultrasonic and infrared sensors to estimate distance, then visually scale what the wearer sees.",
-  },
-  {
-    title: "Multimodal Context-Adaptive Keyframe Selection System for Vision Assistive Wearables",
-    venue: "Patent Application",
-    year: "2024",
-    authors: "K. Gounder",
-    type: "patent",
-    image: "/KeyframeSelectionFramework.png",
-    description: "Picks which video frames deserve compute on vision-assistive wearables, using scene complexity, motion, and gaze.",
-  },
-]
+import { patents, publications, type Publication } from "@/lib/profile"
 
 export function ResearchSection() {
   return (

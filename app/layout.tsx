@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { ThemeDice } from "@/components/theme-dice"
 import { MotionRoot } from "@/components/motion/motion-root"
+import { basics, degrees, now, SITE_URL as PROFILE_URL } from "@/lib/profile"
 import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" })
@@ -34,7 +35,11 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Kartik Gounder", url: SITE_URL }],
   creator: "Kartik Gounder",
-  alternates: { canonical: "/" },
+  alternates: {
+    canonical: "/",
+    // For agents: a markdown index of the whole site, and the same data as JSON.
+    types: { "text/plain": "/llms.txt", "application/json": "/api/agent" },
+  },
   openGraph: {
     type: "website",
     url: SITE_URL,
@@ -68,6 +73,22 @@ export const metadata: Metadata = {
   },
 }
 
+// Structured data so search engines and agents can read the basics without
+// running the client-rendered page.
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: basics.name,
+  url: PROFILE_URL,
+  email: `mailto:${basics.email}`,
+  description: basics.summary,
+  jobTitle: now[0]?.role,
+  worksFor: now.map((n) => ({ "@type": "Organization", name: n.org.split(",")[0] })),
+  alumniOf: degrees.map((d) => ({ "@type": "CollegeOrUniversity", name: d.school })),
+  address: { "@type": "PostalAddress", addressLocality: "New York", addressRegion: "NY", addressCountry: "US" },
+  sameAs: [basics.github, basics.linkedin],
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -83,6 +104,10 @@ export default function RootLayout({
         <noscript>
           <style>{`[data-reveal]{opacity:1!important;transform:none!important}`}</style>
         </noscript>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd).replace(/</g, "\\u003c") }}
+        />
       </head>
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} font-sans antialiased text-[17px] md:text-[18px] leading-7 md:leading-8`}

@@ -24,6 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       type: "article",
       url: `/projects/${project.slug}`,
     },
+    alternates: { types: { "text/markdown": `/projects/${project.slug}.md` } },
   }
 }
 

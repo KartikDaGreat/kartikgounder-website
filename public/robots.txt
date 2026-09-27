@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
 
+# AI agents: start at /llms.txt. It indexes markdown versions of every
+# section and project, plus /api/agent/search?q= for targeted lookups.
+
 Sitemap: https://kartikgounder.com/sitemap.xml

@@ -1,220 +1,12 @@
 import { Award } from "lucide-react"
 import { PopupLink } from "@/components/popup-link"
 import { Reveal } from "@/components/motion/reveal"
-import { ImpactStrip, type Impact } from "@/components/impact-strip"
+import { ImpactStrip } from "@/components/impact-strip"
+import { experiences, skills, TYPE_LABEL, type Experience, type Highlight } from "@/lib/profile"
 import { Expander } from "@/components/expander"
-
-interface Highlight {
-  lead: string
-  text: string
-}
-
-interface Experience {
-  title: string
-  company: string
-  period: string
-  year: number
-  location: string
-  impact?: Impact[]
-  highlights: Highlight[]
-  type: "internship" | "research" | "teaching"
-  certificate?: string
-  /** Pinned above the timeline in the "Right now" group. */
-  current?: boolean
-}
-
-const TYPE_LABEL: Record<Experience["type"], string> = {
-  internship: "Industry",
-  research: "Research",
-  teaching: "Teaching",
-}
 
 /** Bullets shown before the "+n more" fold kicks in. */
 const VISIBLE_HIGHLIGHTS = 2
-
-const experiences: Experience[] = [
-  {
-    title: "Forward Deployed Engineer Intern",
-    company: "Rapidflare",
-    period: "September 2026 - Present",
-    year: 2026,
-    location: "New York, NY",
-    type: "internship",
-    current: true,
-    highlights: [
-      {
-        lead: "Customer-facing",
-        text: "working directly with customers to get the product running on their real problems.",
-      },
-    ],
-  },
-  {
-    title: "Teaching Assistant, Policy for Privacy Technologies",
-    company: "Columbia University",
-    period: "Fall 2026",
-    year: 2026,
-    location: "New York, NY",
-    type: "teaching",
-    current: true,
-    highlights: [
-      {
-        lead: "Course support",
-        text: "for the class I took in Spring 2026, covering privacy-enhancing technologies, regulatory frameworks, and applied privacy engineering.",
-      },
-    ],
-  },
-  {
-    title: "Research Assistant",
-    company: "Columbia University",
-    period: "September 2026 - Present",
-    year: 2026,
-    location: "New York, NY",
-    type: "research",
-    current: true,
-    highlights: [
-      {
-        lead: "Paper distillation",
-        text: "with Prof. Tian Zheng, turning research papers into a form an AI agent can build a project from, and a reader can chat with to understand the paper.",
-      },
-    ],
-  },
-  {
-    title: "Software Development Intern",
-    company: "Vertex Inc.",
-    period: "June 2026 - August 2026",
-    year: 2026,
-    location: "Pennsylvania, US",
-    type: "internship",
-    impact: [
-      { icon: "bug-trace", value: "2-2.5h", label: "saved per bug" },
-      { icon: "token-funnel", value: "36.11%", label: "fewer tokens" },
-    ],
-    highlights: [
-      {
-        lead: "MCP platform",
-        text: "connects 105 enterprise tools through one Electron app, routing real requests across Jira, Slack, GitHub, Confluence, and more.",
-      },
-      {
-        lead: "Sherlock",
-        text: "AI bug tracer that validates issues against Datadog logs and Pulsar events with chain-of-thought reasoning. Cuts 2 to 2.5 hours off every debugging cycle.",
-      },
-      {
-        lead: "78 tests",
-        text: "across unit, integration, functional, and e2e layers, at 92.65% coverage.",
-      },
-      {
-        lead: "Token instrumentation",
-        text: "measured every tool-discovery call, then cut redundant context for a 36.11% saving.",
-      },
-    ],
-  },
-  {
-    title: "aiX Convergence Design Studio Intern",
-    company: "Columbia University",
-    period: "Jan 2026 - May 2026",
-    year: 2026,
-    location: "New York, NY",
-    type: "internship",
-    impact: [
-      { icon: "blur-shield", value: "Blur-first", label: "PII never reaches storage" },
-      { icon: "gauge", value: "Eval metrics", label: "for data-science agents" },
-    ],
-    highlights: [
-      {
-        lead: "Privacy pipeline",
-        text: "image labeling platform with ensemble face detection (MTCNN + RetinaFace + MediaPipe) that blurs PII before anything hits storage.",
-      },
-      {
-        lead: "Agent evaluation",
-        text: "metrics with Prof. Tian Zheng for whether a data-science agent actually helps students learn, not just whether it answers correctly.",
-      },
-      {
-        lead: "AI literacy",
-        text: "multi-year initiative with Prof. Anthony Vanky, building tools for students and educators working with AI in course design.",
-      },
-    ],
-    certificate: "https://drive.google.com/file/d/1XNSc5r4Z2FpBkPpxfL4F7uuOdVi5_0Mb/view?usp=sharing",
-  },
-  {
-    title: "Software Development Intern",
-    company: "eNova Software and Hardware Solutions",
-    period: "January 2025 - June 2025",
-    year: 2025,
-    location: "Coimbatore, Tamil Nadu, India",
-    type: "internship",
-    impact: [
-      { icon: "pipeline-clock", value: "45→35 min", label: "production release" },
-      { icon: "revenue-curve", value: "13%", label: "revenue, 15 clients" },
-      { icon: "threat-shield", value: "19%", label: "fewer threats shipped" },
-    ],
-    highlights: [
-      {
-        lead: "CI/CD",
-        text: "parallelized the testing and security checks, taking a production release from about 45 minutes down to 35.",
-      },
-      {
-        lead: "3 AI modules",
-        text: "scaled up across the Python products, working with 15 clients to predictively improve revenue by 13%.",
-      },
-      {
-        lead: "Security scanner",
-        text: "redesigned around local server-based agentic monitoring, cutting threats that reached a release by 19%.",
-      },
-    ],
-    certificate: "https://drive.google.com/file/d/1kL7yFm7ALNFfT2R6YdrNCYVFRnZWNI_z/view?usp=sharing",
-  },
-  {
-    title: "iXp Intern",
-    company: "SAP Labs India",
-    period: "June 2024 - August 2024",
-    year: 2024,
-    location: "Bangalore, India",
-    type: "internship",
-    impact: [
-      { icon: "api-speed", value: "28%", label: "faster API calls" },
-      { icon: "auth-key", value: "JWT", label: "on every endpoint" },
-    ],
-    highlights: [
-      { lead: "Farmbot", text: "designed and built the platform, cutting API call time 28% by restructuring frontend request batching." },
-      { lead: "XSUAA auth", text: "JWT access tokens locking down every endpoint in the service layer." },
-    ],
-    certificate: "https://drive.google.com/file/d/1P6tKBze3g_Ph-Tz2fRZoHEUmEasikRZn/view?usp=sharing",
-  },
-  {
-    title: "R&D Intern (Samsung PRISM)",
-    company: "Samsung R&D Institute India - Bangalore",
-    period: "January 2024 - May 2024",
-    year: 2024,
-    location: "Bangalore, India",
-    type: "internship",
-    impact: [
-      { icon: "on-device-chip", value: "On-device", label: "classification, no server" },
-      { icon: "paper-stack", value: "ISEC-2025", label: "paper published" },
-    ],
-    highlights: [
-      { lead: "On-device CNN", text: "custom framework for document classification that runs on the phone, not a server." },
-      { lead: "ISEC-2025", text: "co-authored and published the research paper behind it." },
-    ],
-    certificate: "https://drive.google.com/file/d/1xpLRjU5B9Chpf3GpxL4jeNGbhm4g0_5B/view?usp=sharing",
-  },
-  {
-    title: "Software Engineer Intern",
-    company: "eNova Software and Hardware Solutions",
-    period: "August 2023 - December 2023",
-    year: 2023,
-    location: "Coimbatore, Tamil Nadu, India",
-    type: "internship",
-    impact: [
-      { icon: "server-pulse", value: "Uptime pages", label: "server status monitoring" },
-      { icon: "syllabus", value: "Syllabus", label: "intern curriculum rewritten" },
-    ],
-    highlights: [
-      { lead: "Web assets", text: "email landing pages and server status monitoring." },
-      { lead: "Training syllabus", text: "updated and enhanced the internship curriculum." },
-    ],
-    certificate: "https://drive.google.com/file/d/1kL7yFm7ALNFfT2R6YdrNCYVFRnZWNI_z/view?usp=sharing",
-  },
-]
 
 const CURRENT_ORDER: Experience["type"][] = ["internship", "research", "teaching"]
 const current = experiences
@@ -288,47 +80,21 @@ export function ExperienceSection() {
       <div className="mt-16 pt-8 border-t border-border">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-5">Technical Skills</h2>
         <div className="grid md:grid-cols-3 gap-8">
-          <div>
-            <h3 className="text-sm font-medium mb-3">Languages & Frameworks</h3>
-            <div className="flex flex-wrap gap-2">
-              {["TypeScript", "Python", "Java", "C++", "React", "Next.js", "Flask", "Kotlin"].map((skill) => (
-                <span
-                  key={skill}
-                  className="px-2.5 py-1 text-xs font-mono bg-secondary text-secondary-foreground rounded-md border border-border"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium mb-3">ML/AI & Data</h3>
-            <div className="flex flex-wrap gap-2">
-              {["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "LLMs", "MCP", "Ollama", "PostgreSQL"].map(
-                (skill) => (
+          {skills.map((group) => (
+            <div key={group.label}>
+              <h3 className="text-sm font-medium mb-3">{group.label}</h3>
+              <div className="flex flex-wrap gap-2">
+                {group.items.map((skill) => (
                   <span
                     key={skill}
                     className="px-2.5 py-1 text-xs font-mono bg-secondary text-secondary-foreground rounded-md border border-border"
                   >
                     {skill}
                   </span>
-                ),
-              )}
+                ))}
+              </div>
             </div>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium mb-3">Infrastructure & Tools</h3>
-            <div className="flex flex-wrap gap-2">
-              {["AWS", "Docker", "Electron", "CI/CD", "Vercel", "Firebase", "Git", "Jest"].map((skill) => (
-                <span
-                  key={skill}
-                  className="px-2.5 py-1 text-xs font-mono bg-secondary text-secondary-foreground rounded-md border border-border"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

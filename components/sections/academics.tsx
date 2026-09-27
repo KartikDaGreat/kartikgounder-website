@@ -1,125 +1,8 @@
+import { Award } from "lucide-react"
 import { Art } from "@/components/art"
 import { Expander } from "@/components/expander"
 import { Reveal } from "@/components/motion/reveal"
-
-type Degree = {
-  title: string
-  school: string
-  period: string
-  gpa?: string
-  gpaNote?: string
-  rank?: { value: string; label: string }
-  focus?: string
-  current?: boolean
-  coursework?: { label: string; items: string[] }[]
-}
-
-type SchoolItem = {
-  title: string
-  school: string
-  period: string
-}
-
-type LeadershipItem = {
-  title: string
-  org: string
-  period: string
-  highlight: string
-}
-
-type AccoladeItem = {
-  title: string
-  org: string
-  period: string
-  detail?: string
-}
-
-const degrees: Degree[] = [
-  {
-    title: "Master of Science, Computer Science",
-    school: "Columbia Engineering",
-    period: "Aug 2025 – Dec 2026",
-    gpa: "3.62",
-    gpaNote: "3.76 cumulative expected at graduation",
-    focus: "AI, Machine Learning, Healthcare Applications",
-    current: true,
-    coursework: [
-      {
-        label: "Fall 2026",
-        items: ["Advanced Software Engineering", "Projects in Computer Science"],
-      },
-      {
-        label: "Spring 2026 · 4.1 GPA",
-        items: [
-          "User Interface Design",
-          "Ethical and Responsible AI",
-          "Topics in Software Engineering",
-          "Policy for Privacy Technologies",
-        ],
-      },
-      {
-        label: "Fall 2025 · 3.1 GPA",
-        items: ["Machine Learning", "Databases", "Algorithms", "Computational Learning Theory"],
-      },
-    ],
-  },
-  {
-    title: "Bachelor of Technology, Computer Science",
-    school: "Vellore Institute of Technology",
-    period: "May 2021 – May 2025",
-    gpa: "9.6/10",
-    rank: { value: "11", label: "of 4,000" },
-  },
-]
-
-const earlierSchooling: SchoolItem[] = [
-  { title: "High School, Computer Science", school: "Suguna PIP School", period: "Aug 2019 – Apr 2021" },
-  { title: "Middle School", school: "SSVM Institutions", period: "Aug 2017 – May 2019" },
-]
-
-const leadership: LeadershipItem[] = [
-  {
-    title: "Member Secretary, Student Council",
-    org: "VIT",
-    period: "Sep 2023 – Aug 2024",
-    highlight: "Represented 12,000+ students in Academic Council meetings and ran 15+ concurrent events during Yantra.",
-  },
-  {
-    title: "Technical Board Member",
-    org: "IEEE Computer Society",
-    period: "Aug 2023 – May 2024",
-    highlight: "Mentored project teams across AI, IoT, web, and ML tracks; built a speed-detection system for NHAI.",
-  },
-  {
-    title: "Guest Speaker",
-    org: "KV Institute of Management",
-    period: "Jun 2019 – May 2020",
-    highlight: "12 sessions on emerging tech, with AI/ML workshops designed for business cohorts.",
-  },
-]
-
-const accolades: AccoladeItem[] = [
-  {
-    title: "Semi-finalist, Innovation Challenge",
-    org: "Accenture",
-    period: "2023",
-    detail: "Selected from 50,000+ teams",
-  },
-  { title: "Winners, Game Of Codes", org: "IEEE-CS", period: "2023", detail: "1st place among 30+ teams" },
-  { title: "Third Place, Cryptic Hunt", org: "ACM-VIT", period: "2022" },
-  {
-    title: "Blood Donation Camp Organizer",
-    org: "VIT",
-    period: "2022 – 2024",
-    detail: "Planned recurring campus drives",
-  },
-  {
-    title: "Operation HOPE Volunteer",
-    org: "Operation HOPE",
-    period: "2019 – 2024",
-    detail: "Financial literacy outreach",
-  },
-]
+import { accolades, certifications, degrees, earlierSchooling, leadership, type Degree } from "@/lib/profile"
 
 export function AcademicsSection() {
   return (
@@ -166,6 +49,46 @@ export function AcademicsSection() {
                 {item.school} · {item.period}
               </span>
             </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Certifications: with the validation number so anyone can check it */}
+      <div className="mb-14">
+        <h2 className="eyebrow mb-5">Certifications</h2>
+        <div className="space-y-2">
+          {certifications.map((cert) => (
+            <Reveal key={cert.title} className="rounded-lg border border-border bg-card px-4 py-3">
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
+                <h3 className="font-semibold text-sm">{cert.title}</h3>
+                <span className="text-xs text-primary">{cert.issuer}</span>
+                <span className="text-xs text-muted-foreground font-mono ml-auto">
+                  {cert.issued}, valid to {cert.expires}
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-sm">
+                <a
+                  href={cert.file}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 min-h-9 font-medium text-primary hover:underline underline-offset-4"
+                >
+                  <Award className="w-3.5 h-3.5" />
+                  View certificate
+                </a>
+                <span className="text-xs text-muted-foreground">
+                  Validation number <span className="font-mono text-foreground/80 break-all">{cert.validation}</span> at{" "}
+                  <a
+                    href={cert.verifyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-2 hover:text-primary"
+                  >
+                    aws.amazon.com/verification
+                  </a>
+                </span>
+              </div>
+            </Reveal>
           ))}
         </div>
       </div>

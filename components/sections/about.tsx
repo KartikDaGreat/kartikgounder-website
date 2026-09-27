@@ -2,60 +2,10 @@ import Link from "next/link"
 import { Art } from "@/components/art"
 import { ArrowRight, ArrowUpRight, Download, Github, Linkedin, Mail, MapPin, Terminal } from "lucide-react"
 import { getProjectBySlug } from "@/lib/projects"
+import { now, proof, recently } from "@/lib/profile"
 import { GitHubStats } from "@/components/github-stats"
 import { FlipCard } from "@/components/flip-card"
 import { Reveal } from "@/components/motion/reveal"
-
-// The receipts, ordered by how much value each one actually produced.
-// Every number already lives elsewhere on this site.
-const proof = [
-  {
-    value: "2-2.5h",
-    label: "cut off every bug traced at Vertex",
-    where: "Vertex · Sherlock",
-    detail: "An AI tracer that checks a reported bug against Datadog logs and Pulsar events before anyone opens an editor.",
-  },
-  {
-    value: "13%",
-    label: "revenue lift I drove across 15 clients",
-    where: "eNova · AI modules",
-    detail: "Scaled three prediction modules across the Python products, tuned against 15 real client deployments.",
-  },
-  {
-    value: "14/14",
-    label: "boxr drawings problem-free, vs 4/14",
-    where: "boxr · paired eval",
-    detail: "Same model, 14 paired briefs. The plain prompt drew problem-free diagrams 4 times; boxr's guardrails got all 14.",
-  },
-  {
-    value: "3 + 2",
-    label: "papers published, patents filed",
-    where: "ACM · Springer · IEEE",
-    detail: "Three peer-reviewed papers, plus two patents out of $135 of wearable hardware I built and ran.",
-  },
-]
-
-// The three hats this semester, in the order a visitor most likely cares about.
-const now = [
-  {
-    kind: "Industry",
-    org: "Rapidflare",
-    role: "Forward Deployed Engineer Intern",
-    detail: "Working directly with customers to get the product running on their real problems.",
-  },
-  {
-    kind: "Research",
-    org: "Columbia, with Prof. Tian Zheng",
-    role: "Research Assistant",
-    detail: "Distilling papers into a form an AI agent can build from, and a reader can chat with to understand.",
-  },
-  {
-    kind: "Teaching",
-    org: "Columbia",
-    role: "TA, Policy for Privacy Technologies",
-    detail: "Helping run the course I took last spring: privacy-enhancing tech, regulation, and where they meet.",
-  },
-]
 
 // Hand-picked, with the one number that best says what each project does.
 // The metric index skips numbers already shown in the proof strip above.
@@ -72,19 +22,6 @@ const selectedProjects = selected.flatMap(({ slug, metric }) => {
   const [name, tagline] = project.title.split(/:\s+/, 2)
   return [{ slug, name, tagline: tagline ?? project.description, metric: project.metrics?.[metric] }]
 })
-
-// Newest first. Short, and only things that actually happened.
-const recently = [
-  {
-    when: "Sep 2026",
-    title: "Sponsored the AI² workshop at graVITas'26",
-    body: [
-      "\"AI²: Building AI Systems with AI\" ran September 18 to 20 at VIT, where I wrote my first research papers, landed my first internships, and figured out I love building things with AI. Supporting it felt like a small way to give back to the place that gave me my start.",
-      "AI is changing how software gets built, fast, and students shouldn't have to wait for their first job to learn to work with it. Using the tools isn't enough. You have to design, test, and build real systems with them, and that only comes from getting your hands dirty.",
-      "Thanks to the graVITas team for putting it together, and to Dr. Shashank Mouli Satapathy for making it happen.",
-    ],
-  },
-]
 
 
 export function AboutSection() {
