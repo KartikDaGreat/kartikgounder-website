@@ -28,3 +28,8 @@ next-env.d.ts
 .claude
 # Source photo for the portrait art. The rendered prints ship; this does not.
 public/art/profile.jpg
+
+# Private working files: the Word resume, source art, archived exports
+.content/
+# Raspberry Pi code for the departure board and storage server, deployed separately
+/dets/

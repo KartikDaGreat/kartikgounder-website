@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Art } from "@/components/art"
 import { ArrowRight, ArrowUpRight, Download, Github, Linkedin, Mail, MapPin, Terminal } from "lucide-react"
 import { getProjectBySlug } from "@/lib/projects"
-import { now, proof, recently } from "@/lib/profile"
+import { now, principles, proof, recently } from "@/lib/profile"
 import { GitHubStats } from "@/components/github-stats"
 import { FlipCard } from "@/components/flip-card"
 import { Reveal } from "@/components/motion/reveal"
@@ -216,24 +216,7 @@ export function AboutSection() {
       <div className="mb-12">
         <h2 className="font-heading text-xl font-bold tracking-tight">How I work</h2>
         <div className="mt-5 grid sm:grid-cols-2 gap-3">
-          {[
-            {
-              title: "Measure before you claim",
-              line: "Instrumented every tool-discovery call at Vertex before touching a prompt. That is where the 36.11% token cut came from.",
-            },
-            {
-              title: "Tests are how you go fast",
-              line: "78 tests at Vertex, 144 on TAOL. A suite that catches regressions is what lets you keep changing things.",
-            },
-            {
-              title: "Hardware keeps you honest",
-              line: "The Pi and Arduino on my desk report live into this site. When they go down, you watch them go down.",
-            },
-            {
-              title: "Research should ship",
-              line: "Three papers and two patents, every one from an artifact I actually built and ran.",
-            },
-          ].map((principle) => (
+          {principles.map((principle) => (
             <div
               key={principle.title}
               className="border-l-2 border-primary/40 pl-4 py-1"

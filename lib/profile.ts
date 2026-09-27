@@ -111,6 +111,13 @@ export interface Experience {
   certificate?: string
   /** Pinned above the timeline in the "Right now" group. */
   current?: boolean
+  /** YYYY-MM, for the JSON resume. `end` is absent while the role is ongoing. */
+  start: string
+  end?: string
+  /** One line on what the role is about, for the JSON resume. */
+  summary?: string
+  /** Tools and topics, for the JSON resume and agent search. */
+  keywords?: string[]
 }
 
 export const TYPE_LABEL: Record<Experience["type"], string> = {
@@ -126,6 +133,7 @@ export const experiences: Experience[] = [
     period: "September 2026 - Present",
     year: 2026,
     location: "New York, NY",
+    start: "2026-09",
     type: "internship",
     current: true,
     highlights: [
@@ -141,6 +149,10 @@ export const experiences: Experience[] = [
     period: "Fall 2026",
     year: 2026,
     location: "New York, NY",
+    start: "2026-09",
+    end: "2026-12",
+    summary: "Teaching assistant for Columbia's course on privacy-enhancing technologies and the policy around them.",
+    keywords: ["Privacy-Enhancing Technologies", "Privacy Policy", "Teaching"],
     type: "teaching",
     current: true,
     highlights: [
@@ -156,6 +168,9 @@ export const experiences: Experience[] = [
     period: "September 2026 - Present",
     year: 2026,
     location: "New York, NY",
+    start: "2026-09",
+    summary: "Research on turning papers into something agents can build from and readers can talk to.",
+    keywords: ["AI Agents", "Research Tooling", "LLMs"],
     type: "research",
     current: true,
     highlights: [
@@ -171,6 +186,10 @@ export const experiences: Experience[] = [
     period: "June 2026 - August 2026",
     year: 2026,
     location: "Pennsylvania, US",
+    start: "2026-06",
+    end: "2026-08",
+    summary: "Built AI agent infrastructure for enterprise engineering teams.",
+    keywords: ["MCP", "Electron", "TypeScript", "LLM agents", "Datadog", "Apache Pulsar", "Jest"],
     type: "internship",
     impact: [
       { icon: "bug-trace", value: "2-2.5h", label: "saved per bug" },
@@ -201,6 +220,10 @@ export const experiences: Experience[] = [
     period: "Jan 2026 - May 2026",
     year: 2026,
     location: "New York, NY",
+    start: "2026-01",
+    end: "2026-05",
+    summary: "Research engineering across privacy-preserving ML data collection, agent evaluation, and AI literacy in pedagogy.",
+    keywords: ["Computer Vision", "Privacy Engineering", "Agent Evaluation", "FastAPI", "Google Cloud", "PostgreSQL"],
     type: "internship",
     impact: [
       { icon: "blur-shield", value: "Blur-first", label: "PII never reaches storage" },
@@ -228,6 +251,9 @@ export const experiences: Experience[] = [
     period: "January 2025 - June 2025",
     year: 2025,
     location: "Coimbatore, Tamil Nadu, India",
+    start: "2025-01",
+    end: "2025-06",
+    keywords: ["Python", "CI/CD", "Security Automation", "AI/ML"],
     type: "internship",
     impact: [
       { icon: "pipeline-clock", value: "45→35 min", label: "production release" },
@@ -256,6 +282,9 @@ export const experiences: Experience[] = [
     period: "June 2024 - August 2024",
     year: 2024,
     location: "Bangalore, India",
+    start: "2024-06",
+    end: "2024-08",
+    keywords: ["SAP BTP", "XSUAA", "JWT", "Frontend Performance"],
     type: "internship",
     impact: [
       { icon: "api-speed", value: "28%", label: "faster API calls" },
@@ -273,6 +302,9 @@ export const experiences: Experience[] = [
     period: "January 2024 - May 2024",
     year: 2024,
     location: "Bangalore, India",
+    start: "2024-01",
+    end: "2024-05",
+    keywords: ["TensorFlow", "CNN", "On-Device ML", "Computer Vision"],
     type: "internship",
     impact: [
       { icon: "on-device-chip", value: "On-device", label: "classification, no server" },
@@ -290,6 +322,9 @@ export const experiences: Experience[] = [
     period: "August 2023 - December 2023",
     year: 2023,
     location: "Coimbatore, Tamil Nadu, India",
+    start: "2023-08",
+    end: "2023-12",
+    keywords: ["Web Development", "Monitoring"],
     type: "internship",
     impact: [
       { icon: "server-pulse", value: "Uptime pages", label: "server status monitoring" },
@@ -523,3 +558,155 @@ export const skills: { label: string; items: string[] }[] = [
   { label: "ML/AI & Data", items: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "LLMs", "MCP", "Ollama", "PostgreSQL"] },
   { label: "Infrastructure & Tools", items: ["AWS", "Docker", "Electron", "CI/CD", "Vercel", "Firebase", "Git", "Jest"] },
 ]
+
+/** The longer, resume-grade skill list. The UI shows the shorter `skills`. */
+export const detailedSkills: { name: string; keywords: string[] }[] = [
+  { name: "Languages", keywords: ["TypeScript", "Python", "Java", "C++", "Kotlin", "JavaScript", "SQL"] },
+  {
+    name: "Frameworks & Frontend",
+    keywords: ["React", "Next.js", "Vite", "Tailwind CSS", "Shadcn/ui", "Electron", "Flask", "FastAPI", "AngularJS", "Konva.js"],
+  },
+  {
+    name: "ML/AI",
+    keywords: [
+      "PyTorch",
+      "TensorFlow",
+      "Scikit-learn",
+      "OpenCV",
+      "NLTK",
+      "CNNs",
+      "Transfer Learning",
+      "Model Ensembles",
+      "LLMs",
+      "MCP",
+      "Ollama",
+      "Gemini Flash",
+      "ElevenLabs",
+      "On-Device ML",
+      "NLP",
+    ],
+  },
+  { name: "Data & Storage", keywords: ["PostgreSQL", "SQLite", "Firebase", "Firestore", "Supabase", "GTFS-Realtime"] },
+  {
+    name: "Infrastructure & DevOps",
+    keywords: ["AWS", "Google Cloud", "Docker", "CI/CD", "GitHub Actions", "Vercel", "Git", "Tailscale", "pnpm"],
+  },
+  {
+    name: "Testing & Quality",
+    keywords: ["Jest", "Unit Testing", "Integration Testing", "Functional Testing", "E2E Testing", "Benchmarking", "Ablation Studies"],
+  },
+  {
+    name: "Hardware & Embedded",
+    keywords: ["Raspberry Pi", "Arduino", "WS2812B LED matrices", "HC-SR04 ultrasonic", "Sensor Fusion", "IoT", "3D Printing"],
+  },
+  {
+    name: "Specialties",
+    keywords: [
+      "AI Agent Infrastructure",
+      "Developer Tooling",
+      "Agent Evaluation",
+      "Privacy-Enhancing Technologies",
+      "Computer Vision",
+      "Trust & Safety",
+    ],
+  },
+]
+
+// ---- How I work ----
+
+export const principles: { title: string; line: string }[] = [
+  {
+    title: "Measure before you claim",
+    line: "Instrumented every tool-discovery call at Vertex before touching a prompt. That is where the 36.11% token cut came from.",
+  },
+  {
+    title: "Tests are how you go fast",
+    line: "78 tests at Vertex, 144 on TAOL. A suite that catches regressions is what lets you keep changing things.",
+  },
+  {
+    title: "Hardware keeps you honest",
+    line: "The Pi and Arduino on my desk report live into this site. When they go down, you watch them go down.",
+  },
+  {
+    title: "Research should ship",
+    line: "Three papers and two patents, every one from an artifact I actually built and ran.",
+  },
+]
+
+export const interests: { name: string; keywords: string[] }[] = [
+  { name: "Building hardware", keywords: ["Raspberry Pi", "Arduino", "LED matrices", "3D printing"] },
+  { name: "Off-hours", keywords: ["Iced mochas", "Running", "Tennis", "Whatever is half-built on my desk"] },
+]
+
+// ---- Setup ----
+
+export interface UseItem {
+  name: string
+  description: string
+  url?: string
+}
+
+export interface UseCategory {
+  title: string
+  /** Lucide icon name; the Setup section maps it to a component. */
+  icon: "code" | "terminal" | "wrench" | "monitor" | "coffee"
+  items: UseItem[]
+}
+
+export const uses: UseCategory[] = [
+  {
+    title: "Editor & IDE",
+    icon: "code",
+    items: [
+      { name: "VS Code", description: "Primary editor with vim keybindings", url: "https://code.visualstudio.com" },
+      { name: "Cursor", description: "AI-native IDE for faster prototyping", url: "https://cursor.sh" },
+      { name: "JetBrains IntelliJ", description: "Java/Kotlin development", url: "https://www.jetbrains.com/idea/" },
+      { name: "Theme: One Dark Pro", description: "Consistent across all editors" },
+      { name: "Font: JetBrains Mono", description: "Ligatures enabled, 14px" },
+    ],
+  },
+  {
+    title: "Terminal & Shell",
+    icon: "terminal",
+    items: [
+      { name: "Windows Terminal", description: "Tabbed terminal with custom profiles for WSL, PowerShell, and SSH" },
+      { name: "Bash / Zsh", description: "Zsh with oh-my-zsh on WSL, Bash on remote machines" },
+      { name: "Claude Code", description: "AI CLI I use for scaffolding, debugging, and bulk refactors", url: "https://claude.ai" },
+      { name: "Git", description: "Conventional commits, interactive rebase, signed commits" },
+      { name: "pnpm", description: "Faster installs, strict dependency resolution, saves disk space" },
+    ],
+  },
+  {
+    title: "Development Tools",
+    icon: "wrench",
+    items: [
+      { name: "Docker", description: "Containerized development and deployment" },
+      { name: "Postman", description: "API testing and documentation" },
+      { name: "Figma", description: "UI/UX design and prototyping", url: "https://figma.com" },
+      { name: "Vercel", description: "Deployment and hosting for this site", url: "https://vercel.com" },
+      { name: "GitHub Actions", description: "CI/CD pipelines" },
+    ],
+  },
+  {
+    title: "Hardware",
+    icon: "monitor",
+    items: [
+      { name: "Custom PC", description: "Ryzen build, Windows 11. Primary dev machine for everything." },
+      { name: "Raspberry Pi 4", description: "Runs the file storage API this site talks to over Tailscale" },
+      { name: "Arduino Uno", description: "Sends real heartbeat telemetry to this site's Systems dashboard" },
+      { name: "Dual Monitor Setup", description: "27\" + 24\". Code on the big one, terminal and docs on the other." },
+    ],
+  },
+  {
+    title: "Productivity",
+    icon: "coffee",
+    items: [
+      { name: "Notion", description: "Project tracking, meeting notes, knowledge base for every course and project" },
+      { name: "Arc Browser", description: "Spaces for each project context. Way better tab management than Chrome.", url: "https://arc.net" },
+      { name: "Spotify", description: "Lo-fi beats while coding. Silence while debugging." },
+      { name: "ChatGPT / Claude", description: "Research, rubber-ducking, and exploring ideas before I write code" },
+    ],
+  },
+]
+
+export const siteStack = ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS 4", "Shadcn/ui", "Vercel", "Raspberry Pi", "Arduino"]

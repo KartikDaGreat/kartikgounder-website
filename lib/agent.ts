@@ -60,6 +60,7 @@ function roleMarkdown(e: Experience, level = "###"): string {
     `${e.period} · ${e.location} · ${TYPE_LABEL[e.type]}${e.current ? " · current" : ""}`,
   ]
   if (e.impact?.length) lines.push("", `Impact: ${e.impact.map((i) => `${i.value} ${i.label}`).join("; ")}`)
+  if (e.keywords?.length) lines.push("", `Keywords: ${e.keywords.join(", ")}`)
   lines.push("", bullet(e.highlights.map((h) => `**${h.lead}**: ${h.text}`)))
   if (e.certificate) lines.push("", `Certificate: ${e.certificate}`)
   return lines.join("\n")
@@ -385,6 +386,7 @@ export function passages(): Passage[] {
         TYPE_LABEL[e.type],
         String(e.year),
         "experience work job",
+        ...(e.keywords ?? []),
         e.current ? "current now present" : "previous past",
       ],
     })

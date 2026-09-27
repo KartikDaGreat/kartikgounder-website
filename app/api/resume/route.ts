@@ -1,159 +1,183 @@
-import { NextResponse } from "next/server"
+import { json } from "@/lib/agent-http"
+import {
+  SITE_URL,
+  accolades,
+  basics,
+  certifications,
+  degrees,
+  detailedSkills,
+  earlierSchooling,
+  experiences,
+  interests,
+  leadership,
+  patents,
+  principles,
+  publications,
+  uses,
+} from "@/lib/profile"
+import { projects } from "@/lib/projects"
 
-// JSON Resume spec: https://jsonresume.org/schema/
-const resume = {
-  $schema: "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
-  basics: {
-    name: "Kartik Gounder",
-    label: "Software Engineer & ML Researcher",
-    email: "hello@kartikgounder.com",
-    url: "https://kartikgounder.com",
-    summary:
-      "MS in Computer Science at Columbia University. Building production-grade systems, AI platforms, and developer tools. Experience spans full-stack development, ML/AI pipelines, and enterprise tooling.",
-    location: {
-      city: "New York",
-      region: "NY",
-      countryCode: "US",
-    },
-    profiles: [
-      { network: "GitHub", username: "KartikDaGreat", url: "https://github.com/KartikDaGreat" },
-      { network: "LinkedIn", username: "kartik-gounder", url: "https://www.linkedin.com/in/kartik-gounder" },
-    ],
-  },
-  work: [
-    {
-      name: "Vertex Inc.",
-      position: "Software Development Intern",
-      location: "Pennsylvania, US",
-      startDate: "2026-06",
-      highlights: [
-        "Built a production-grade MCP platform that connects 105 enterprise tools via an Electron desktop app (10 providers)",
-        "Built Sherlock, an internal AI bug-tracing system that validates issues against Datadog logs and Pulsar events using chain-of-thought reasoning, reducing developer debugging and resolution time by 2 to 2.5 hours",
-        "Implemented 78 automated tests across unit, integration, functional and e2e layers reaching a 92.65% coverage rate",
-        "Integrated data collection for token optimization in tool discovery and reaching 36.11% improved token efficiency",
-      ],
-    },
-    {
-      name: "Columbia University",
-      position: "aiX Convergence Design Studio Intern",
-      location: "New York, NY",
-      startDate: "2026-01",
-      highlights: [
-        "Supporting a multi-year AI literacy initiative in pedagogy with Prof. Anthony Vanky",
-        "Using computer vision to examine algorithmic bias and urban equity in course design",
-        "Researching and developing statistics for evaluating Data Science related agents with Prof. Tian Zheng",
-      ],
-    },
-    {
-      name: "eNova Software and Hardware Solutions",
-      position: "Software Development Intern",
-      location: "Coimbatore, Tamil Nadu, India",
-      startDate: "2025-01",
-      endDate: "2025-06",
-      highlights: [
-        "Improved the CI/CD pipeline by parallelizing testing and security checks, reducing release time from about 45 to 35 minutes per production push",
-        "Scaled up 3 AI modules across Python-based products, working with 15 clients to predictively improve revenue by 13%",
-        "Redesigned the security scanner around local server-based agentic monitoring, reducing threats in releases by 19%",
-      ],
-    },
-    {
-      name: "SAP Labs India",
-      position: "iXp Intern",
-      location: "Bangalore, India",
-      startDate: "2024-06",
-      endDate: "2024-08",
-      highlights: [
-        "Designed and developed Farmbot software, achieving a 28% decrease in API call time",
-        "Integrated XSUAA authentication using JWT access tokens",
-      ],
-    },
-    {
-      name: "Samsung R&D Institute India - Bangalore",
-      position: "R&D Intern (Samsung PRISM)",
-      location: "Bangalore, India",
-      startDate: "2024-01",
-      endDate: "2024-05",
-      highlights: [
-        "Developed a custom CNN framework for on-device document classification",
-        "Co-authored and published a research paper at ISEC-2025",
-      ],
-    },
-    {
-      name: "eNova Software and Hardware Solutions",
-      position: "Software Engineer Intern",
-      location: "Coimbatore, Tamil Nadu, India",
-      startDate: "2023-08",
-      endDate: "2023-12",
-      highlights: [
-        "Developed key web assets including email landing pages and server status monitoring",
-        "Contributed to the update and enhancement of the internship training syllabus",
-      ],
-    },
-  ],
-  education: [
-    {
-      institution: "Columbia University",
-      area: "Computer Science",
-      studyType: "Master of Science",
-      startDate: "2025-09",
-    },
-  ],
-  skills: [
-    { name: "Languages", keywords: ["TypeScript", "Python", "Java", "C++", "Kotlin"] },
-    { name: "Frontend", keywords: ["React", "Next.js", "Tailwind CSS", "Electron"] },
-    { name: "ML/AI", keywords: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "LLMs", "MCP"] },
-    { name: "Infrastructure", keywords: ["AWS", "Docker", "CI/CD", "Vercel", "Firebase", "PostgreSQL"] },
-    { name: "Testing", keywords: ["Jest", "Unit Testing", "Integration Testing", "E2E Testing"] },
-  ],
-  projects: [
-    {
-      name: "TAOL: Trust-Aware Orchestration Layer",
-      description: "Trust-aware middleware for LLM coding agents with 99.2% ambiguity detection",
-      keywords: ["Python", "FastAPI", "Ollama", "AST", "Scikit-learn"],
-      url: "https://taol-demo.vercel.app/",
-    },
-    {
-      name: "Brandeis: Privacy Technology Advisor",
-      description: "Analyzes 11 constraints to recommend among 10 privacy-enhancing technologies",
-      keywords: ["React 19", "TypeScript", "Rule Engine"],
-      url: "https://brandeis-two.vercel.app/",
-    },
-    {
-      name: "Mind Duelist: AI Adversarial Interviewer",
-      description: "Real-time voice-based technical interviewer with bluff detection",
-      keywords: ["React", "TypeScript", "ElevenLabs", "Gemini Flash", "Supabase"],
-      url: "https://github.com/KartikDaGreat/NightmareBot",
-    },
-    {
-      name: "125th Street Departure Board",
-      description:
-        "32x16 LED matrix showing live MTA subway and bus arrivals, driven by a Raspberry Pi with ultrasonic gesture control",
-      keywords: ["Python", "Raspberry Pi", "WS2812B", "GTFS-Realtime", "OneBusAway"],
-      url: "https://kartikgounder.com/projects/departure-board",
-    },
-  ],
-  publications: [
-    { name: "On-Device Document Classification Framework", publisher: "ISEC-2025 (IEEE)" },
-    { name: "Psychological Counselling Chatbot", publisher: "BITMDM-2024 (ACM)" },
-    {
-      name: "Ensemble Model using Various CNNs for Improved Skin Cancer Diagnosis",
-      publisher: "ICoICI-2024 (IEEE)",
-      url: "https://ieeexplore.ieee.org/abstract/document/10696508",
-    },
-  ],
-  meta: {
-    version: "v1.0.0",
-    lastModified: new Date().toISOString().split("T")[0],
-    canonical: "https://kartikgounder.com/api/resume",
-  },
+export const dynamic = "force-static"
+
+/**
+ * The resume in the JSON Resume schema (https://jsonresume.org/schema/),
+ * generated from lib/profile.ts and lib/projects.ts so it always matches the
+ * site. Extra top-level keys (patents, certificates details, toolchain,
+ * principles) are extensions the schema allows.
+ */
+
+const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
+
+/**
+ * "Aug 2025 – Dec 2026", "January - May 2026", "September 2026 - Present",
+ * "2025 - Present" → { startDate, endDate } as YYYY-MM (or YYYY). A month
+ * without its own year takes the next year mentioned.
+ */
+function dates(period: string | undefined, fallbackYear?: number): { startDate?: string; endDate?: string } {
+  const text = period ?? ""
+  const ongoing = /present|current/i.test(text)
+  const tokens = [...text.matchAll(/([A-Za-z]+)\.?(?:\s+(\d{4}))?/g)]
+    .map(([, word, year]) => ({ month: MONTHS.indexOf(word.slice(0, 3).toLowerCase()), year }))
+    .filter((t) => t.month >= 0)
+  if (tokens.length) {
+    for (let i = tokens.length - 2; i >= 0; i--) tokens[i].year ??= tokens[i + 1].year
+    const fmt = (t: (typeof tokens)[number]) =>
+      t.year ? `${t.year}-${String(t.month + 1).padStart(2, "0")}` : undefined
+    return { startDate: fmt(tokens[0]), endDate: ongoing ? undefined : tokens[1] && fmt(tokens[1]) }
+  }
+  const years = text.match(/\d{4}/g)
+  if (years) return { startDate: years[0], endDate: ongoing ? undefined : years[1] }
+  return fallbackYear ? { startDate: String(fallbackYear) } : {}
 }
 
-export async function GET() {
-  return NextResponse.json(resume, {
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "public, max-age=3600",
-      "Access-Control-Allow-Origin": "*",
+const isCommunity = (title: string) => /volunteer|organizer/i.test(title)
+
+function buildResume() {
+  const internships = experiences.filter((e) => e.type === "internship")
+
+  return {
+    $schema: "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
+    basics: {
+      name: basics.name,
+      label: "Software Engineer & ML Researcher",
+      email: basics.email,
+      url: SITE_URL,
+      summary: `${basics.headline}. ${basics.summary}`,
+      location: { city: "New York", region: "NY", countryCode: "US" },
+      profiles: [
+        { network: "GitHub", username: "KartikDaGreat", url: basics.github },
+        { network: "LinkedIn", username: "kartik-gounder", url: basics.linkedin },
+      ],
+      emails: [
+        { address: basics.email, note: "Work, collaborations, and this site" },
+        { address: basics.personalEmail, note: "Personal inbox" },
+      ],
+      availability: basics.availability,
+      resumePdf: basics.resume,
     },
-  })
+    work: experiences.map((e) => ({
+      name: e.company,
+      position: e.title,
+      location: e.location,
+      type: e.type,
+      startDate: e.start,
+      endDate: e.end ?? null,
+      current: !!e.current,
+      summary: e.summary,
+      highlights: e.highlights.map((h) => `${h.lead}: ${h.text}`),
+      keywords: e.keywords,
+      metrics: e.impact?.map(({ value, label }) => ({ value, label })),
+      certificate: e.certificate,
+    })),
+    education: [
+      ...degrees.map((d) => ({
+        institution: d.school,
+        studyType: d.title.split(",")[0],
+        area: d.title.split(",").slice(1).join(",").trim() || undefined,
+        ...dates(d.period),
+        score: d.gpa,
+        scoreNote: d.gpaNote,
+        rank: d.rank ? `${d.rank.value} ${d.rank.label}` : undefined,
+        focus: d.focus,
+        status: d.current ? "In progress" : "Completed",
+        courses: d.coursework?.map((c) => ({ term: c.label, items: c.items })),
+      })),
+      ...earlierSchooling.map((s) => ({ institution: s.school, studyType: s.title, ...dates(s.period) })),
+    ],
+    certificates: certifications.map((c) => ({
+      name: c.title,
+      issuer: c.issuer,
+      date: dates(c.issued).startDate,
+      expires: dates(c.expires).startDate,
+      validationNumber: c.validation,
+      verifyAt: c.verifyUrl,
+      url: `${SITE_URL}${c.file}`,
+    })),
+    skills: detailedSkills,
+    projects: projects.map((p) => ({
+      name: p.title,
+      slug: p.slug,
+      featured: !!p.featured,
+      ...dates(p.period, p.year),
+      description: p.description,
+      role: p.role,
+      status: p.status,
+      keywords: p.technologies,
+      tags: p.tags,
+      metrics: p.metrics,
+      url: `${SITE_URL}/projects/${p.slug}`,
+      github: p.github,
+      demo: p.demo ?? p.demos?.[0]?.href,
+      paper: p.paper,
+    })),
+    publications: publications.map((p) => ({
+      name: p.title,
+      publisher: p.venue,
+      releaseDate: p.year,
+      authors: p.authors,
+      url: p.link,
+      summary: p.description,
+    })),
+    patents: patents.map((p) => ({
+      name: p.title,
+      status: p.venue,
+      releaseDate: p.year,
+      authors: p.authors,
+      summary: p.description,
+    })),
+    volunteer: [
+      ...leadership.map((l) => ({
+        organization: l.org,
+        position: l.title,
+        ...dates(l.period),
+        summary: l.highlight,
+      })),
+      ...accolades
+        .filter((a) => isCommunity(a.title))
+        .map((a) => ({ organization: a.org, position: a.title, ...dates(a.period), summary: a.detail })),
+    ],
+    awards: accolades
+      .filter((a) => !isCommunity(a.title))
+      .map((a) => ({ title: a.title, awarder: a.org, date: a.period, summary: a.detail })),
+    interests,
+    principles: principles.map((p) => ({ title: p.title, detail: p.line })),
+    toolchain: Object.fromEntries(uses.map((c) => [c.title, c.items.map((i) => `${i.name}: ${i.description}`)])),
+    summaryStats: {
+      internships: internships.length,
+      publishedPapers: publications.length,
+      patentApplications: patents.length,
+      certifications: certifications.length,
+      projects: projects.length,
+    },
+    meta: {
+      version: "v3.0.0",
+      canonical: `${SITE_URL}/api/resume`,
+      source: "Generated at build time from lib/profile.ts and lib/projects.ts, the same data the site renders.",
+      lastModified: new Date().toISOString().slice(0, 10),
+    },
+  }
+}
+
+export function GET() {
+  return json(buildResume())
 }
