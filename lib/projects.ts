@@ -336,18 +336,28 @@ export function applyBatch(doc: Doc, batch: Batch): { doc: Doc; outcome: Outcome
     github: "https://github.com/KartikDaGreat/skill-optimize",
     demo: "https://pickr.kartikgounder.com",
     description:
-      "A Claude Code plugin and web demo (Pickr) that searches local skills, plugin marketplaces and 12 GitHub collections, picks the best skill for your task in a single API call, and shows the retrieval pipeline live. v0.3.0 cut selection to 41k tokens and 5.5 seconds.",
-    technologies: ["Claude Code", "Bash", "Next.js", "BM25", "Jev", "GitHub CLI", "Vercel AI SDK", "Markdown"],
+      "A Claude Code plugin that picks the best skill for your task in a single API call, and Pickr, a web app that does the same across about 1,900 skills with a cheapest-first cascade (BM25, then Jev, then Groq) and streams every decision live. Anyone can add a skill, which gets a live safety scan before it joins the catalog.",
+    technologies: [
+      "Claude Code",
+      "Bash",
+      "Next.js",
+      "BM25",
+      "Jev",
+      "Groq",
+      "Vercel AI Gateway",
+      "Vercel Blob",
+      "GitHub CLI",
+    ],
     period: "September 2026",
     year: 2026,
     category: ["swe"],
     role: "Solo build",
     status: "active",
     metrics: [
-      { value: "41k", label: "tokens per selection (down from 213k)" },
-      { value: "5.5s", label: "average selection time" },
-      { value: "$0.126", label: "average cost per run" },
-      { value: "1", label: "API call (down from 3)" },
+      { value: "98%", label: "Pickr picks rated a good fit by an independent judge" },
+      { value: "$0.00017", label: "per Pickr search, 1.2s on average" },
+      { value: "~1,900", label: "skills in the catalog" },
+      { value: "41k", label: "tokens per plugin selection (down from 213k)" },
     ],
     architecture: `/skill-optimizer <task>
   │
@@ -364,8 +374,15 @@ export function applyBatch(doc: Doc, batch: Batch): { doc: Doc; outcome: Outcome
   ├─▶ 5. APPROVAL                  install · use once · stay local
   └─▶ 6. TASK                      done with the winning skill
 
-Pickr web demo:
-  task → BM25 search → Jev reranking → LLM verdict → recommendation`,
+Pickr (pickr.kartikgounder.com), cheapest stage first:
+  task
+  ├─▶ 1. SEARCH   BM25 over names, descriptions and example requests
+  │               ~1,900 skills → 50 candidates        free, ~5 ms
+  ├─▶ 2. JEV      probability + calibrated confidence per candidate
+  │               ≥ 40% sure → done                    ~$0.0002
+  └─▶ 3. GROQ     only when Jev is unsure: picks from top 5
+
+/add: find → format → dedupe → 19-rule scan → Jev review → tests → catalog`,
     story: {
       problem: [
         "There are now thousands of Claude Code skills spread across official repos, community collections and plugin marketplaces. The right one for a task often exists, but finding it means knowing where to look, and pulling every catalog into the main session burns context you need for the actual work.",
@@ -375,25 +392,28 @@ Pickr web demo:
         "v0.3.0 inlines a compact inventory of every installed skill at load time (about 230 tokens), so choosing among what you already have costs no tool call at all. Discovery only runs when nothing installed fits.",
         "All discovery happens in one bundled script call: local skills, every registered marketplace ranked by install count, and 12 well-known GitHub collections, with each repo's file list cached for 24 hours. BM25 with a synonym table ranks candidates and produces a confidence verdict.",
         "Nothing gets installed, enabled or run from the internet without approval. Remote picks are checked first for download-and-run commands, credential access, hooks and instructions to skip confirmations.",
-        "The web demo (Pickr) lets you describe a task and watch the retrieval pipeline live: BM25 lexical search, Jev reranking for typed confidence scores, and an LLM final verdict. It streams each stage so you see the catalog narrow in real time.",
+        "Pickr takes the same idea to the web as a cascade, cheapest stage first. BM25 narrows about 1,900 skills to 50 candidates. Jev, a System One model reached through Vercel AI Gateway, scores every candidate with a calibrated confidence, and if it is at least 40% sure that is the answer. Groq only runs when Jev is unsure. Each stage streams to a live decision log.",
+        "Keyword search failed on tasks worded differently from a skill's description, so once and offline, Gemini wrote six everyday requests and eight keywords for every skill, and search indexes them next to the description. No model runs at search time.",
+        "Anyone can add a skill at /add. It is checked live before it joins the shared catalog: format, duplicates, a 19-rule scan for prompt injection, hidden instructions, pipe-to-shell installs and credential reads, then a Jev safety review with Groq as a second opinion, then held-out test requests that search has to find it with.",
       ],
       outcome: [
-        "Selection costs 41k tokens in a single API call, down from 213k and three calls in v0.2.0: an 81% reduction. Average time is 5.5 seconds, 12x faster, with no loss of accuracy on the benchmark set.",
-        "The cost driver is API calls, not search results. Every call re-reads about 40k of fixed context. Cutting from 3 calls to 1 is what made the difference, not shrinking the discovery output.",
-        "The Pickr web demo makes the pipeline inspectable. Community members can submit skills they built and see how they rank against the catalog.",
+        "The plugin's selection costs 41k tokens in a single API call, down from 213k and three calls in v0.2.0. Average time is 5.5 seconds, 12x faster, with no loss of accuracy on the benchmark set.",
+        "On 65 labeled tasks, Pickr picks the labeled skill 72% of the time and has it in the top 8 shown 97% of the time, at $0.00017 and 1.2 seconds per search. Exact labels undercount near-equivalents, so an independent judge that never sees the labels rated 98% of picks a good fit.",
+        "The example requests lifted the right skill into the top 10 for 97% of tasks, up from 75%. Jev's edge is on the hard tasks worded without the skill's vocabulary: 43% right against Groq's 14%.",
       ],
       lessons: [
-        "A skill installed mid-session can't be called by name until Claude Code restarts. Rather than asking for a restart, skill-optimizer reads the new SKILL.md and follows it directly, so the task still gets done.",
-        "Ranking is lexical (BM25), and research on tool retrieval finds lexical scoring matches or beats embedding models. Thin descriptions are the real bottleneck, not the ranking method.",
+        "The cost driver in the plugin is API calls, not search results. Every call re-reads about 40k of fixed context, so cutting from 3 calls to 1 is what made the difference.",
+        "Most remaining misses are retrieval misses: the right skill was never offered. Better candidates beat a better chooser, and adding embeddings on top of the example requests gained about one task in 63, so it ships switched off.",
+        "A stress test found Jev failing every time above 50 options through the Gateway, so Pickr sends 50, retries transient failures, and falls back to Groq.",
       ],
     },
     highlights: [
-      "Single-call selection: 41k tokens, 5.5s, $0.126, down from 213k tokens and 66.5s",
-      "Inventory inlined at load time so local-only picks cost zero tool calls",
-      "BM25 ranking with synonym table and confidence cascade",
-      "Pickr web demo with live pipeline visualization (BM25, Jev reranking, LLM verdict)",
+      "Plugin: single-call selection, 41k tokens and 5.5s, down from 213k tokens and 66.5s",
+      "Pickr: BM25 → Jev → Groq cascade over ~1,900 skills, $0.00017 and 1.2s per search",
+      "98% of Pickr picks rated a good fit by an independent judge across 65 tasks",
+      "Offline example requests per skill lifted top-10 retrieval from 75% to 97%",
+      "Community submissions with a live 19-rule scan and a Jev safety review",
       "Safety check on remote picks for download-and-run commands, credential access and hooks",
-      "Community skill submission and catalog browsing",
     ],
     codeSnippet: {
       language: "markdown",
