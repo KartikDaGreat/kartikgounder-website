@@ -783,7 +783,7 @@ export function TerminalSection() {
   }
 
   return (
-    <section className="max-w-4xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <section className="max-w-4xl">
       <h1 className="text-3xl md:text-4xl font-bold mb-2">Terminal</h1>
       <p className="text-muted-foreground mb-8">
         A working shell, not a demo. Try <code className="text-xs font-mono bg-secondary px-1.5 py-0.5 rounded">help</code> for commands, <code className="text-xs font-mono bg-secondary px-1.5 py-0.5 rounded">game</code> to play hangman or rock-paper-scissors, or <code className="text-xs font-mono bg-secondary px-1.5 py-0.5 rounded">visitor</code> to see what this site knows about you (not much, by design).

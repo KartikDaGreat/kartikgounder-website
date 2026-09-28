@@ -1,12 +1,11 @@
 import { Award } from "lucide-react"
 import { Art } from "@/components/art"
 import { Expander } from "@/components/expander"
-import { Reveal } from "@/components/motion/reveal"
 import { accolades, certifications, degrees, earlierSchooling, leadership, type Degree } from "@/lib/profile"
 
 export function AcademicsSection() {
   return (
-    <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <section>
       <div className="mb-12 lg:grid lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-10 lg:items-center">
         <div>
           <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Education</h1>
@@ -32,9 +31,9 @@ export function AcademicsSection() {
         <h2 className="eyebrow mb-5">Degrees</h2>
         <div className="space-y-4">
           {degrees.map((degree) => (
-            <Reveal key={degree.school}>
+            <div key={degree.school}>
               <DegreeCard degree={degree} />
-            </Reveal>
+            </div>
           ))}
         </div>
 
@@ -58,7 +57,7 @@ export function AcademicsSection() {
         <h2 className="eyebrow mb-5">Certifications</h2>
         <div className="space-y-2">
           {certifications.map((cert) => (
-            <Reveal key={cert.title} className="rounded-lg border border-border bg-card px-4 py-3">
+            <div key={cert.title} className="rounded-lg border border-border bg-card px-4 py-3">
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
                 <h3 className="font-semibold text-sm">{cert.title}</h3>
                 <span className="text-xs text-primary">{cert.issuer}</span>
@@ -88,7 +87,7 @@ export function AcademicsSection() {
                   </a>
                 </span>
               </div>
-            </Reveal>
+            </div>
           ))}
         </div>
       </div>
@@ -98,7 +97,7 @@ export function AcademicsSection() {
         <h2 className="eyebrow mb-5">Leadership</h2>
         <div className="space-y-2">
           {leadership.map((item) => (
-            <Reveal
+            <div
               key={item.title}
               className="rounded-lg border border-border bg-card px-4 py-3 hover:border-primary/50 transition-colors"
             >
@@ -108,7 +107,7 @@ export function AcademicsSection() {
                 <span className="text-xs text-muted-foreground font-mono ml-auto">{item.period}</span>
               </div>
               <p className="text-sm text-muted-foreground mt-1">{item.highlight}</p>
-            </Reveal>
+            </div>
           ))}
         </div>
       </div>

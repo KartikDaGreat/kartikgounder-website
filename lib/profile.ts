@@ -60,18 +60,21 @@ export const proof = [
 // The three hats this semester, in the order a visitor most likely cares about.
 export const now = [
   {
+    id: "rapidflare",
     kind: "Industry",
     org: "Rapidflare",
     role: "Forward Deployed Engineer Intern",
     detail: "Working directly with customers to get the product running on their real problems.",
   },
   {
+    id: "research",
     kind: "Research",
     org: "Columbia, with Prof. Tian Zheng",
     role: "Research Assistant",
     detail: "Distilling papers into a form an AI agent can build from, and a reader can chat with to understand.",
   },
   {
+    id: "teaching",
     kind: "Teaching",
     org: "Columbia",
     role: "TA, Policy for Privacy Technologies",
@@ -111,6 +114,8 @@ export interface Experience {
   certificate?: string
   /** Pinned above the timeline in the "Right now" group. */
   current?: boolean
+  /** Matches a `now` item's id, so the Home card morphs into this row. */
+  nowId?: string
   /** YYYY-MM, for the JSON resume. `end` is absent while the role is ongoing. */
   start: string
   end?: string
@@ -130,6 +135,7 @@ export const experiences: Experience[] = [
   {
     title: "Forward Deployed Engineer Intern",
     company: "Rapidflare",
+    nowId: "rapidflare",
     period: "September 2026 - Present",
     year: 2026,
     location: "New York, NY",
@@ -146,6 +152,7 @@ export const experiences: Experience[] = [
   {
     title: "Teaching Assistant, Policy for Privacy Technologies",
     company: "Columbia University",
+    nowId: "teaching",
     period: "Fall 2026",
     year: 2026,
     location: "New York, NY",
@@ -165,6 +172,7 @@ export const experiences: Experience[] = [
   {
     title: "Research Assistant",
     company: "Columbia University",
+    nowId: "research",
     period: "September 2026 - Present",
     year: 2026,
     location: "New York, NY",

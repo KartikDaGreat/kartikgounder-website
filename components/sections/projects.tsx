@@ -1,13 +1,13 @@
 "use client"
 
 import { useState } from "react"
+import { ViewTransition } from "react"
 import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { artFor, projectLinks, projects, type Project } from "@/lib/projects"
 import { Art } from "@/components/art"
 import { ProjectLinks } from "@/components/project-links"
-import { Reveal, StaggerItem, StaggerRoot } from "@/components/motion/reveal"
 
 type Filter = "all" | "swe" | "ml"
 
@@ -25,7 +25,7 @@ export function ProjectsSection() {
   const visible = filter === "all" ? rest : rest.filter((p) => p.category.includes(filter))
 
   return (
-    <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <section>
       <div className="mb-12">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">Projects</h1>
         <p className="text-muted-foreground max-w-2xl">
@@ -38,13 +38,13 @@ export function ProjectsSection() {
       {/* Featured projects */}
       <div className="mb-14">
         <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-4">Flagship builds</h2>
-        <StaggerRoot className="space-y-4" stagger={0.08}>
+        <div className="space-y-4">
           {featured.map((project, i) => (
-            <StaggerItem key={project.slug}>
+            <div key={project.slug}>
               <FeaturedCard project={project} index={i} />
-            </StaggerItem>
+            </div>
           ))}
-        </StaggerRoot>
+        </div>
       </div>
 
       {/* All other projects */}
@@ -70,9 +70,9 @@ export function ProjectsSection() {
         </div>
         <div className="grid md:grid-cols-2 gap-4">
           {visible.map((project) => (
-            <Reveal key={project.slug}>
+            <div key={project.slug}>
               <CompactCard project={project} />
-            </Reveal>
+            </div>
           ))}
         </div>
         {visible.length === 0 && (
@@ -119,6 +119,19 @@ function TagChips({ tags }: { tags?: string[] }) {
   )
 }
 
+
+/**
+ * The title morphs into the project page's heading (text-morph in
+ * globals.css). The name must stay unique on screen, and it is: the Projects
+ * section and a project page are never mounted together.
+ */
+export function ProjectTitle({ slug, children }: { slug: string; children: React.ReactNode }) {
+  return (
+    <ViewTransition name={`project-title-${slug}`} share="text-morph" default="none">
+      <span className="inline-block">{children}</span>
+    </ViewTransition>
+  )
+}
 
 /** Faint category illustration bleeding off the card's right edge. */
 function CardArt({ project }: { project: Project }) {
@@ -167,8 +180,12 @@ function FeaturedCard({ project, index }: { project: Project; index: number }) {
       </div>
 
       <h3 className="text-xl md:text-2xl font-bold mb-2 group-hover:text-primary transition-colors pr-8">
-        <Link href={`/projects/${project.slug}`} className="after:absolute after:inset-0 after:content-['']">
-          {project.title}
+        <Link
+          href={`/projects/${project.slug}`}
+          transitionTypes={["nav-forward"]}
+          className="after:absolute after:inset-0 after:content-['']"
+        >
+          <ProjectTitle slug={project.slug}>{project.title}</ProjectTitle>
         </Link>
       </h3>
       <p className="text-sm md:text-[15px] text-muted-foreground leading-relaxed max-w-3xl mb-4">{hook}</p>
@@ -200,8 +217,12 @@ function CompactCard({ project }: { project: Project }) {
         <span className="ml-auto text-muted-foreground">{project.year}</span>
       </div>
       <h3 className="font-medium group-hover:text-primary transition-colors mb-1.5">
-        <Link href={`/projects/${project.slug}`} className="after:absolute after:inset-0 after:content-['']">
-          {project.title}
+        <Link
+          href={`/projects/${project.slug}`}
+          transitionTypes={["nav-forward"]}
+          className="after:absolute after:inset-0 after:content-['']"
+        >
+          <ProjectTitle slug={project.slug}>{project.title}</ProjectTitle>
         </Link>
       </h3>
       <p className="text-sm text-muted-foreground leading-relaxed mb-3 line-clamp-3">{project.description}</p>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { Dices } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { ALL_PALETTES } from "@/components/theme-provider"
+import { ALL_PALETTES } from "@/lib/themes"
 
 /**
  * Re-rolls the color palette without a reload. The site already picks a random

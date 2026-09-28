@@ -1,3 +1,4 @@
+import { ViewTransition } from "react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowRight } from "lucide-react"
@@ -47,6 +48,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const next = projects[(index + 1) % projects.length]
 
   return (
+    // Arriving from the site fades the page in while the title morphs from
+    // its card. Keyed by slug so "Next project" re-enters too.
+    <ViewTransition key={project.slug} enter={{ "nav-forward": "page-in", default: "none" }} default="none">
     <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-7xl mx-auto px-6 py-12 md:py-20">
         <BackButton />
@@ -99,7 +103,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                 )}
               </div>
 
-              <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">{project.title}</h1>
+              <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">
+                <ViewTransition name={`project-title-${project.slug}`} share="text-morph" default="none">
+                  <span className="inline-block">{project.title}</span>
+                </ViewTransition>
+              </h1>
               <p className="text-lg text-muted-foreground leading-relaxed">{project.description}</p>
 
               {project.role && <p className="mt-4 text-sm text-muted-foreground font-mono">{project.role}</p>}
@@ -262,11 +270,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
             {/* Next project */}
             <div className="mt-16 pt-8 border-t border-border">
-              <Link href={`/projects/${next.slug}`} className="group block">
+              <Link href={`/projects/${next.slug}`} transitionTypes={["nav-forward"]} className="group block">
                 <span className="eyebrow eyebrow-index">Next project</span>
                 <div className="flex items-center justify-between gap-4 mt-2">
                   <span className="text-xl md:text-2xl font-bold group-hover:text-primary transition-colors">
-                    {next.title}
+                    <ViewTransition name={`project-title-${next.slug}`} share="text-morph" default="none">
+                      <span className="inline-block">{next.title}</span>
+                    </ViewTransition>
                   </span>
                   <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
                 </div>
@@ -276,6 +286,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         </div>
       </div>
     </div>
+    </ViewTransition>
   )
 }
 

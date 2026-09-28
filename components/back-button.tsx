@@ -14,7 +14,7 @@ export function BackButton({
 
   return (
     <button
-      onClick={() => router.push(href)}
+      onClick={() => router.push(href, { transitionTypes: ["nav-back"] })}
       className="inline-flex items-center gap-2 min-h-10 pr-3 text-sm text-muted-foreground hover:text-foreground transition-colors mb-10 cursor-pointer"
     >
       <ArrowLeft className="w-4 h-4" />

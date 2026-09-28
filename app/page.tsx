@@ -1,6 +1,17 @@
 "use client"
 
-import { useState, useRef, lazy, Suspense, useEffect, useCallback } from "react"
+import {
+  useState,
+  useRef,
+  lazy,
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useCallback,
+  startTransition,
+  addTransitionType,
+  ViewTransition,
+} from "react"
 
 // Generate or retrieve a unique visitor ID for this session
 function getVisitorId(): string {
@@ -58,29 +69,31 @@ import { Sidebar } from "@/components/sidebar"
 import { CommandPalette } from "@/components/command-palette"
 import { KeyboardShortcuts } from "@/components/keyboard-shortcuts"
 
-const AboutSection = lazy(() => import("@/components/sections/about").then((m) => ({ default: m.AboutSection })))
-const AcademicsSection = lazy(() =>
-  import("@/components/sections/academics").then((m) => ({ default: m.AcademicsSection })),
-)
-const ResearchSection = lazy(() =>
-  import("@/components/sections/research").then((m) => ({ default: m.ResearchSection })),
-)
-const ExperienceSection = lazy(() =>
-  import("@/components/sections/experience").then((m) => ({ default: m.ExperienceSection })),
-)
-const ContactSection = lazy(() => import("@/components/sections/contact").then((m) => ({ default: m.ContactSection })))
-const TerminalSection = lazy(() =>
-  import("@/components/sections/terminal").then((m) => ({ default: m.TerminalSection })),
-)
-const SystemsSection = lazy(() =>
-  import("@/components/sections/systems").then((m) => ({ default: m.SystemsSection })),
-)
-const UsesSection = lazy(() =>
-  import("@/components/sections/uses").then((m) => ({ default: m.UsesSection })),
-)
-const ProjectsSection = lazy(() =>
-  import("@/components/sections/projects").then((m) => ({ default: m.ProjectsSection })),
-)
+// One loader per section, so the chunks can be preloaded once Home has
+// painted. Section changes run in a transition, which waits for a chunk that
+// hasn't arrived yet; preloading makes the switch (and its animation) instant.
+const loaders = {
+  home: () => import("@/components/sections/about").then((m) => ({ default: m.AboutSection })),
+  work: () => import("@/components/sections/experience").then((m) => ({ default: m.ExperienceSection })),
+  projects: () => import("@/components/sections/projects").then((m) => ({ default: m.ProjectsSection })),
+  research: () => import("@/components/sections/research").then((m) => ({ default: m.ResearchSection })),
+  education: () => import("@/components/sections/academics").then((m) => ({ default: m.AcademicsSection })),
+  contact: () => import("@/components/sections/contact").then((m) => ({ default: m.ContactSection })),
+  terminal: () => import("@/components/sections/terminal").then((m) => ({ default: m.TerminalSection })),
+  lab: () => import("@/components/sections/systems").then((m) => ({ default: m.SystemsSection })),
+  setup: () => import("@/components/sections/uses").then((m) => ({ default: m.UsesSection })),
+}
+
+const AboutSection = lazy(loaders.home)
+const ExperienceSection = lazy(loaders.work)
+const ProjectsSection = lazy(loaders.projects)
+const ResearchSection = lazy(loaders.research)
+const AcademicsSection = lazy(loaders.education)
+const ContactSection = lazy(loaders.contact)
+const TerminalSection = lazy(loaders.terminal)
+const SystemsSection = lazy(loaders.lab)
+const UsesSection = lazy(loaders.setup)
+
 export type SectionId =
   | "home"
   | "work"
@@ -135,44 +148,81 @@ export default function Home() {
   // hash-sync effect below corrects to the URL's section right after mount.
   // Reading window.location.hash in the initializer caused hydration errors.
   const [activeSection, setActiveSection] = useState<SectionId>("home")
+  const activeRef = useRef<SectionId>("home")
   const mainRef = useRef<HTMLDivElement>(null)
 
-  const handleNavigate = useCallback((section: SectionId) => {
-    setActiveSection(section)
-    trackPageView(section)
-    // pushState (not replaceState) so browser back steps through sections
-    // instead of leaving the site.
-    if (window.location.hash !== `#${section}`) {
-      window.history.pushState(null, "", `#${section}`)
+  /**
+   * Every section change goes through here. Animated changes run in a
+   * transition tagged with the direction of travel through the sidebar order,
+   * which the section's <ViewTransition> below turns into a slide.
+   */
+  const goTo = useCallback((next: SectionId, animate = true) => {
+    const prev = activeRef.current
+    if (next === prev) return
+    activeRef.current = next
+    if (!animate) {
+      setActiveSection(next)
+      return
     }
-    if (mainRef.current) {
-      mainRef.current.scrollTo({ top: 0, behavior: "instant" })
-    }
-    window.scrollTo({ top: 0, behavior: "instant" })
+    startTransition(() => {
+      addTransitionType(sectionOrder.indexOf(next) > sectionOrder.indexOf(prev) ? "section-down" : "section-up")
+      setActiveSection(next)
+    })
   }, [])
 
-  // Sync section from the URL. hashchange covers plain <a href="#..."> clicks;
-  // popstate covers browser back/forward and pushState-based navigation.
+  // Scroll to the top once the new section has committed, inside the view
+  // transition's update, so the outgoing snapshot keeps its scroll position.
+  useLayoutEffect(() => {
+    mainRef.current?.scrollTo({ top: 0, behavior: "instant" })
+    window.scrollTo({ top: 0, behavior: "instant" })
+  }, [activeSection])
+
+  const handleNavigate = useCallback(
+    (section: SectionId) => {
+      goTo(section)
+      trackPageView(section)
+      // pushState (not replaceState) so browser back steps through sections
+      // instead of leaving the site.
+      if (window.location.hash !== `#${section}`) {
+        window.history.pushState(null, "", `#${section}`)
+      }
+    },
+    [goTo],
+  )
+
+  // Arriving with a hash (a bookmark, or back from a project page) settles on
+  // that section before paint, with no animation and no flash of Home.
+  useLayoutEffect(() => {
+    const section = resolveSection(window.location.hash.replace("#", ""))
+    if (section) goTo(section, false)
+  }, [goTo])
+
+  // hashchange covers plain <a href="#..."> clicks and back/forward between
+  // sections (every entry differs by its fragment, so traversal fires it too).
+  // Deliberately not popstate: React finishes a transition started inside a
+  // popstate event synchronously (for scroll restoration), so a section that
+  // suspends would flash its skeleton and skip the view transition.
   useEffect(() => {
     function syncFromHash() {
-      const section = resolveSection(window.location.hash.replace("#", ""))
-      if (section) {
-        setActiveSection(section)
-        if (mainRef.current) mainRef.current.scrollTo({ top: 0, behavior: "instant" })
-        window.scrollTo({ top: 0, behavior: "instant" })
-      }
+      const section = resolveSection(window.location.hash.replace("#", "")) ?? "home"
+      goTo(section)
     }
     window.addEventListener("hashchange", syncFromHash)
-    window.addEventListener("popstate", syncFromHash)
-    // Also check on mount in case we arrived with a hash
-    syncFromHash()
-    return () => {
-      window.removeEventListener("hashchange", syncFromHash)
-      window.removeEventListener("popstate", syncFromHash)
+    return () => window.removeEventListener("hashchange", syncFromHash)
+  }, [goTo])
+
+  // Preload every section once the first screen is idle.
+  useEffect(() => {
+    const preload = () => Object.values(loaders).forEach((load) => load().catch(() => {}))
+    if ("requestIdleCallback" in window) {
+      const id = window.requestIdleCallback(preload, { timeout: 2500 })
+      return () => window.cancelIdleCallback(id)
     }
+    const id = setTimeout(preload, 1200)
+    return () => clearTimeout(id)
   }, [])
 
-  // Keyboard navigation: j/k for next/prev, 1-8 for direct jump
+  // Keyboard navigation: j/k for next/prev, 1-9 for direct jump
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Skip if user is typing in an input/textarea or command palette is open
@@ -186,27 +236,15 @@ export default function Home() {
 
       if (e.key === "j" || e.key === "k") {
         e.preventDefault()
-        setActiveSection((prev) => {
-          const idx = sectionOrder.indexOf(prev)
-          const next =
-            e.key === "j"
-              ? sectionOrder[Math.min(idx + 1, sectionOrder.length - 1)]
-              : sectionOrder[Math.max(idx - 1, 0)]
-          if (next !== prev) {
-            trackPageView(next)
-            window.history.pushState(null, "", `#${next}`)
-          }
-          return next
-        })
-        if (mainRef.current) mainRef.current.scrollTo({ top: 0, behavior: "instant" })
-        window.scrollTo({ top: 0, behavior: "instant" })
+        const idx = sectionOrder.indexOf(activeRef.current)
+        const next =
+          e.key === "j" ? sectionOrder[Math.min(idx + 1, sectionOrder.length - 1)] : sectionOrder[Math.max(idx - 1, 0)]
+        handleNavigate(next)
       } else {
-        // Number keys 1-9 for direct section jump
         const num = parseInt(e.key)
         if (num >= 1 && num <= sectionOrder.length) {
           e.preventDefault()
-          const section = sectionOrder[num - 1]
-          handleNavigate(section)
+          handleNavigate(sectionOrder[num - 1])
         }
       }
     }
@@ -251,7 +289,23 @@ export default function Home() {
       */}
       <main ref={mainRef} className="flex-1 min-w-0 ml-0 md:ml-24 lg:ml-72 transition-all duration-300">
         <div className="min-h-dvh p-5 pt-20 sm:p-6 md:p-12 md:pt-12 lg:p-16 lg:pl-24 max-w-5xl mx-auto">
-          <Suspense fallback={<SectionLoader />}>{renderSection()}</Suspense>
+          <Suspense fallback={<SectionLoader />}>
+            {/*
+              Keyed by section, so a change exits the old one and enters the
+              new one. Only typed transitions animate: section changes slide
+              in the direction of travel, and returning from a project page
+              fades in. The first load and Suspense reveals stay still; the
+              Home intro owns that moment.
+            */}
+            <ViewTransition
+              key={activeSection}
+              enter={{ "section-down": "section-down", "section-up": "section-up", "nav-back": "page-in", default: "none" }}
+              exit={{ "section-down": "section-down", "section-up": "section-up", default: "none" }}
+              default="none"
+            >
+              {renderSection()}
+            </ViewTransition>
+          </Suspense>
         </div>
       </main>
     </div>

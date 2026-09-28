@@ -1,6 +1,7 @@
+import { ViewTransition } from "react"
 import { Award } from "lucide-react"
 import { PopupLink } from "@/components/popup-link"
-import { Reveal } from "@/components/motion/reveal"
+import { TimelineBeat, TimelineDot, TimelineItem, TimelineTrack } from "@/components/motion/timeline"
 import { ImpactStrip } from "@/components/impact-strip"
 import { experiences, skills, TYPE_LABEL, type Experience, type Highlight } from "@/lib/profile"
 import { Expander } from "@/components/expander"
@@ -17,7 +18,7 @@ const years = [...new Set(past.map((e) => e.year))].sort((a, b) => b - a)
 
 export function ExperienceSection() {
   return (
-    <section className="max-w-3xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <section className="max-w-3xl">
       <div className="mb-12">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">Building</h1>
         <p className="text-muted-foreground">
@@ -25,18 +26,23 @@ export function ExperienceSection() {
         </p>
       </div>
 
-      {/* Right now: pinned above the timeline so current roles are never a scroll away */}
+      {/* Right now: pinned above the timeline so current roles are never a
+          scroll away. Each row is the same role as a card on Home, so it
+          morphs from there (role-morph in globals.css). */}
       <div className="mb-14">
         <h2 className="flex items-center gap-2 font-heading text-xl font-bold tracking-tight mb-4">
-          <span className="relative flex w-2 h-2" aria-hidden>
-            <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-60 motion-reduce:hidden" />
-            <span className="relative w-2 h-2 rounded-full bg-emerald-400" />
-          </span>
+          <span className="w-2 h-2 rounded-full bg-emerald-400" aria-hidden />
           Right now
         </h2>
         <div className="rounded-xl border border-border bg-card divide-y divide-border">
           {current.map((exp) => (
-            <article key={exp.title} className="grid sm:grid-cols-[96px_minmax(0,1fr)] gap-x-5 gap-y-1 p-5">
+            <ViewTransition
+              key={exp.title}
+              name={exp.nowId ? `role-${exp.nowId}` : undefined}
+              share="role-morph"
+              default="none"
+            >
+            <article className="grid sm:grid-cols-[96px_minmax(0,1fr)] gap-x-5 gap-y-1 p-5 bg-card">
               <p className="text-xs font-medium text-primary pt-1">{TYPE_LABEL[exp.type]}</p>
               <div>
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
@@ -51,32 +57,44 @@ export function ExperienceSection() {
                 </ul>
               </div>
             </article>
+            </ViewTransition>
           ))}
         </div>
       </div>
 
       <h2 className="font-heading text-xl font-bold tracking-tight mb-6">Before this</h2>
-      <div className="relative border-l-2 border-border ml-3 md:ml-6 space-y-10 pb-2">
+      {/*
+        The line draws down as you scroll (components/motion/timeline.tsx).
+        Year groups, cards, and the skills block are view-transition
+        boundaries with only `update` on, so opening "+n more" makes
+        everything below glide down instead of jumping.
+      */}
+      <TimelineTrack className="ml-3 md:ml-6 space-y-10 pb-2">
         {years.map((year) => (
-          <div key={year}>
+          <ViewTransition key={year} update="displaced" default="none">
+          <div>
             <div className="flex items-center gap-4 mb-5 -ml-[13px] md:-ml-[13px]">
-              <span className="w-6 h-6 rounded-full bg-primary flex-shrink-0" aria-hidden />
+              <TimelineDot className="w-6 h-6 rounded-full bg-primary flex-shrink-0" />
               <span className="text-lg font-bold">{year}</span>
             </div>
             <div className="space-y-4 pl-6 md:pl-8">
               {past
                 .filter((e) => e.year === year)
-                .map((exp, i) => (
-                  <Reveal key={i}>
-                    <ExperienceCard experience={exp} />
-                  </Reveal>
+                .map((exp) => (
+                  <ViewTransition key={exp.title + exp.period} update="displaced" default="none">
+                    <TimelineItem>
+                      <ExperienceCard experience={exp} />
+                    </TimelineItem>
+                  </ViewTransition>
                 ))}
             </div>
           </div>
+          </ViewTransition>
         ))}
-      </div>
+      </TimelineTrack>
 
       {/* Skills Section */}
+      <ViewTransition update="displaced" default="none">
       <div className="mt-16 pt-8 border-t border-border">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-5">Technical Skills</h2>
         <div className="grid md:grid-cols-3 gap-8">
@@ -97,6 +115,7 @@ export function ExperienceSection() {
           ))}
         </div>
       </div>
+      </ViewTransition>
     </section>
   )
 }
@@ -120,7 +139,7 @@ function ExperienceCard({ experience }: { experience: Experience }) {
   const folded = experience.highlights.slice(VISIBLE_HIGHLIGHTS)
 
   return (
-    <article className="p-5 rounded-lg border border-border hover:border-primary/50 transition-colors bg-card">
+    <article className="p-5 rounded-lg border border-border bg-card">
       <div className="flex flex-wrap items-baseline justify-between gap-2 mb-0.5">
         <h3 className="font-semibold">
           {experience.company} <span className="font-normal text-muted-foreground">· {experience.title}</span>
@@ -129,7 +148,9 @@ function ExperienceCard({ experience }: { experience: Experience }) {
       </div>
       <p className="text-xs text-muted-foreground mb-3">{experience.location}</p>
       {experience.impact && (
-        <ImpactStrip items={experience.impact} className="mb-4 pb-4 border-b border-border/60" />
+        <TimelineBeat>
+          <ImpactStrip items={experience.impact} className="mb-4 pb-4 border-b border-border/60" />
+        </TimelineBeat>
       )}
       <ul className="space-y-1.5">
         {visible.map((highlight) => (

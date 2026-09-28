@@ -1,11 +1,13 @@
+import type { CSSProperties } from "react"
+import { ViewTransition } from "react"
 import Link from "next/link"
 import { Art } from "@/components/art"
-import { ArrowRight, ArrowUpRight, Download, Github, Linkedin, Mail, MapPin, Terminal } from "lucide-react"
+import { ArrowRight, ArrowUpRight, Download, Github, Linkedin, Mail, Terminal } from "lucide-react"
 import { getProjectBySlug } from "@/lib/projects"
 import { now, principles, proof, recently } from "@/lib/profile"
 import { GitHubStats } from "@/components/github-stats"
 import { FlipCard } from "@/components/flip-card"
-import { Reveal } from "@/components/motion/reveal"
+import { IntroGate } from "@/components/motion/intro-gate"
 
 // Hand-picked, with the one number that best says what each project does.
 // The metric index skips numbers already shown in the proof strip above.
@@ -15,6 +17,9 @@ const selected: { slug: string; metric: number }[] = [
   { slug: "taol", metric: 0 },
   { slug: "urbanistai", metric: 1 },
 ]
+
+/** Stagger index for the intro keyframes in globals.css. */
+const stagger = (i: number) => ({ "--i": i }) as CSSProperties
 
 const selectedProjects = selected.flatMap(({ slug, metric }) => {
   const project = getProjectBySlug(slug)
@@ -26,35 +31,58 @@ const selectedProjects = selected.flatMap(({ slug, metric }) => {
 
 export function AboutSection() {
   return (
-    <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Code-style greeting */}
+    <section>
+      <IntroGate />
+
+      {/* whoami, and its output: who I am and whether I'm available, which is
+          the first thing a visitor needs. The command types, the output prints. */}
       <div className="mb-8 font-mono text-sm text-muted-foreground">
-        <span className="text-emerald-500">~/kartik</span>
-        <span className="text-muted-foreground/60"> $ </span>
-        <span className="text-foreground">whoami</span>
+        <p>
+          <span className="text-emerald-500">~/kartik</span>
+          <span className="text-muted-foreground/60"> $ </span>
+          <span className="relative text-foreground">
+            <span className="intro-type inline-block">whoami</span>
+            <span className="intro-caret absolute left-full top-[0.1em]" aria-hidden />
+          </span>
+        </p>
+        <p className="intro-output mt-1.5 text-foreground/90 leading-relaxed">
+          <span className="font-semibold text-foreground">Kartik Gounder</span>. MS CS at Columbia, New York.{" "}
+          <span className="text-emerald-500">Graduating Dec 2026, open to full-time roles.</span>
+        </p>
       </div>
 
       {/* Hero */}
       <div className="mb-10 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12 lg:items-center">
         <div>
-        <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight leading-[1.08] text-balance">
-          I build systems that <span className="text-primary">survive contact with production</span>.
+        {/* Set as its four natural lines, each masked and rising from its own
+            baseline. Each line fits on one line from a phone up to desktop. */}
+        <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight leading-[1.08]">
+          <span className="intro-line">
+            <span style={stagger(0)}>I build systems</span>
+          </span>
+          <span className="intro-line">
+            <span style={stagger(1)}>
+              that <span className="text-primary">survive</span>
+            </span>
+          </span>
+          <span className="intro-line">
+            <span className="text-primary" style={stagger(2)}>
+              contact with
+            </span>
+          </span>
+          <span className="intro-line">
+            <span style={stagger(3)}>
+              <span className="text-primary">production</span>.
+            </span>
+          </span>
         </h1>
 
+        {/* Everything a visitor acts on fades in together and never moves. */}
+        <div className="intro-after-headline">
         <p className="text-lg md:text-xl text-foreground/80 leading-relaxed max-w-2xl text-pretty">
-          I'm finishing my MS in Computer Science at Columbia. The problems I like are the ones where the answer has to actually run: on real data, on real
-          hardware, with real users waiting.
+          The problems I like are the ones where the answer has to actually run: on real data, on real hardware, with
+          real users waiting.
         </p>
-
-        <div className="flex flex-wrap items-center gap-3 mt-5 text-muted-foreground text-sm">
-          <span className="flex items-center gap-1.5">
-            <MapPin className="w-3.5 h-3.5" />
-            New York, NY
-          </span>
-          <span className="font-mono text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-            graduating Dec 2026 · open to roles
-          </span>
-        </div>
 
         {/* CTAs */}
         {/*
@@ -117,9 +145,10 @@ export function AboutSection() {
           </a>
         </div>
         </div>
+        </div>
 
         {/* Workshop line art, desktop only so the copy stays first on mobile */}
-        <div className="hidden lg:block">
+        <div className="intro-art hidden lg:block">
           <Art
             src="/art/hero-workshop.png"
             alt="Line illustration of a builder's desk: laptop, LED matrix, microcontroller, and tangled wires"
@@ -132,34 +161,41 @@ export function AboutSection() {
 
       {/* Right now: the three current roles, promoted from the old footer box
           because they are the first thing a visitor should learn. */}
-      <div className="mb-10 rounded-xl border border-border bg-card overflow-hidden">
+      {/* The intro's one bold moment: the dot lights once, then the roles
+          fill in, Industry first. Each role morphs into its row on Building. */}
+      <div className="intro-now mb-10 rounded-xl border border-border bg-card overflow-hidden">
         <div className="flex items-center justify-between gap-3 px-5 py-3 border-b border-border">
           <h2 className="flex items-center gap-2 font-heading text-sm font-semibold">
             <span className="relative flex w-2 h-2" aria-hidden>
-              <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-60 motion-reduce:hidden" />
-              <span className="relative w-2 h-2 rounded-full bg-emerald-400" />
+              <span className="intro-now-ping absolute inset-0 rounded-full bg-emerald-400 opacity-0" />
+              <span className="intro-now-dot relative w-2 h-2 rounded-full bg-emerald-400" />
             </span>
-            Right now
+            Right now, Fall 2026
           </h2>
-          <span className="text-xs text-muted-foreground">Fall 2026, New York</span>
+          {/* Plain anchor so the hash change switches sections (see page.tsx). */}
+          <a href="#work" className="text-xs font-medium text-primary hover:underline underline-offset-4">
+            See all roles
+          </a>
         </div>
         <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
-          {now.map((item) => (
-            <div key={item.role} className="p-5">
-              <p className="text-xs font-medium text-primary mb-2">{item.kind}</p>
-              <h3 className="font-heading text-lg font-bold tracking-tight leading-snug">{item.role}</h3>
-              <p className="text-sm text-foreground/80 mt-0.5">{item.org}</p>
-              <p className="text-sm text-muted-foreground leading-relaxed mt-3">{item.detail}</p>
-            </div>
+          {now.map((item, i) => (
+            <ViewTransition key={item.id} name={`role-${item.id}`} share="role-morph" default="none">
+              <div className="intro-now-item p-5 bg-card" style={stagger(i)}>
+                <p className="text-xs font-medium text-primary mb-2">{item.kind}</p>
+                <h3 className="font-heading text-lg font-bold tracking-tight leading-snug">{item.role}</h3>
+                <p className="text-sm text-foreground/80 mt-0.5">{item.org}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed mt-3">{item.detail}</p>
+              </div>
+            </ViewTransition>
           ))}
         </div>
       </div>
 
       {/* Proof strip: the numbers a recruiter skims for, without the reading */}
-      <div className="mb-10 grid grid-cols-2 lg:grid-cols-4 gap-px rounded-lg border border-border bg-border overflow-hidden">
-        {proof.map((stat) => (
+      <div className="intro-proof mb-10 grid grid-cols-2 lg:grid-cols-4 gap-px rounded-lg border border-border bg-border overflow-hidden">
+        {proof.map((stat, i) => (
+          <div key={stat.label} style={stagger(i)}>
           <FlipCard
-            key={stat.label}
             label={`${stat.value} ${stat.label}. ${stat.where}: ${stat.detail}`}
             className="h-[150px] sm:h-[132px] lg:h-[124px]"
             front={
@@ -175,6 +211,7 @@ export function AboutSection() {
               </>
             }
           />
+          </div>
         ))}
       </div>
 
@@ -191,6 +228,7 @@ export function AboutSection() {
             <li key={project.slug} className="border-b border-border">
               <Link
                 href={`/projects/${project.slug}`}
+                transitionTypes={["nav-forward"]}
                 className="group grid grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[minmax(0,1fr)_200px_auto] items-center gap-x-6 gap-y-1 py-4 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 rounded-sm"
               >
                 <div className="min-w-0">
@@ -233,7 +271,7 @@ export function AboutSection() {
         <h2 className="font-heading text-xl font-bold tracking-tight mb-5">Recently</h2>
         <div className="space-y-6">
           {recently.map((event) => (
-            <Reveal key={event.title} className="grid sm:grid-cols-[88px_minmax(0,1fr)] gap-x-6 gap-y-1">
+            <div key={event.title} className="grid sm:grid-cols-[88px_minmax(0,1fr)] gap-x-6 gap-y-1">
               <span className="font-mono text-xs text-muted-foreground pt-1">{event.when}</span>
               <div className="border-l-2 border-primary/40 pl-4">
                 <h3 className="font-semibold text-[15px] mb-2">{event.title}</h3>
@@ -245,7 +283,7 @@ export function AboutSection() {
                   ))}
                 </div>
               </div>
-            </Reveal>
+            </div>
           ))}
         </div>
       </div>

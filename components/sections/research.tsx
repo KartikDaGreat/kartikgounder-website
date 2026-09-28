@@ -1,13 +1,12 @@
 import { ExternalLink } from "lucide-react"
 import Image from "next/image"
 import { Art } from "@/components/art"
-import { Reveal } from "@/components/motion/reveal"
 import { MetricChips } from "@/components/metric-chips"
 import { patents, publications, type Publication } from "@/lib/profile"
 
 export function ResearchSection() {
   return (
-    <section className="max-w-5xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <section className="max-w-5xl">
       <div className="mb-12 lg:grid lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-10 lg:items-center">
         <div>
           <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Research</h1>
@@ -38,7 +37,7 @@ export function ResearchSection() {
         <h2 className="eyebrow mb-5">Publications</h2>
         <div className="space-y-3">
           {publications.map((pub) => (
-            <Reveal
+            <div
               key={pub.title}
               className="group flex items-start gap-4 rounded-xl border border-border bg-card p-4 hover:border-primary/50 transition-colors"
             >
@@ -68,7 +67,7 @@ export function ResearchSection() {
                   <ExternalLink className="w-4 h-4" />
                 </a>
               )}
-            </Reveal>
+            </div>
           ))}
         </div>
       </div>

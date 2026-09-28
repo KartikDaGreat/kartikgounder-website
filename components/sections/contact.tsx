@@ -4,7 +4,7 @@ import { PortraitSwitcher } from "@/components/portrait-switcher"
 
 export function ContactSection() {
   return (
-    <section className="max-w-3xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <section className="max-w-3xl">
       <div className="mb-10 sm:grid sm:grid-cols-[minmax(0,1fr)_220px] sm:gap-8 sm:items-start">
         <div>
           <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Let's talk</h1>

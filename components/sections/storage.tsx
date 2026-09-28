@@ -96,7 +96,7 @@ export function StorageSection() {
   }
 
   return (
-    <section className="max-w-4xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <section className="max-w-4xl">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold">Storage</h1>

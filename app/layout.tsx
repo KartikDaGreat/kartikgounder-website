@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { ThemeDice } from "@/components/theme-dice"
 import { MotionRoot } from "@/components/motion/motion-root"
 import { basics, degrees, now, SITE_URL as PROFILE_URL } from "@/lib/profile"
+import { paletteScript } from "@/lib/themes"
 import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" })
@@ -104,6 +105,18 @@ export default function RootLayout({
         <noscript>
           <style>{`[data-reveal]{opacity:1!important;transform:none!important}`}</style>
         </noscript>
+        {/* Picks the color palette before first paint, so it never flashes. */}
+        <script dangerouslySetInnerHTML={{ __html: paletteScript() }} />
+        {/*
+          The Home intro plays once per visit, and only when a visit lands on
+          Home. Runs before paint so a returning visitor never sees it start.
+          Add ?intro to the URL to replay it.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var d=document.documentElement,h=location.hash.slice(1);if(/[?&]intro(=|&|$)/.test(location.search))sessionStorage.removeItem("intro-seen");else if(sessionStorage.getItem("intro-seen")||location.pathname!=="/"||(h&&h!=="home"&&h!=="about"))d.dataset.introSeen="1"}catch(e){}`,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd).replace(/</g, "\\u003c") }}

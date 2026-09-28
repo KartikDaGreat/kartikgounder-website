@@ -1774,3 +1774,260 @@
     transparent
   );
 }
+
+/* ==========================================================================
+ * Motion, in order of what a visitor should notice first.
+ * Only transform and opacity animate; the 1500ms theme-transition owns color.
+ * ========================================================================== */
+
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-quick: cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* ---- View transitions (React <ViewTransition>) ---- */
+
+/*
+ * Live root: unnamed content (sidebar, theme toggle, Ctrl+K hint) swaps in
+ * place and stays interactive, so persistent chrome never slides with the page.
+ * Only the boundaries we name or class below animate.
+ */
+::view-transition-old(root) {
+  display: none;
+}
+::view-transition-new(root) {
+  animation: none;
+}
+::view-transition {
+  pointer-events: none;
+}
+
+@keyframes vt-fade-in {
+  from { opacity: 0; }
+}
+@keyframes vt-fade-out {
+  to { opacity: 0; }
+}
+@keyframes vt-rise-in {
+  from { opacity: 0; transform: translateY(24px); }
+}
+@keyframes vt-rise-out {
+  to { opacity: 0; transform: translateY(-24px); }
+}
+@keyframes vt-drop-in {
+  from { opacity: 0; transform: translateY(-24px); }
+}
+@keyframes vt-drop-out {
+  to { opacity: 0; transform: translateY(24px); }
+}
+
+/* Moving down the sidebar order: the new section comes up from below. */
+::view-transition-old(.section-down) {
+  animation: 200ms var(--ease-in-quick) both vt-rise-out;
+}
+::view-transition-new(.section-down) {
+  animation: 420ms var(--ease-out-expo) 120ms both vt-rise-in;
+}
+/* Moving up the sidebar order: the new section comes down from above. */
+::view-transition-old(.section-up) {
+  animation: 200ms var(--ease-in-quick) both vt-drop-out;
+}
+::view-transition-new(.section-up) {
+  animation: 420ms var(--ease-out-expo) 120ms both vt-drop-in;
+}
+
+/* Arriving on a new page (project write-ups, and back to the site). */
+::view-transition-new(.page-in) {
+  animation: 400ms var(--ease-out-expo) 100ms both vt-fade-in;
+}
+
+/*
+ * Text morph: titles change size between card and page, so scaling a raster
+ * snapshot would ghost. Show the new text at full resolution while the group
+ * travels from the old box to the new one.
+ */
+::view-transition-group(.text-morph) {
+  animation-duration: 560ms;
+  animation-timing-function: var(--ease-out-expo);
+}
+::view-transition-old(.text-morph) {
+  display: none;
+}
+::view-transition-new(.text-morph) {
+  animation: none;
+  object-fit: none;
+  object-position: left top;
+}
+
+/*
+ * Role morph: a "Right now" column on Home becomes a row on Building. The
+ * boxes have different shapes, so neither snapshot is stretched: the old one
+ * fades out quickly and the new one fades in as the group moves.
+ */
+::view-transition-group(.role-morph) {
+  animation-duration: 640ms;
+  animation-timing-function: var(--ease-out-expo);
+}
+::view-transition-old(.role-morph),
+::view-transition-new(.role-morph) {
+  object-fit: none;
+  object-position: left top;
+  height: 100%;
+}
+::view-transition-old(.role-morph) {
+  animation: 180ms var(--ease-in-quick) both vt-fade-out;
+}
+::view-transition-new(.role-morph) {
+  animation: 420ms var(--ease-out-expo) 160ms both vt-fade-in;
+}
+
+/* "+n more": the extra lines fade in, the cards below glide (update). */
+::view-transition-new(.expand-in) {
+  animation: 360ms var(--ease-out-expo) 80ms both vt-fade-in;
+}
+::view-transition-old(.collapse-out) {
+  animation: 180ms var(--ease-in-quick) both vt-fade-out;
+}
+::view-transition-group(.displaced) {
+  animation-duration: 420ms;
+  animation-timing-function: var(--ease-out-expo);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* ---- Home intro: plays once per visit, on the first screen only ----
+ *
+ * Order is the information hierarchy: who (the whoami output), what (the
+ * headline), how to act (paragraph and buttons, which never move), what now
+ * (Right now, the one bold moment), proof (stats), then decoration (art).
+ * Every element's resting style is its final state, so removing the
+ * animation (skip, reduced motion, second visit) just shows the page.
+ */
+
+@keyframes intro-type {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes intro-caret-travel {
+  from { transform: translateX(-6ch); }
+}
+/* Over 1600ms: on while typing (0-420ms) and a beat after, blinks twice, then goes out. */
+@keyframes intro-caret-blink {
+  0% { opacity: 1; }
+  40% { opacity: 0; }
+  52% { opacity: 1; }
+  66% { opacity: 0; }
+  78% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes intro-print {
+  from { opacity: 0; }
+}
+@keyframes intro-line-rise {
+  from { transform: translateY(105%); }
+}
+@keyframes intro-fade {
+  from { opacity: 0; }
+}
+@keyframes intro-lift {
+  from { opacity: 0; transform: translateY(16px); }
+}
+@keyframes intro-light {
+  0% { opacity: 0; transform: scale(0.4); }
+  60% { opacity: 1; transform: scale(1.35); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes intro-ping {
+  from { opacity: 0.7; transform: scale(1); }
+  to { opacity: 0; transform: scale(3); }
+}
+
+/* Headline lines are masked so each rises from its own baseline. The padding
+   keeps descenders inside the mask; the negative margin gives the space back. */
+.intro-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+.intro-line > span {
+  display: block;
+}
+
+.intro-caret {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: currentColor;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-intro-seen]) .intro-type {
+    animation: intro-type 420ms steps(6, end) both;
+  }
+  html:not([data-intro-seen]) .intro-caret {
+    animation:
+      intro-caret-travel 420ms steps(6, end) both,
+      intro-caret-blink 1600ms step-end both;
+  }
+  html:not([data-intro-seen]) .intro-output {
+    animation: intro-print 220ms ease-out 520ms both;
+  }
+  html:not([data-intro-seen]) .intro-line > span {
+    animation: intro-line-rise 700ms var(--ease-out-expo) calc(700ms + var(--i, 0) * 110ms) both;
+  }
+  html:not([data-intro-seen]) .intro-after-headline {
+    animation: intro-fade 450ms ease-out 1350ms both;
+  }
+
+  /* Desktop only: on phones these sit below the first screen, and a timed
+     animation would finish before anyone scrolls to it. */
+  @media (min-width: 768px) {
+    html:not([data-intro-seen]) .intro-now {
+      animation: intro-fade 300ms ease-out 1600ms both;
+    }
+    html:not([data-intro-seen]) .intro-now-dot {
+      animation: intro-light 500ms var(--ease-out-expo) 1700ms both;
+    }
+    html:not([data-intro-seen]) .intro-now-ping {
+      animation: intro-ping 900ms ease-out 2100ms both;
+    }
+    html:not([data-intro-seen]) .intro-now-item {
+      animation: intro-lift 550ms var(--ease-out-expo) calc(1850ms + var(--i, 0) * 140ms) both;
+    }
+    html:not([data-intro-seen]) .intro-proof > * {
+      animation: intro-fade 450ms ease-out calc(2450ms + var(--i, 0) * 90ms) both;
+    }
+    html:not([data-intro-seen]) .intro-art {
+      animation: intro-fade 700ms ease-out 2600ms both;
+    }
+  }
+
+  /* Phones: "Right now" reveals as it scrolls into view, where the browser
+     supports scroll-driven animations. It is driven by the visitor's scroll,
+     not a clock, so it is not tied to the one-time intro. */
+  @supports (animation-timeline: view()) {
+    @media (max-width: 767px) {
+      .intro-now-item {
+        animation: intro-lift linear both;
+        animation-timeline: view();
+        animation-range: entry 10% entry 60%;
+      }
+    }
+  }
+}
+
+/* ---- Building: the timeline line draws down as you scroll ---- */
+.timeline-progress {
+  transform-origin: top;
+}

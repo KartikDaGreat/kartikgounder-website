@@ -12,7 +12,7 @@ const ICONS: Record<UseCategory["icon"], React.ElementType> = {
 
 export function UsesSection() {
   return (
-    <section className="max-w-3xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <section className="max-w-3xl">
       <div className="mb-10">
         <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Setup</h1>
         <p className="text-lg text-foreground/80 leading-relaxed max-w-2xl">
