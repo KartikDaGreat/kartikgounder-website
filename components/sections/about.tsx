@@ -95,7 +95,7 @@ export function AboutSection() {
           {/* Its own container, so `.t-display` (sized in cqi) follows the
               width of the column the headline actually sits in. */}
           <div className="@container min-w-0">
-            {/* Set as its four natural lines, each masked and rising from its
+            {/* Set as its three natural lines, each masked and rising from its
                 own baseline. A line too long for its column wraps, never clips. */}
             <h1 className="t-display mb-4">
               <span className="intro-line">
@@ -105,11 +105,8 @@ export function AboutSection() {
                 <span style={stagger(1)}>that survive</span>
               </span>
               <span className="intro-line">
-                <span style={stagger(2)}>contact with</span>
-              </span>
-              <span className="intro-line">
-                <span style={stagger(3)}>
-                  <span className="text-primary">production</span>.
+                <span style={stagger(2)}>
+                  in <span className="text-primary">production</span>.
                 </span>
               </span>
             </h1>

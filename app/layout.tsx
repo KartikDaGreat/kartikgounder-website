@@ -16,7 +16,7 @@ const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mon
 
 const SITE_URL = "https://kartikgounder.com"
 const DESCRIPTION =
-  "Software engineer and MS CS student at Columbia. I build systems that have to survive contact with production: AI agent infrastructure, trust scoring for LLM-generated code, and privacy-preserving ML platforms."
+  "Software engineer and MS CS student at Columbia. I build systems that survive in production: AI agent infrastructure, trust scoring for LLM-generated code, and privacy-preserving ML platforms."
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

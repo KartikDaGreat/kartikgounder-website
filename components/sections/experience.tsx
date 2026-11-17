@@ -21,7 +21,7 @@ export function ExperienceSection() {
       <div className="mb-12">
         <h1 className="t-page mb-4">Building</h1>
         <p className="t-lede">
-          Seven internships, plus research and teaching at Columbia. Every bullet in the timeline shipped to real users or real benchmarks.
+          A forward deployed role at Rapidflare and six internships before it, plus research and teaching at Columbia. Every bullet in the timeline shipped to real users or real benchmarks.
         </p>
       </div>
 
