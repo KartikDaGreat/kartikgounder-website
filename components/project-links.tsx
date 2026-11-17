@@ -28,7 +28,7 @@ export function ProjectLinks({
 
   return (
     <div className={className}>
-      <div className={cn("flex flex-wrap items-center", size === "sm" ? "gap-1.5" : "gap-3")}>
+      <div className={cn("flex flex-wrap items-center", size === "sm" ? "gap-2" : "gap-3")}>
         {links.map((link) => {
           const Icon = ICONS[link.kind]
           return (
@@ -37,15 +37,14 @@ export function ProjectLinks({
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={`${link.label} (opens in a new tab)`}
               className={cn(
-                "relative z-10 inline-flex items-center font-medium border transition-colors",
-                size === "sm" ? "gap-1.5 min-h-8 px-2.5 rounded-md text-xs" : "gap-2 px-4 py-2 rounded-lg text-sm",
-                link.kind === "live"
-                  ? "border-primary/40 bg-primary/10 text-primary hover:bg-primary/15"
-                  : "border-border bg-card text-foreground hover:border-primary/50 hover:text-primary",
+                "relative z-10 btn btn-secondary",
+                size === "sm" && "btn-sm",
+                link.kind === "live" && "text-primary border-primary/40",
               )}
             >
-              <Icon className={size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"} />
+              <Icon aria-hidden className={size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"} />
               {link.label}
             </a>
           )
@@ -53,9 +52,9 @@ export function ProjectLinks({
       </div>
 
       {notes.length > 0 && (
-        <ul className="mt-3 space-y-1.5">
+        <ul className="mt-3 space-y-2">
           {notes.map((link) => (
-            <li key={link.href} className="text-sm text-muted-foreground leading-relaxed">
+            <li key={link.href} className="text-sm text-muted-foreground">
               <span className="text-foreground/80">{link.label}:</span> {link.note}
             </li>
           ))}

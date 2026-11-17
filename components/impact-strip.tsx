@@ -44,8 +44,8 @@ export function ImpactStrip({ items, className }: { items: Impact[]; className?:
             />
           )}
           <div>
-            <div className="font-heading text-[15px] font-bold leading-none tracking-tight">{item.value}</div>
-            <div className="mt-1.5 text-[10px] font-mono uppercase tracking-[0.1em] text-muted-foreground leading-none">
+            <div className="font-heading text-base font-semibold leading-none tracking-tight">{item.value}</div>
+            <div className="mt-1.5 text-xs font-mono uppercase tracking-[0.08em] text-muted-foreground leading-none">
               {item.label}
             </div>
           </div>

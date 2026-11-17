@@ -65,7 +65,7 @@ function collectAndSendVisitorInfo() {
     });
   } catch { /* ignore errors */ }
 }
-import { Sidebar } from "@/components/sidebar"
+import { Sidebar, navGroups } from "@/components/sidebar"
 import { CommandPalette } from "@/components/command-palette"
 import { KeyboardShortcuts } from "@/components/keyboard-shortcuts"
 
@@ -122,9 +122,18 @@ function resolveSection(raw: string): SectionId | null {
   return SECTION_ALIASES[raw] ?? null
 }
 
+const HOME_TITLE = "Kartik Gounder | Software Engineer"
+const sectionLabels = Object.fromEntries(
+  navGroups.flatMap((g) => g.items.map((item) => [item.id, item.label])),
+) as Record<SectionId, string>
+
+function titleFor(section: SectionId): string {
+  return section === "home" ? HOME_TITLE : `${sectionLabels[section]} | Kartik Gounder`
+}
+
 function SectionLoader() {
   return (
-    <div className="animate-pulse">
+    <div className="animate-pulse motion-reduce:animate-none">
       <div className="h-10 w-48 bg-secondary rounded mb-4" />
       <div className="h-4 w-full bg-secondary rounded mb-2" />
       <div className="h-4 w-3/4 bg-secondary rounded mb-2" />
@@ -149,7 +158,12 @@ export default function Home() {
   // Reading window.location.hash in the initializer caused hydration errors.
   const [activeSection, setActiveSection] = useState<SectionId>("home")
   const activeRef = useRef<SectionId>("home")
-  const mainRef = useRef<HTMLDivElement>(null)
+  const mainRef = useRef<HTMLElement>(null)
+  // Set by animated (visitor-driven) section changes, so the effect below can
+  // move focus to the new content. Hash-on-load changes leave focus alone.
+  const focusPendingRef = useRef(false)
+  const [paletteOpen, setPaletteOpen] = useState(false)
+  const [shortcutsOpen, setShortcutsOpen] = useState(false)
 
   /**
    * Every section change goes through here. Animated changes run in a
@@ -164,6 +178,7 @@ export default function Home() {
       setActiveSection(next)
       return
     }
+    focusPendingRef.current = true
     startTransition(() => {
       addTransitionType(sectionOrder.indexOf(next) > sectionOrder.indexOf(prev) ? "section-down" : "section-up")
       setActiveSection(next)
@@ -175,6 +190,18 @@ export default function Home() {
   useLayoutEffect(() => {
     mainRef.current?.scrollTo({ top: 0, behavior: "instant" })
     window.scrollTo({ top: 0, behavior: "instant" })
+  }, [activeSection])
+
+  // Announce the new section: update the tab title and, after a visitor-driven
+  // change, move focus to main so screen readers and Tab start from the new
+  // content. A section that focused something itself (the terminal input)
+  // keeps that focus.
+  useEffect(() => {
+    document.title = titleFor(activeSection)
+    if (!focusPendingRef.current) return
+    focusPendingRef.current = false
+    const main = mainRef.current
+    if (main && !main.contains(document.activeElement)) main.focus({ preventScroll: true })
   }, [activeSection])
 
   const handleNavigate = useCallback(
@@ -204,7 +231,11 @@ export default function Home() {
   // suspends would flash its skeleton and skip the view transition.
   useEffect(() => {
     function syncFromHash() {
-      const section = resolveSection(window.location.hash.replace("#", "")) ?? "home"
+      // An empty hash means Home. An unknown one (the #main skip link, a stale
+      // anchor) is not a section, so stay where we are.
+      const raw = window.location.hash.slice(1)
+      const section = raw ? resolveSection(raw) : "home"
+      if (!section) return
       goTo(section)
     }
     window.addEventListener("hashchange", syncFromHash)
@@ -225,14 +256,19 @@ export default function Home() {
   // Keyboard navigation: j/k for next/prev, 1-9 for direct jump
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Skip if user is typing in an input/textarea or command palette is open
+      // Plain keys only, never while typing, and never under an open dialog
+      // (palette, shortcuts, lightbox).
+      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return
+      const target = e.target as HTMLElement | null
       if (
-        e.target instanceof HTMLInputElement ||
-        e.target instanceof HTMLTextAreaElement ||
-        (e.metaKey || e.ctrlKey)
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLSelectElement ||
+        target?.isContentEditable
       ) {
         return
       }
+      if (document.querySelector('[role="dialog"]')) return
 
       if (e.key === "j" || e.key === "k") {
         e.preventDefault()
@@ -240,9 +276,9 @@ export default function Home() {
         const next =
           e.key === "j" ? sectionOrder[Math.min(idx + 1, sectionOrder.length - 1)] : sectionOrder[Math.max(idx - 1, 0)]
         handleNavigate(next)
-      } else {
-        const num = parseInt(e.key)
-        if (num >= 1 && num <= sectionOrder.length) {
+      } else if (/^[1-9]$/.test(e.key)) {
+        const num = Number(e.key)
+        if (num <= sectionOrder.length) {
           e.preventDefault()
           handleNavigate(sectionOrder[num - 1])
         }
@@ -251,6 +287,9 @@ export default function Home() {
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [handleNavigate])
+
+  const openPalette = useCallback(() => setPaletteOpen(true), [])
+  const openShortcuts = useCallback(() => setShortcutsOpen(true), [])
 
   const renderSection = () => {
     switch (activeSection) {
@@ -279,16 +318,26 @@ export default function Home() {
 
   return (
     <div className="min-h-dvh flex">
-      <Sidebar activeSection={activeSection} onNavigate={handleNavigate} />
-      <CommandPalette onNavigate={handleNavigate} />
-      <KeyboardShortcuts />
+      <Sidebar
+        activeSection={activeSection}
+        onNavigate={handleNavigate}
+        onOpenPalette={openPalette}
+        onOpenShortcuts={openShortcuts}
+      />
+      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} onNavigate={handleNavigate} />
+      <KeyboardShortcuts open={shortcutsOpen} onOpenChange={setShortcutsOpen} />
       {/*
         min-w-0 is load-bearing: a flex item defaults to min-width:auto, so any
         single wide descendant (a long commit message, a code block) stretches
         main past the viewport and scrolls the whole page sideways on a phone.
       */}
-      <main ref={mainRef} className="flex-1 min-w-0 ml-0 md:ml-24 lg:ml-72 transition-all duration-300">
-        <div className="min-h-dvh p-5 pt-20 sm:p-6 md:p-12 md:pt-12 lg:p-16 lg:pl-24 max-w-5xl mx-auto">
+      <main
+        ref={mainRef}
+        id="main"
+        tabIndex={-1}
+        className="flex-1 min-w-0 pt-14 md:pt-0 md:ml-16 lg:ml-56 outline-none"
+      >
+        <div className="min-h-dvh px-5 py-8 md:px-10 md:py-12 lg:px-16 lg:py-16 max-w-5xl mx-auto">
           <Suspense fallback={<SectionLoader />}>
             {/*
               Keyed by section, so a change exits the old one and enters the

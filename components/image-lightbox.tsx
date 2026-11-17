@@ -1,17 +1,24 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback } from "react"
 import Image from "next/image"
+import { ChevronLeft, ChevronRight, X } from "lucide-react"
+import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog"
 
 interface ImageLightboxProps {
   images: string[]
   projectTitle: string
 }
 
+const controlClass =
+  "pointer-events-auto inline-flex size-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-150"
+
+/**
+ * Radix Dialog supplies the focus trap, Escape, scroll lock and focus return
+ * to the thumbnail that opened it.
+ */
 export function ImageLightbox({ images, projectTitle }: ImageLightboxProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
-
-  const close = useCallback(() => setActiveIndex(null), [])
 
   const prev = useCallback(() => {
     setActiveIndex((i) => (i !== null ? (i - 1 + images.length) % images.length : null))
@@ -21,20 +28,15 @@ export function ImageLightbox({ images, projectTitle }: ImageLightboxProps) {
     setActiveIndex((i) => (i !== null ? (i + 1) % images.length : null))
   }, [images.length])
 
-  useEffect(() => {
-    if (activeIndex === null) return
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") close()
-      if (e.key === "ArrowLeft") prev()
-      if (e.key === "ArrowRight") next()
+  function onKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "ArrowLeft") {
+      e.preventDefault()
+      prev()
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault()
+      next()
     }
-    document.addEventListener("keydown", onKey)
-    document.body.style.overflow = "hidden"
-    return () => {
-      document.removeEventListener("keydown", onKey)
-      document.body.style.overflow = ""
-    }
-  }, [activeIndex, close, prev, next])
+  }
 
   return (
     <>
@@ -43,8 +45,10 @@ export function ImageLightbox({ images, projectTitle }: ImageLightboxProps) {
         {images.map((src, i) => (
           <button
             key={i}
+            type="button"
             onClick={() => setActiveIndex(i)}
-            className="block w-full rounded-lg overflow-hidden border border-border bg-card hover:border-primary/50 transition-colors cursor-zoom-in break-inside-avoid"
+            aria-label={`Open figure ${i + 1} of ${images.length}`}
+            className="block w-full rounded-lg overflow-hidden border border-border bg-card hover:border-primary/50 transition-colors duration-150 cursor-zoom-in break-inside-avoid"
           >
             <Image
               src={src}
@@ -52,7 +56,7 @@ export function ImageLightbox({ images, projectTitle }: ImageLightboxProps) {
               width={800}
               height={600}
               className="w-full h-auto"
-              sizes="(max-width: 1024px) 50vw, 220px"
+              sizes="(max-width: 1024px) 50vw, 180px"
               quality={90}
               unoptimized
             />
@@ -60,61 +64,56 @@ export function ImageLightbox({ images, projectTitle }: ImageLightboxProps) {
         ))}
       </div>
 
-      {/* Lightbox overlay */}
-      {activeIndex !== null && (
-        <div
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md"
-          onClick={close}
+      <Dialog open={activeIndex !== null} onOpenChange={(open) => !open && setActiveIndex(null)}>
+        <DialogContent
+          showCloseButton={false}
+          onKeyDown={onKeyDown}
+          aria-describedby={undefined}
+          className="inset-0 top-0 left-0 block h-dvh w-screen max-w-none sm:max-w-none translate-x-0 translate-y-0 rounded-none border-0 bg-black/95 p-0 shadow-none"
         >
-          {/* Close button, top-left to avoid side panel overlap */}
-          <button
-            onClick={close}
-            className="absolute top-5 left-5 z-[60] w-12 h-12 flex items-center justify-center rounded-full bg-white text-black hover:bg-white/80 transition-colors shadow-lg"
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <line x1="4" y1="4" x2="16" y2="16" />
-              <line x1="16" y1="4" x2="4" y2="16" />
-            </svg>
-          </button>
+          <DialogTitle className="sr-only">{`${projectTitle} gallery`}</DialogTitle>
 
-          {/* Counter */}
-          <div className="absolute top-6 left-1/2 -translate-x-1/2 z-[60] px-3 py-1 rounded-full bg-white/15 text-white text-sm font-mono">
-            {activeIndex + 1} / {images.length}
-          </div>
+          {activeIndex !== null && (
+            <>
+              {/* Clicking the empty area around the image closes, like the old overlay */}
+              <div
+                className="absolute inset-0 flex items-center justify-center p-4 pt-16 pb-20 md:p-16"
+                onClick={(e) => e.target === e.currentTarget && setActiveIndex(null)}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={images[activeIndex]}
+                  alt={`${projectTitle}, figure ${activeIndex + 1}`}
+                  className="max-w-full max-h-full object-contain rounded-lg select-none"
+                  draggable={false}
+                />
+              </div>
 
-          {/* Prev button */}
-          {images.length > 1 && (
-            <button
-              onClick={(e) => { e.stopPropagation(); prev() }}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-[60] w-12 h-12 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/30 text-white transition-colors text-2xl"
-            >
-              &#8592;
-            </button>
+              <p
+                aria-live="polite"
+                className="absolute top-4 left-1/2 -translate-x-1/2 flex min-h-11 items-center font-mono text-sm text-white/80"
+              >
+                {activeIndex + 1} / {images.length}
+              </p>
+
+              <DialogClose aria-label="Close gallery" className={`absolute top-4 right-4 ${controlClass}`}>
+                <X aria-hidden className="size-5" />
+              </DialogClose>
+
+              {images.length > 1 && (
+                <div className="pointer-events-none absolute inset-x-0 bottom-4 flex justify-center gap-4 md:inset-x-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:justify-between">
+                  <button type="button" onClick={prev} aria-label="Previous image" className={controlClass}>
+                    <ChevronLeft aria-hidden className="size-5" />
+                  </button>
+                  <button type="button" onClick={next} aria-label="Next image" className={controlClass}>
+                    <ChevronRight aria-hidden className="size-5" />
+                  </button>
+                </div>
+              )}
+            </>
           )}
-
-          {/* Full-screen image area, extra right padding to clear side panel */}
-          <div className="absolute inset-0 flex items-center justify-center p-16 pt-20 pr-24 lg:pr-32">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={images[activeIndex]}
-              alt={`${projectTitle}, figure ${activeIndex + 1}`}
-              className="max-w-full max-h-full object-contain rounded-lg select-none"
-              draggable={false}
-              onClick={(e) => e.stopPropagation()}
-            />
-          </div>
-
-          {/* Next button */}
-          {images.length > 1 && (
-            <button
-              onClick={(e) => { e.stopPropagation(); next() }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-[60] w-12 h-12 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/30 text-white transition-colors text-2xl"
-            >
-              &#8594;
-            </button>
-          )}
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

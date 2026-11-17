@@ -1,53 +1,71 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useSyncExternalStore } from "react"
 import { useTheme } from "next-themes"
 import { Sun, Moon } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Tip } from "@/components/tip"
+
+const LIGHT_PALETTE = "light-extreme"
+
+// The palette script (and the dice) write data-theme directly, so the DOM is
+// the source of truth for what is on screen. next-themes' resolvedTheme is not:
+// it can say "dark" while a light palette shows, or the reverse.
+function subscribe(onChange: () => void) {
+  const observer = new MutationObserver(onChange)
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] })
+  return () => observer.disconnect()
+}
+const getSnapshot = () => document.documentElement.getAttribute("data-theme") === LIGHT_PALETTE
+// Every palette but one is dark, so assume dark until hydration reads the DOM.
+const getServerSnapshot = () => false
+
+function saveMode(mode: "light" | "dark") {
+  try {
+    localStorage.setItem("themeMode", mode)
+  } catch {
+    // Storage blocked (private mode): the choice lasts for this page view only.
+  }
+}
 
 export function ThemeToggle({ className }: { className?: string }) {
-  const { resolvedTheme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) return null
-
-  const isDark = resolvedTheme === "dark"
+  const { setTheme } = useTheme()
+  const isLight = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 
   const toggle = () => {
-    // Let the 1500ms color transition in globals.css run, then get out of its way.
+    // Let the colour cross-fade in globals.css run, then get out of its way.
     document.documentElement.classList.add("theme-transition")
     window.setTimeout(() => {
       document.documentElement.classList.remove("theme-transition")
-    }, 1500)
+    }, 350)
 
-    if (isDark) {
-      setTheme("light")
-      document.documentElement.setAttribute("data-theme", "light-extreme")
-      localStorage.setItem("themeMode", "light")
-    } else {
+    if (isLight) {
       setTheme("dark")
       document.documentElement.removeAttribute("data-theme")
-      localStorage.setItem("themeMode", "dark")
+      saveMode("dark")
+    } else {
+      setTheme("light")
+      document.documentElement.setAttribute("data-theme", LIGHT_PALETTE)
+      saveMode("light")
     }
   }
 
+  const label = isLight ? "Switch to dark theme" : "Switch to light theme"
+
   return (
-    <button
-      type="button"
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      onClick={toggle}
-      className={cn(
-        "inline-flex h-9 items-center gap-2 rounded-md border border-input bg-background/80 backdrop-blur-sm px-3 text-sm shadow-xs",
-        "hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none",
-        className,
-      )}
-    >
-      {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-      <span className="hidden sm:inline">{isDark ? "Light" : "Dark"}</span>
-    </button>
+    <Tip label={label}>
+      <button
+        type="button"
+        aria-label={label}
+        onClick={toggle}
+        className={cn(
+          "inline-flex size-11 items-center justify-center rounded-lg border border-border bg-card text-foreground md:size-10",
+          "transition-colors duration-150 hover:bg-secondary",
+          className,
+        )}
+      >
+        {isLight ? <Moon className="size-4" aria-hidden /> : <Sun className="size-4" aria-hidden />}
+      </button>
+    </Tip>
   )
 }

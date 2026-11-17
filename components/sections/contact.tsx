@@ -5,10 +5,10 @@ import { PortraitSwitcher } from "@/components/portrait-switcher"
 export function ContactSection() {
   return (
     <section className="max-w-3xl">
-      <div className="mb-10 sm:grid sm:grid-cols-[minmax(0,1fr)_220px] sm:gap-8 sm:items-start">
+      <div className="mb-12 sm:grid sm:grid-cols-[minmax(0,1fr)_220px] sm:gap-8 lg:gap-12 sm:items-start">
         <div>
-          <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Let's talk</h1>
-          <p className="text-lg text-foreground/80 leading-relaxed text-pretty">
+          <h1 className="t-page mb-4">Let's talk</h1>
+          <p className="t-lede">
             <span className="font-semibold text-foreground">Graduating December 2026.</span> If you're building
             agentic systems, developer tooling, or evaluation, tell me what's broken on your side. I'd rather
             hear about the problem than the job description.
@@ -21,15 +21,15 @@ export function ContactSection() {
         <PortraitSwitcher className="mt-8 sm:mt-0" />
       </div>
 
-      <div className="rule-accent mb-10" />
+      <div className="rule-accent mb-12" />
 
-      <div className="space-y-9">
+      <div className="space-y-8">
         <div>
           <h2 className="eyebrow mb-4">Email</h2>
           <div className="grid gap-3">
             <a
               href="mailto:hello@kartikgounder.com"
-              className="flex items-center gap-3 p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-card transition-all group"
+              className="flex items-center gap-3 p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-card transition-colors duration-150 group"
             >
               <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                 <Mail className="w-4 h-4 text-primary" />
@@ -37,7 +37,7 @@ export function ContactSection() {
               {/* min-w-0 + break-all: an email address is one unbreakable token
                   and would otherwise widen the card past a narrow phone. */}
               <div className="min-w-0">
-                <p className="font-medium group-hover:text-primary transition-colors break-all">
+                <p className="font-medium group-hover:text-primary transition-colors duration-150 break-all">
                   hello@kartikgounder.com
                 </p>
                 <p className="text-sm text-muted-foreground">Best for work, collaborations, and this site</p>
@@ -45,13 +45,13 @@ export function ContactSection() {
             </a>
             <a
               href="mailto:kartikgounder@gmail.com"
-              className="flex items-center gap-3 p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-card transition-all group"
+              className="flex items-center gap-3 p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-card transition-colors duration-150 group"
             >
               <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                 <Mail className="w-4 h-4 text-primary" />
               </div>
               <div className="min-w-0">
-                <p className="font-medium group-hover:text-primary transition-colors break-all">
+                <p className="font-medium group-hover:text-primary transition-colors duration-150 break-all">
                   kartikgounder@gmail.com
                 </p>
                 <p className="text-sm text-muted-foreground">Personal inbox, also reliable</p>
@@ -67,11 +67,11 @@ export function ContactSection() {
               href="https://github.com/KartikDaGreat"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 p-3 rounded-lg hover:bg-secondary transition-colors group"
+              className="flex items-center gap-3 min-h-11 p-3 rounded-lg hover:bg-secondary transition-colors duration-150 group"
             >
               <Github className="w-5 h-5 flex-shrink-0" />
               <div>
-                <p className="font-medium group-hover:text-primary transition-colors">GitHub</p>
+                <p className="font-medium group-hover:text-primary transition-colors duration-150">GitHub</p>
                 <p className="text-sm text-muted-foreground">@KartikDaGreat, including the source of this site</p>
               </div>
             </a>
@@ -79,21 +79,21 @@ export function ContactSection() {
               href="https://www.linkedin.com/in/kartik-gounder"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 p-3 rounded-lg hover:bg-secondary transition-colors group"
+              className="flex items-center gap-3 min-h-11 p-3 rounded-lg hover:bg-secondary transition-colors duration-150 group"
             >
               <Linkedin className="w-5 h-5 flex-shrink-0" />
               <div>
-                <p className="font-medium group-hover:text-primary transition-colors">LinkedIn</p>
+                <p className="font-medium group-hover:text-primary transition-colors duration-150">LinkedIn</p>
                 <p className="text-sm text-muted-foreground">kartik-gounder</p>
               </div>
             </a>
             <a
               href="/api/resume"
-              className="flex items-center gap-3 p-3 rounded-lg hover:bg-secondary transition-colors group"
+              className="flex items-center gap-3 min-h-11 p-3 rounded-lg hover:bg-secondary transition-colors duration-150 group"
             >
               <FileJson className="w-5 h-5 flex-shrink-0" />
               <div>
-                <p className="font-medium group-hover:text-primary transition-colors">GET /api/resume</p>
+                <p className="font-medium group-hover:text-primary transition-colors duration-150">GET /api/resume</p>
                 <p className="text-sm text-muted-foreground">
                   Machine-readable version, for the recruiters running scripts
                 </p>

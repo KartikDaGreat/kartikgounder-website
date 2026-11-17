@@ -11,7 +11,7 @@ const INPUT_EVENTS = ["keydown", "pointerdown", "wheel", "touchstart"] as const
  * sequence finishes or when the visitor presses a key, clicks or scrolls, and
  * it is remembered for the rest of the visit.
  */
-export function IntroGate({ duration = 3600 }: { duration?: number }) {
+export function IntroGate({ duration = 1400 }: { duration?: number }) {
   useEffect(() => {
     const root = document.documentElement
     if (root.dataset.introSeen) return

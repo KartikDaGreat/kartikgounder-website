@@ -1,5 +1,5 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -74,6 +74,10 @@ export const metadata: Metadata = {
   },
 }
 
+// The palette script picks dark or light before paint; let the browser match
+// form controls and scrollbars to either.
+export const viewport: Viewport = { colorScheme: "dark light" }
+
 // Structured data so search engines and agents can read the basics without
 // running the client-rendered page.
 const personJsonLd = {
@@ -123,22 +127,21 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} font-sans antialiased text-[17px] md:text-[18px] leading-7 md:leading-8`}
+        className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 btn btn-secondary"
+        >
+          Skip to main content
+        </a>
         <ThemeProvider>
           <MotionRoot>
-            <div className="fixed top-4 right-4 z-40 flex items-center gap-2">
+            <div className="fixed top-0 right-0 z-30 flex h-14 items-center gap-1 px-2 md:top-4 md:right-4 md:h-auto md:gap-2 md:px-0">
               <ThemeDice />
               <ThemeToggle />
             </div>
             {children}
-            {/* Cmd+K hint */}
-            <div className="fixed bottom-4 right-4 hidden lg:flex items-center gap-1.5 px-3 py-1.5 text-xs text-muted-foreground bg-card/80 backdrop-blur-sm border border-border rounded-full shadow-sm">
-              <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-secondary rounded border border-border">
-                Ctrl+K
-              </kbd>
-              <span>to search</span>
-            </div>
           </MotionRoot>
         </ThemeProvider>
         <Analytics />

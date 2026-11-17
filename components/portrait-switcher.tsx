@@ -27,7 +27,7 @@ export function PortraitSwitcher({ className }: { className?: string }) {
 
   return (
     <div className={cn("max-w-[240px]", className)}>
-      <div className="rounded-lg border border-border bg-card p-2 shadow-sm">
+      <div className="rounded-lg border border-border bg-card p-2">
         {/*
           All four are rendered, with only the active one visible. Toggling then
           costs no network request and cannot flash a half-loaded image.
@@ -55,17 +55,16 @@ export function PortraitSwitcher({ className }: { className?: string }) {
         </div>
       </div>
 
-      <div className="mt-2 flex flex-wrap justify-center gap-1">
+      <div role="group" aria-label="Portrait style" className="mt-2 flex flex-wrap justify-center gap-1">
         {STYLES.map((s) => (
           <button
             key={s.id}
             type="button"
             onClick={() => setStyle(s.id)}
             aria-pressed={s.id === style}
-            title={s.note}
             className={cn(
-              // min-h-8 + px-3: a 19px pill was too small to hit on a phone.
-              "inline-flex items-center min-h-8 px-3 rounded-full text-[11px] font-mono border transition-colors",
+              // 44px tall on touch, 36px from md where a pointer is likely.
+              "inline-flex items-center min-h-11 md:min-h-9 px-3 rounded-full text-xs font-mono border transition-colors duration-150",
               s.id === style
                 ? "bg-primary/10 text-primary border-primary/40"
                 : "text-muted-foreground border-border hover:text-foreground hover:border-primary/30",
@@ -76,7 +75,8 @@ export function PortraitSwitcher({ className }: { className?: string }) {
         ))}
       </div>
 
-      <p className="mt-1.5 text-[11px] font-mono text-muted-foreground text-center leading-snug">
+      {/* min-h-8 with a 16px line reserves exactly two lines, so a shorter note does not make the column jump. */}
+      <p aria-live="polite" className="mt-2 min-h-8 text-xs leading-4 font-mono text-muted-foreground text-center">
         {active.note}
       </p>
     </div>

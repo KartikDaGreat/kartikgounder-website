@@ -95,7 +95,7 @@ function StatusDot({ online }: { online: boolean }) {
     <span
       className={cn(
         "inline-block w-2 h-2 rounded-full",
-        online ? "bg-emerald-400 animate-pulse" : "bg-rose-400"
+        online ? "bg-success" : "bg-rose-400"
       )}
     />
   )
@@ -112,7 +112,7 @@ function CardShell({ title, children }: { title: string; children: React.ReactNo
   )
 }
 
-function MiniSparkline({ data, color = "emerald" }: { data: number[]; color?: string }) {
+function MiniSparkline({ data, color = "success" }: { data: number[]; color?: string }) {
   if (data.length < 2) return null
   const max = Math.max(...data, 1)
   const h = 24
@@ -122,7 +122,7 @@ function MiniSparkline({ data, color = "emerald" }: { data: number[]; color?: st
     .join(" ")
 
   const colorMap: Record<string, string> = {
-    emerald: "stroke-emerald-400",
+    success: "stroke-success",
     sky: "stroke-sky-400",
     amber: "stroke-amber-400",
   }
@@ -132,7 +132,7 @@ function MiniSparkline({ data, color = "emerald" }: { data: number[]; color?: st
       <polyline
         points={points}
         fill="none"
-        className={colorMap[color] || "stroke-emerald-400"}
+        className={colorMap[color] || "stroke-success"}
         strokeWidth="1.5"
         strokeLinejoin="round"
       />
@@ -333,7 +333,7 @@ function PiStorageCard({ storage }: { storage: StorageStatus }) {
     <CardShell title="Raspberry Pi Storage">
       <div className="flex items-center gap-2 text-sm">
         <StatusDot online={storage.online} />
-        <span className={storage.online ? "text-emerald-300" : "text-rose-300"}>
+        <span className={storage.online ? "text-success" : "text-rose-300"}>
           {storage.online ? "Online" : "Offline"}
         </span>
       </div>
@@ -367,7 +367,7 @@ function ArduinoCard({ arduino }: { arduino: ArduinoStatus }) {
     <CardShell title="Arduino">
       <div className="flex items-center gap-2 text-sm">
         <StatusDot online={arduino.connected} />
-        <span className={arduino.connected ? "text-emerald-300" : "text-rose-300"}>
+        <span className={arduino.connected ? "text-success" : "text-rose-300"}>
           {arduino.connected ? "Connected" : "Offline"}
         </span>
       </div>
@@ -387,7 +387,7 @@ function ArduinoCard({ arduino }: { arduino: ArduinoStatus }) {
         {arduino.error && <div className="text-rose-300/90">{arduino.error}</div>}
       </div>
       {arduino.logs && arduino.logs.length > 0 && (
-        <div className="rounded bg-background/50 border border-border/40 p-2 max-h-20 overflow-y-auto text-[11px] text-muted-foreground space-y-0.5">
+        <div className="rounded bg-background/50 border border-border/40 p-2 max-h-20 overflow-y-auto text-xs text-muted-foreground space-y-0.5">
           {arduino.logs.slice(0, 4).map((log, i) => (
             <div key={i} className="truncate font-mono">{log}</div>
           ))}
@@ -452,7 +452,7 @@ function GitHubActivityCard({ data }: { data: GitHubData | null }) {
               .sort((a, b) => b[1] - a[1])
               .slice(0, 6)
               .map(([lang, pct]) => (
-                <span key={lang} className="text-[10px] text-muted-foreground flex items-center gap-1">
+                <span key={lang} className="text-xs text-muted-foreground flex items-center gap-1">
                   <span className={cn("w-1.5 h-1.5 rounded-full", langColors[lang] || "bg-gray-500")} />
                   {lang} {pct}%
                 </span>
@@ -466,7 +466,7 @@ function GitHubActivityCard({ data }: { data: GitHubData | null }) {
           <div key={i} className="flex items-start gap-2 text-xs">
             <span className="font-mono text-primary shrink-0">{c.sha}</span>
             <span className="text-foreground truncate flex-1">{c.message}</span>
-            <span className="text-muted-foreground shrink-0 text-[10px]">
+            <span className="text-muted-foreground shrink-0 text-xs">
               {c.date ? relativeTime(c.date) : ""}
             </span>
           </div>
@@ -515,7 +515,7 @@ function CodeStatsCard({ data }: { data: GitHubData | null }) {
 
       {codeStats.weeklyActivity.length > 0 && (
         <div>
-          <div className="text-[10px] text-muted-foreground mb-1">Last 12 weeks</div>
+          <div className="text-xs text-muted-foreground mb-1">Last 12 weeks</div>
           <div className="flex gap-1">
             {codeStats.weeklyActivity.map((count, i) => {
               const intensity = count / maxWeekly
@@ -526,8 +526,8 @@ function CodeStatsCard({ data }: { data: GitHubData | null }) {
                   style={{
                     backgroundColor:
                       count === 0
-                        ? "hsl(var(--muted) / 0.3)"
-                        : `rgba(52, 211, 153, ${0.2 + intensity * 0.8})`,
+                        ? "color-mix(in oklch, var(--muted) 30%, transparent)"
+                        : `color-mix(in oklch, var(--success) ${Math.round((0.2 + intensity * 0.8) * 100)}%, transparent)`,
                   }}
                   title={`Week ${i + 1}: ${count} commits`}
                 />
@@ -569,24 +569,25 @@ function CommitTimeCard({ data }: { data: GitHubData | null }) {
         {dist.map((count, hour) => {
           const height = count > 0 ? Math.max(2, (count / max) * 40) : 1
           return (
+            // Data bar, not chrome: height encodes the value, so it animates when data refreshes.
             <div
               key={hour}
-              className="flex-1 rounded-t-sm transition-all"
+              className="flex-1 rounded-t-sm transition-[height] duration-200"
               style={{
                 height: `${height}px`,
                 backgroundColor:
                   count === 0
-                    ? "hsl(var(--muted) / 0.2)"
+                    ? "color-mix(in oklch, var(--muted) 20%, transparent)"
                     : hour === peakHour
-                      ? "rgb(52, 211, 153)"
-                      : `rgba(52, 211, 153, ${0.3 + (count / max) * 0.5})`,
+                      ? "var(--success)"
+                      : `color-mix(in oklch, var(--success) ${Math.round((0.3 + (count / max) * 0.5) * 100)}%, transparent)`,
               }}
               title={`${formatHour(hour)}: ${count} commits`}
             />
           )
         })}
       </div>
-      <div className="flex justify-between text-[9px] text-muted-foreground mt-0.5">
+      <div className="flex justify-between text-xs text-muted-foreground mt-0.5">
         <span>12am</span>
         <span>6am</span>
         <span>12pm</span>
@@ -602,7 +603,7 @@ function WebPerformanceCard({ vitals }: { vitals: WebVitals }) {
     vitals.lcp === null
       ? "text-muted-foreground"
       : vitals.lcp < 2500
-        ? "text-emerald-300"
+        ? "text-success"
         : vitals.lcp < 4000
           ? "text-amber-300"
           : "text-rose-300"
@@ -611,7 +612,7 @@ function WebPerformanceCard({ vitals }: { vitals: WebVitals }) {
     vitals.cls === null
       ? "text-muted-foreground"
       : vitals.cls < 0.1
-        ? "text-emerald-300"
+        ? "text-success"
         : vitals.cls < 0.25
           ? "text-amber-300"
           : "text-rose-300"
@@ -662,7 +663,7 @@ function DeployCard({ data }: { data: VercelData | null }) {
   }
 
   const stateColors: Record<string, string> = {
-    READY: "bg-emerald-400/20 text-emerald-300 border-emerald-400/40",
+    READY: "bg-success/20 text-success border-success/40",
     ERROR: "bg-rose-400/20 text-rose-300 border-rose-400/40",
     BUILDING: "bg-amber-400/20 text-amber-300 border-amber-400/40",
     QUEUED: "bg-blue-400/20 text-blue-300 border-blue-400/40",
@@ -683,7 +684,7 @@ function DeployCard({ data }: { data: VercelData | null }) {
             <span
               className={cn(
                 "font-mono",
-                data.successRate >= 90 ? "text-emerald-300" : data.successRate >= 70 ? "text-amber-300" : "text-rose-300"
+                data.successRate >= 90 ? "text-success" : data.successRate >= 70 ? "text-amber-300" : "text-rose-300"
               )}
             >
               {data.successRate}%
@@ -704,14 +705,14 @@ function DeployCard({ data }: { data: VercelData | null }) {
             <div className="flex items-center justify-between">
               <span
                 className={cn(
-                  "px-1.5 py-0.5 rounded text-[10px] border",
+                  "px-1.5 py-0.5 rounded text-xs border",
                   stateColors[d.state] || "bg-gray-400/20 text-gray-300 border-gray-400/40"
                 )}
               >
                 {d.state}
               </span>
               {d.createdAt && (
-                <span className="text-muted-foreground text-[10px]">{relativeTime(d.createdAt)}</span>
+                <span className="text-muted-foreground text-xs">{relativeTime(d.createdAt)}</span>
               )}
             </div>
             {d.commit.message && (
@@ -756,8 +757,8 @@ function BuildSizeCard({ data }: { data: VercelData | null }) {
         {delta !== 0 && (
           <span
             className={cn(
-              "font-mono text-[10px]",
-              delta > 0 ? "text-rose-300" : "text-emerald-300"
+              "font-mono text-xs",
+              delta > 0 ? "text-rose-300" : "text-success"
             )}
           >
             {delta > 0 ? "+" : ""}
@@ -779,7 +780,7 @@ function BuildSizeCard({ data }: { data: VercelData | null }) {
           )
         })}
       </div>
-      <div className="text-[10px] text-muted-foreground">
+      <div className="text-xs text-muted-foreground">
         Last {sizes.length} deploys
       </div>
     </CardShell>
@@ -806,7 +807,7 @@ function ApiHealthCard({ latencies }: { latencies: Record<string, number[]> }) {
                 </div>
                 <div className="flex items-center gap-2">
                   <MiniSparkline data={history} />
-                  <span className="text-[10px] text-muted-foreground">avg {avg}ms</span>
+                  <span className="text-xs text-muted-foreground">avg {avg}ms</span>
                 </div>
               </div>
             )
@@ -836,7 +837,7 @@ function DepsCard({ data }: { data: DepsData | null }) {
           <span
             className={cn(
               "font-mono",
-              data.outdatedCount === 0 ? "text-emerald-300" : "text-amber-300"
+              data.outdatedCount === 0 ? "text-success" : "text-amber-300"
             )}
           >
             {data.outdatedCount}
@@ -852,10 +853,10 @@ function DepsCard({ data }: { data: DepsData | null }) {
             <div className="flex items-center gap-2">
               <span className="font-mono text-foreground">{pkg.installed}</span>
               {pkg.upToDate === false && pkg.latest && (
-                <span className="font-mono text-amber-300 text-[10px]">{pkg.latest}</span>
+                <span className="font-mono text-amber-300 text-xs">{pkg.latest}</span>
               )}
               {pkg.upToDate === true && (
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span className="w-1.5 h-1.5 rounded-full bg-success" />
               )}
               {pkg.upToDate === false && (
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
@@ -897,7 +898,7 @@ function TechStackCard({ data }: { data: DepsData | null }) {
         {infra.map((item) => (
           <div key={item.name} className="flex items-center justify-between text-xs">
             <span className="text-foreground">{item.name}</span>
-            <span className="text-muted-foreground text-[10px]">{item.detail}</span>
+            <span className="text-muted-foreground text-xs">{item.detail}</span>
           </div>
         ))}
       </div>
@@ -924,7 +925,7 @@ function VisitorCard({ data }: { data: VisitorData | null }) {
           <span className="font-mono text-foreground text-sm">{data.unique}</span> unique
         </span>
       </div>
-      <div className="text-[10px] text-muted-foreground">
+      <div className="text-xs text-muted-foreground">
         Since deploy {relativeTime(data.since)}
       </div>
     </CardShell>
@@ -943,10 +944,10 @@ export function SystemsSection() {
 
   return (
     <section>
-      <div className="mb-10 lg:grid lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-10 lg:items-center">
+      <div className="mb-12 lg:grid lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-12 lg:items-center">
         <div>
-          <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Live Systems</h1>
-          <p className="text-lg text-foreground/80 leading-relaxed max-w-2xl">
+          <h1 className="t-page mb-4">Live Systems</h1>
+          <p className="t-lede">
             Real telemetry from real machines. A Raspberry Pi file server in my apartment, an Arduino on my desk,
             this site's deploy pipeline, and the repos behind all of it. Nothing on this page is mocked or seeded,
             which means when the Pi goes down, you watch it go down. That felt like the honest way to build a
@@ -967,7 +968,7 @@ export function SystemsSection() {
       <div className="space-y-8">
         {/* Hardware */}
         <div>
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Hardware</h2>
+          <h2 className="eyebrow mb-4">Hardware</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <PiStorageCard storage={storage} />
             <ArduinoCard arduino={arduino} />
@@ -976,7 +977,7 @@ export function SystemsSection() {
 
         {/* Code */}
         <div>
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Code</h2>
+          <h2 className="eyebrow mb-4">Code</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <GitHubActivityCard data={githubData} />
             <CodeStatsCard data={githubData} />
@@ -987,7 +988,7 @@ export function SystemsSection() {
 
         {/* Deployment */}
         <div>
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Deployment</h2>
+          <h2 className="eyebrow mb-4">Deployment</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <WebPerformanceCard vitals={vitals} />
             <DeployCard data={vercelData} />
@@ -997,7 +998,7 @@ export function SystemsSection() {
 
         {/* Meta */}
         <div>
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Meta</h2>
+          <h2 className="eyebrow mb-4">Meta</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <DepsCard data={depsData} />
             <TechStackCard data={depsData} />

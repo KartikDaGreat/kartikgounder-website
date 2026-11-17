@@ -1,99 +1,102 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Kbd } from "@/components/ui/kbd"
+import { useModKey } from "@/lib/platform"
 
 interface ShortcutGroup {
   title: string
   shortcuts: { keys: string[]; description: string }[]
 }
 
-const shortcutGroups: ShortcutGroup[] = [
-  {
-    title: "Navigation",
-    shortcuts: [
-      { keys: ["j"], description: "Next section" },
-      { keys: ["k"], description: "Previous section" },
-      { keys: ["1-9"], description: "Jump to section by number" },
-    ],
-  },
-  {
-    title: "Actions",
-    shortcuts: [
-      { keys: ["Ctrl", "K"], description: "Open command palette" },
-      { keys: ["?"], description: "Show keyboard shortcuts" },
-      { keys: ["Esc"], description: "Close overlay" },
-    ],
-  },
-]
+function shortcutGroups(mod: string): ShortcutGroup[] {
+  return [
+    {
+      title: "Navigation",
+      shortcuts: [
+        { keys: ["j"], description: "Next section" },
+        { keys: ["k"], description: "Previous section" },
+        { keys: ["1-9"], description: "Jump to section by number" },
+      ],
+    },
+    {
+      title: "Actions",
+      shortcuts: [
+        { keys: [mod, "K"], description: "Open command palette" },
+        { keys: ["?"], description: "Show keyboard shortcuts" },
+        { keys: ["Esc"], description: "Close overlay" },
+      ],
+    },
+  ]
+}
 
-export function KeyboardShortcuts() {
-  const [open, setOpen] = useState(false)
+interface KeyboardShortcutsProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
 
+export function KeyboardShortcuts({ open, onOpenChange }: KeyboardShortcutsProps) {
+  const mod = useModKey()
+
+  // "?" toggles the dialog, except while typing or while another dialog is up.
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "?" || e.metaKey || e.ctrlKey || e.altKey) return
+      const target = e.target as HTMLElement | null
       if (
-        e.target instanceof HTMLInputElement ||
-        e.target instanceof HTMLTextAreaElement
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLSelectElement ||
+        target?.isContentEditable
       ) {
         return
       }
-
-      if (e.key === "?" && !e.metaKey && !e.ctrlKey) {
-        e.preventDefault()
-        setOpen((prev) => !prev)
-      }
-      if (e.key === "Escape") {
-        setOpen(false)
-      }
+      if (!open && document.querySelector('[role="dialog"]')) return
+      e.preventDefault()
+      onOpenChange(!open)
     }
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [])
-
-  if (!open) return null
+  }, [open, onOpenChange])
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center">
-      <div
-        className="absolute inset-0 bg-background/70 backdrop-blur-sm"
-        onClick={() => setOpen(false)}
-      />
-      <div className="relative w-full max-w-sm mx-4 rounded-xl border border-border bg-card shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        <div className="px-5 py-4 border-b border-border">
-          <h3 className="text-sm font-semibold">Keyboard Shortcuts</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">Press ? to toggle this overlay</p>
-        </div>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="gap-6 rounded-xl bg-card shadow-(--shadow-overlay) sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="text-base leading-snug">Keyboard shortcuts</DialogTitle>
+          <DialogDescription>Press ? to toggle this dialog.</DialogDescription>
+        </DialogHeader>
 
-        <div className="px-5 py-4 space-y-5">
-          {shortcutGroups.map((group) => (
-            <div key={group.title}>
-              <h4 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+        <div className="space-y-6">
+          {shortcutGroups(mod).map((group) => (
+            <section key={group.title} aria-labelledby={`shortcuts-${group.title}`}>
+              <h3 id={`shortcuts-${group.title}`} className="eyebrow mb-2">
                 {group.title}
-              </h4>
-              <div className="space-y-2">
+              </h3>
+              <dl className="space-y-2">
                 {group.shortcuts.map((shortcut) => (
-                  <div
-                    key={shortcut.description}
-                    className="flex items-center justify-between text-sm"
-                  >
-                    <span className="text-foreground/80">{shortcut.description}</span>
-                    <div className="flex items-center gap-1">
+                  <div key={shortcut.description} className="flex items-center justify-between gap-4 text-sm">
+                    <dt className="text-foreground/80">{shortcut.description}</dt>
+                    <dd className="flex items-center gap-1">
                       {shortcut.keys.map((key, i) => (
-                        <span key={i}>
-                          {i > 0 && <span className="text-muted-foreground mx-0.5">+</span>}
-                          <kbd className="inline-flex items-center px-1.5 py-0.5 text-xs font-mono bg-secondary text-secondary-foreground rounded border border-border min-w-[24px] justify-center">
-                            {key}
-                          </kbd>
+                        <span key={key} className="flex items-center gap-1">
+                          {i > 0 && (
+                            <span className="text-xs text-muted-foreground" aria-hidden>
+                              +
+                            </span>
+                          )}
+                          <Kbd className="min-w-6 rounded-md font-mono">{key}</Kbd>
                         </span>
                       ))}
-                    </div>
+                    </dd>
                   </div>
                 ))}
-              </div>
-            </div>
+              </dl>
+            </section>
           ))}
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }
