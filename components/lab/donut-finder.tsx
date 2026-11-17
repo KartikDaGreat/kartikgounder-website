@@ -134,8 +134,8 @@ export function DonutFinder() {
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-background/70 backdrop-blur-sm" onClick={() => setOpen(false)} />
-          <div className="relative w-full max-w-sm rounded-lg border border-border bg-card shadow-xl">
+          <div className="absolute inset-0 bg-background/70" onClick={() => setOpen(false)} />
+          <div className="relative w-full max-w-sm rounded-xl border border-border bg-card shadow-overlay">
             <div className="flex items-center justify-between px-4 py-3">
               <h3 className="text-sm font-semibold">Donut Finder</h3>
               <button onClick={() => setOpen(false)} className="text-xs text-muted-foreground hover:text-foreground">
@@ -168,7 +168,7 @@ export function DonutFinder() {
                           href={`https://www.google.com/maps/dir/?api=1&origin=${location.lat},${location.lng}&destination=${encodeURIComponent(place.address || place.name)}&destination_place_id=${place.placeId}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-primary border-primary/40 hover:bg-primary/10"
+                          className="inline-flex items-center rounded-full border px-2 py-0.5 text-xs text-primary border-primary/40 hover:bg-primary/10"
                         >
                           Directions
                         </a>

@@ -1,8 +1,7 @@
-"use client"
-
-import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 
+/** A real link, so cmd-click and "open in new tab" work. */
 export function BackButton({
   href = "/#projects",
   label = "Back to Projects",
@@ -10,15 +9,14 @@ export function BackButton({
   href?: string
   label?: string
 }) {
-  const router = useRouter()
-
   return (
-    <button
-      onClick={() => router.push(href, { transitionTypes: ["nav-back"] })}
-      className="inline-flex items-center gap-2 min-h-10 pr-3 text-sm text-muted-foreground hover:text-foreground transition-colors mb-10 cursor-pointer"
+    <Link
+      href={href}
+      transitionTypes={["nav-back"]}
+      className="inline-flex min-h-11 items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors duration-150 mb-8"
     >
-      <ArrowLeft className="w-4 h-4" />
+      <ArrowLeft aria-hidden className="w-4 h-4" />
       {label}
-    </button>
+    </Link>
   )
 }

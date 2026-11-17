@@ -3,14 +3,15 @@ import Image from "next/image"
 import { Art } from "@/components/art"
 import { MetricChips } from "@/components/metric-chips"
 import { patents, publications, type Publication } from "@/lib/profile"
+import { cn } from "@/lib/utils"
 
 export function ResearchSection() {
   return (
     <section className="max-w-5xl">
-      <div className="mb-12 lg:grid lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-10 lg:items-center">
+      <div className="mb-12 lg:grid lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-12 lg:items-center">
         <div>
-          <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Research</h1>
-          <p className="text-lg text-foreground/80 leading-relaxed max-w-2xl">
+          <h1 className="t-page mb-4">Research</h1>
+          <p className="t-lede">
             Three peer-reviewed papers across ACM, Springer, and IEEE, and two patent applications. None of it
             started as a paper. Each one began as a thing I was trying to make work, and the write-up came after
             it did.
@@ -30,58 +31,25 @@ export function ResearchSection() {
       {/* The numbers first, then the papers */}
       <MetricChips
         items={["3 papers", "2 patents", "96.33% ensemble accuracy", "87% patient satisfaction", "$135 of hardware"]}
-        className="mb-10"
+        className="mb-12"
       />
 
-      <div className="mb-14">
-        <h2 className="eyebrow mb-5">Publications</h2>
+      <div className="mb-12">
+        <h2 className="eyebrow mb-4">Publications</h2>
         <div className="space-y-3">
           {publications.map((pub) => (
-            <div
-              key={pub.title}
-              className="group flex items-start gap-4 rounded-xl border border-border bg-card p-4 hover:border-primary/50 transition-colors"
-            >
-              {pub.image && (
-                <div className="hidden sm:block relative w-24 h-24 flex-shrink-0 rounded-md border border-border bg-secondary/20 overflow-hidden">
-                  <Image src={pub.image} alt={pub.title} fill className="object-contain p-1.5" />
-                </div>
-              )}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="px-2 py-0.5 text-xs font-mono rounded-md bg-primary/10 text-primary">
-                    {pub.venue}
-                  </span>
-                  <span className="text-xs text-muted-foreground">{pub.year}</span>
-                </div>
-                <h3 className="font-medium leading-snug group-hover:text-primary transition-colors">{pub.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed mt-1">{pub.description}</p>
-              </div>
-              {pub.link && (
-                <a
-                  href={pub.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-secondary hover:bg-primary hover:text-primary-foreground transition-colors flex-shrink-0"
-                  aria-label="View publication"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-              )}
-            </div>
+            <PublicationCard key={pub.title} pub={pub} />
           ))}
         </div>
       </div>
 
       <div>
-        <h2 className="eyebrow mb-1.5">Patents</h2>
-        <p className="text-sm text-muted-foreground mb-5">Both came out of $135 of wearable hardware.</p>
+        <h2 className="eyebrow mb-2">Patents</h2>
+        <p className="text-sm text-muted-foreground mb-4">Both came out of $135 of wearable hardware.</p>
 
-        <div className="grid md:grid-cols-2 gap-5">
+        <div className="grid md:grid-cols-2 gap-6">
           {patents.map((patent, index) => (
-            <article
-              key={index}
-              className="group relative overflow-hidden rounded-xl border border-border bg-card hover:border-primary/50 transition-all duration-300"
-            >
+            <article key={index} className="overflow-hidden rounded-xl border border-border bg-card">
               {patent.image && (
                 <div className="h-36 bg-secondary/20 flex items-center justify-center border-b border-border relative overflow-hidden">
                   <Image
@@ -94,16 +62,9 @@ export function ResearchSection() {
                 </div>
               )}
 
-              <div className="p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="px-2 py-0.5 text-xs font-mono rounded-md bg-secondary text-secondary-foreground">
-                    Patent
-                  </span>
-                  <span className="text-xs text-muted-foreground">{patent.year}</span>
-                </div>
-                <h3 className="font-medium leading-snug mb-1.5 group-hover:text-primary transition-colors">
-                  {patent.title}
-                </h3>
+              <div className="p-6">
+                <p className="t-meta mb-2">Patent · {patent.year}</p>
+                <h3 className="font-medium leading-snug mb-2">{patent.title}</h3>
                 {patent.description && (
                   <p className="text-sm text-muted-foreground leading-relaxed">{patent.description}</p>
                 )}
@@ -113,5 +74,50 @@ export function ResearchSection() {
         </div>
       </div>
     </section>
+  )
+}
+
+/**
+ * When a paper has a link, the title is the link and its ::after stretches over
+ * the whole card, so the card is one target with one accessible name. Cards
+ * without a link get no hover state, since there is nothing to click.
+ */
+function PublicationCard({ pub }: { pub: Publication }) {
+  return (
+    <article
+      className={cn(
+        "relative flex items-start gap-4 rounded-xl border border-border bg-card p-4",
+        pub.link && "hover:border-primary/50 focus-within:border-primary/50 transition-colors duration-150",
+      )}
+    >
+      {pub.image && (
+        <div className="hidden sm:block relative w-24 h-24 flex-shrink-0 rounded-md border border-border bg-secondary/20 overflow-hidden">
+          {/* Decorative: the title sits right next to it. */}
+          <Image src={pub.image} alt="" sizes="96px" fill className="object-contain p-1.5" />
+        </div>
+      )}
+      <div className="flex-1 min-w-0">
+        <p className="t-meta mb-2">
+          {pub.venue} · {pub.year}
+        </p>
+        <h3 className="font-medium leading-snug">
+          {pub.link ? (
+            <a
+              href={pub.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary transition-colors duration-150 after:absolute after:inset-0 after:rounded-xl"
+            >
+              {pub.title}
+              <ExternalLink className="inline-block w-3.5 h-3.5 ml-1.5 align-[-0.125em] text-muted-foreground" aria-hidden />
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          ) : (
+            pub.title
+          )}
+        </h3>
+        <p className="text-sm text-muted-foreground leading-relaxed mt-1">{pub.description}</p>
+      </div>
+    </article>
   )
 }

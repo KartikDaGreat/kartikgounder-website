@@ -17,47 +17,39 @@ const filters: { id: Filter; label: string }[] = [
   { id: "ml", label: "ML / AI" },
 ]
 
+const CATEGORY_LABELS: Record<"swe" | "ml", string> = { swe: "SWE", ml: "ML/AI" }
+
+// Numbered against the full flagship list so a card keeps its number when filtered.
+const allFeatured = projects.filter((p) => p.featured)
+
 export function ProjectsSection() {
   const [filter, setFilter] = useState<Filter>("all")
 
-  const featured = projects.filter((p) => p.featured)
-  const rest = projects.filter((p) => !p.featured)
-  const visible = filter === "all" ? rest : rest.filter((p) => p.category.includes(filter))
+  const matches = (p: Project) => filter === "all" || p.category.includes(filter)
+  const featured = projects.filter((p) => p.featured && matches(p))
+  const rest = projects.filter((p) => !p.featured && matches(p))
+  const shown = featured.length + rest.length
 
   return (
     <section>
       <div className="mb-12">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">Projects</h1>
-        <p className="text-muted-foreground max-w-2xl">
+        <h1 className="t-page mb-4">Projects</h1>
+        <p className="t-lede">
           Fifteen builds, from trust middleware for AI coding agents to smart glasses held together with
           3D-printed parts. Three shipped as peer-reviewed papers. Each page tells the story: the problem,
           the decisions, and what I'd do differently.
         </p>
-      </div>
 
-      {/* Featured projects */}
-      <div className="mb-14">
-        <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-4">Flagship builds</h2>
-        <div className="space-y-4">
-          {featured.map((project, i) => (
-            <div key={project.slug}>
-              <FeaturedCard project={project} index={i} />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* All other projects */}
-      <div>
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">The rest of the shelf</h2>
-          <div className="flex items-center gap-1.5">
+        <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-3">
+          <div role="group" aria-label="Filter projects" className="flex flex-wrap items-center gap-2">
             {filters.map((f) => (
               <button
                 key={f.id}
+                type="button"
+                aria-pressed={filter === f.id}
                 onClick={() => setFilter(f.id)}
                 className={cn(
-                  "inline-flex items-center min-h-8 px-3.5 rounded-full text-xs font-medium border transition-colors",
+                  "inline-flex items-center min-h-11 md:min-h-9 px-4 rounded-full text-xs font-medium border transition-colors duration-150",
                   filter === f.id
                     ? "bg-primary/10 text-primary border-primary/40"
                     : "text-muted-foreground border-border hover:border-primary/30 hover:text-foreground",
@@ -67,58 +59,54 @@ export function ProjectsSection() {
               </button>
             ))}
           </div>
+          <p className="t-meta" aria-live="polite">
+            Showing {shown} of {projects.length}
+          </p>
         </div>
-        <div className="grid md:grid-cols-2 gap-4">
-          {visible.map((project) => (
-            <div key={project.slug}>
-              <CompactCard project={project} />
-            </div>
-          ))}
-        </div>
-        {visible.length === 0 && (
-          <p className="text-sm text-muted-foreground py-8 text-center">Nothing in this bucket.</p>
-        )}
       </div>
+
+      {featured.length > 0 && (
+        <div className="mb-12">
+          <h2 className="eyebrow mb-4">Flagship builds</h2>
+          <div className="space-y-4">
+            {featured.map((project) => (
+              <FeaturedCard key={project.slug} project={project} index={allFeatured.indexOf(project)} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {rest.length > 0 && (
+        <div>
+          <h2 className="eyebrow mb-4">The rest of the shelf</h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            {rest.map((project) => (
+              <CompactCard key={project.slug} project={project} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {shown === 0 && (
+        <div className="flex flex-col items-center gap-4 py-8 text-center">
+          <p className="text-sm text-muted-foreground">Nothing in this bucket.</p>
+          <button type="button" className="btn btn-secondary btn-sm" onClick={() => setFilter("all")}>
+            Show everything
+          </button>
+        </div>
+      )}
     </section>
   )
 }
 
-const chipBase = "px-2 py-0.5 text-[11px] font-mono rounded-md border whitespace-nowrap"
-
-/**
- * Literal emerald rather than a theme variable: --primary already belongs to
- * ML/AI, and every other palette slot is a surface color. Emerald 500 is one
- * of the few shades that reads on both the 53 dark palettes and the light one.
- */
-function CategoryChip({ cat }: { cat: "swe" | "ml" }) {
-  return (
-    <span
-      className={cn(
-        chipBase,
-        cat === "ml"
-          ? "bg-primary/10 text-primary border-primary/20"
-          : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-      )}
-    >
-      {cat === "ml" ? "ML/AI" : "SWE"}
-    </span>
-  )
+/** Static metadata as one quiet line instead of a row of pills. */
+function metaParts(project: Project, ...extra: (string | number | undefined)[]) {
+  return [
+    ...project.category.map((cat) => CATEGORY_LABELS[cat]),
+    ...(project.tags ?? []),
+    ...extra,
+  ].filter((part) => part !== undefined && part !== "")
 }
-
-/** Domain labels. Outlined, not filled, so they stay behind the category chip. */
-function TagChips({ tags }: { tags?: string[] }) {
-  if (!tags || tags.length === 0) return null
-  return (
-    <>
-      {tags.map((tag) => (
-        <span key={tag} className={cn(chipBase, "border-border text-muted-foreground")}>
-          {tag}
-        </span>
-      ))}
-    </>
-  )
-}
-
 
 /**
  * The title morphs into the project page's heading (text-morph in
@@ -133,7 +121,7 @@ export function ProjectTitle({ slug, children }: { slug: string; children: React
   )
 }
 
-/** Faint category illustration bleeding off the card's right edge. */
+/** Faint category illustration bleeding off the card's right edge. Featured cards only. */
 function CardArt({ project }: { project: Project }) {
   return (
     <div
@@ -147,39 +135,43 @@ function CardArt({ project }: { project: Project }) {
 
 function FeaturedCard({ project, index }: { project: Project; index: number }) {
   const hook = project.description.split(". ")[0].replace(/\.$/, "") + "."
+  const meta = metaParts(project, project.period)
 
   // Both cards use a stretched link: the title's ::after covers the card, so
   // the outbound links can sit on top without nesting <a> inside <a>.
   return (
-    <article className="group relative rounded-xl border border-border bg-card p-6 md:p-7 hover:border-primary/50 transition-all duration-300 overflow-hidden">
+    <article className="group relative rounded-xl border border-border bg-card p-6 hover:border-primary/50 transition-colors duration-150 overflow-hidden">
       <CardArt project={project} />
-      <div className="absolute top-5 right-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all">
+      <div
+        aria-hidden
+        className="absolute top-6 right-6 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-[color,translate] duration-150"
+      >
         <ArrowUpRight className="w-5 h-5" />
       </div>
 
-      <div className="flex items-baseline gap-3 mb-3">
-        <span className="text-xs font-mono text-muted-foreground/60">{String(index + 1).padStart(2, "0")}</span>
-        <div className="flex flex-wrap items-center gap-1.5">
-          {project.status && (
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground">
+      <p className="t-meta mb-3 pr-8 flex flex-wrap items-center gap-x-2">
+        <span>{String(index + 1).padStart(2, "0")}</span>
+        {project.status && (
+          <>
+            <span aria-hidden>·</span>
+            <span className="inline-flex items-center gap-1.5">
               <span
-                className={cn(
-                  "w-1.5 h-1.5 rounded-full",
-                  project.status === "active" ? "bg-emerald-400 animate-pulse" : "bg-primary/70",
-                )}
+                aria-hidden
+                className={cn("w-1.5 h-1.5 rounded-full", project.status === "active" ? "bg-success" : "bg-primary/70")}
               />
               {project.status}
             </span>
-          )}
-          {project.category.map((cat) => (
-            <CategoryChip key={cat} cat={cat} />
-          ))}
-          <TagChips tags={project.tags} />
-          {project.period && <span className="text-[11px] font-mono text-muted-foreground">{project.period}</span>}
-        </div>
-      </div>
+          </>
+        )}
+        {meta.length > 0 && (
+          <>
+            <span aria-hidden>·</span>
+            <span>{meta.join(" · ")}</span>
+          </>
+        )}
+      </p>
 
-      <h3 className="text-xl md:text-2xl font-bold mb-2 group-hover:text-primary transition-colors pr-8">
+      <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors duration-150 pr-8">
         <Link
           href={`/projects/${project.slug}`}
           transitionTypes={["nav-forward"]}
@@ -188,17 +180,11 @@ function FeaturedCard({ project, index }: { project: Project; index: number }) {
           <ProjectTitle slug={project.slug}>{project.title}</ProjectTitle>
         </Link>
       </h3>
-      <p className="text-sm md:text-[15px] text-muted-foreground leading-relaxed max-w-3xl mb-4">{hook}</p>
+      <p className="text-sm text-muted-foreground max-w-3xl mb-4">{hook}</p>
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-        {project.accuracy && (
-          <span className="px-2.5 py-1 text-xs font-medium rounded-md bg-primary/10 text-primary border border-primary/20">
-            {project.accuracy}
-          </span>
-        )}
-        <span className="text-xs font-mono text-muted-foreground">
-          {project.technologies.slice(0, 5).join(" · ")}
-        </span>
+        {project.accuracy && <span className="text-sm font-medium text-primary">{project.accuracy}</span>}
+        <span className="t-meta">{project.technologies.slice(0, 5).join(" · ")}</span>
         <ProjectLinks links={projectLinks(project)} size="sm" className="sm:ml-auto" />
       </div>
     </article>
@@ -207,16 +193,9 @@ function FeaturedCard({ project, index }: { project: Project; index: number }) {
 
 function CompactCard({ project }: { project: Project }) {
   return (
-    <article className="group relative h-full p-4 rounded-lg border border-border hover:border-primary/50 transition-colors bg-card overflow-hidden">
-      <CardArt project={project} />
-      <div className="flex flex-wrap items-center gap-1.5 mb-2 text-[11px] font-mono">
-        {project.category.map((cat) => (
-          <CategoryChip key={cat} cat={cat} />
-        ))}
-        <TagChips tags={project.tags} />
-        <span className="ml-auto text-muted-foreground">{project.year}</span>
-      </div>
-      <h3 className="font-medium group-hover:text-primary transition-colors mb-1.5">
+    <article className="group relative h-full p-4 rounded-xl border border-border hover:border-primary/50 transition-colors duration-150 bg-card">
+      <p className="t-meta mb-2">{metaParts(project, project.year).join(" · ")}</p>
+      <h3 className="t-h3 group-hover:text-primary transition-colors duration-150 mb-2">
         <Link
           href={`/projects/${project.slug}`}
           transitionTypes={["nav-forward"]}
@@ -225,9 +204,9 @@ function CompactCard({ project }: { project: Project }) {
           <ProjectTitle slug={project.slug}>{project.title}</ProjectTitle>
         </Link>
       </h3>
-      <p className="text-sm text-muted-foreground leading-relaxed mb-3 line-clamp-3">{project.description}</p>
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-muted-foreground">
-        {project.accuracy && <span className="text-primary font-medium">{project.accuracy}</span>}
+      <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{project.description}</p>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+        {project.accuracy && <span className="text-sm font-medium text-primary">{project.accuracy}</span>}
         <ProjectLinks links={projectLinks(project)} size="sm" className="ml-auto" />
       </div>
     </article>

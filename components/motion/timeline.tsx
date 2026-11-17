@@ -36,11 +36,11 @@ export function TimelineTrack({ children, className }: { children: ReactNode; cl
 }
 
 const dot: Variants = {
-  hidden: { opacity: 0, scale: 0.4 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: EASE } },
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.2, ease: EASE } },
 }
 
-/** A year marker that pops when the line reaches it. */
+/** A year marker that fades in when the line reaches it. */
 export function TimelineDot({ className }: { className?: string }) {
   const reduced = useReducedMotion()
   if (reduced) return <span aria-hidden className={className} />
@@ -58,8 +58,8 @@ export function TimelineDot({ className }: { className?: string }) {
 }
 
 const item: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } },
+  hidden: { opacity: 0, y: 8 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: EASE } },
 }
 
 /** A card that appears as the line passes it. Its TimelineBeat children follow a beat later. */
@@ -74,8 +74,8 @@ export function TimelineItem({ children }: { children: ReactNode }) {
 }
 
 const beat: Variants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE, delay: 0.25 } },
+  hidden: { opacity: 0, y: 8 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: EASE, delay: 0.1 } },
 }
 
 /**

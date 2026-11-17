@@ -6,10 +6,10 @@ import { accolades, certifications, degrees, earlierSchooling, leadership, type 
 export function AcademicsSection() {
   return (
     <section>
-      <div className="mb-12 lg:grid lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-10 lg:items-center">
+      <div className="mb-12 lg:grid lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-12 lg:items-center">
         <div>
-          <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Education</h1>
-          <p className="text-lg text-foreground/80 leading-relaxed max-w-2xl">
+          <h1 className="t-page mb-4">Education</h1>
+          <p className="t-lede">
             Columbia MS in Computer Science, finishing December 2026. Before that, a B.Tech at VIT where I
             graduated 11th out of 4,000, plus student council, an IEEE technical board seat, and a few trophies
             that were mostly an excuse to build things on a deadline.
@@ -27,8 +27,8 @@ export function AcademicsSection() {
       </div>
 
       {/* Degrees */}
-      <div className="mb-14">
-        <h2 className="eyebrow mb-5">Degrees</h2>
+      <div className="mb-12">
+        <h2 className="eyebrow mb-4">Degrees</h2>
         <div className="space-y-4">
           {degrees.map((degree) => (
             <div key={degree.school}>
@@ -53,8 +53,8 @@ export function AcademicsSection() {
       </div>
 
       {/* Certifications: with the validation number so anyone can check it */}
-      <div className="mb-14">
-        <h2 className="eyebrow mb-5">Certifications</h2>
+      <div className="mb-12">
+        <h2 className="eyebrow mb-4">Certifications</h2>
         <div className="space-y-2">
           {certifications.map((cert) => (
             <div key={cert.title} className="rounded-lg border border-border bg-card px-4 py-3">
@@ -65,12 +65,12 @@ export function AcademicsSection() {
                   {cert.issued}, valid to {cert.expires}
                 </span>
               </div>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-sm">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm">
                 <a
                   href={cert.file}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 min-h-9 font-medium text-primary hover:underline underline-offset-4"
+                  className="inline-flex items-center gap-2 min-h-11 md:min-h-9 font-medium text-primary hover:underline underline-offset-4"
                 >
                   <Award className="w-3.5 h-3.5" />
                   View certificate
@@ -93,13 +93,13 @@ export function AcademicsSection() {
       </div>
 
       {/* Leadership: one line per role, the single strongest fact */}
-      <div className="mb-14">
-        <h2 className="eyebrow mb-5">Leadership</h2>
+      <div className="mb-12">
+        <h2 className="eyebrow mb-4">Leadership</h2>
         <div className="space-y-2">
           {leadership.map((item) => (
             <div
               key={item.title}
-              className="rounded-lg border border-border bg-card px-4 py-3 hover:border-primary/50 transition-colors"
+              className="rounded-lg border border-border bg-card px-4 py-3"
             >
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
                 <h3 className="font-semibold text-sm">{item.title}</h3>
@@ -112,23 +112,23 @@ export function AcademicsSection() {
         </div>
       </div>
 
-      {/* Awards & community: a badge wall, not more cards */}
+      {/* Awards & community: one hairline list, not more cards */}
       <div>
-        <h2 className="eyebrow mb-5">Awards & community</h2>
-        <div className="flex flex-wrap gap-2">
+        <h2 className="eyebrow mb-4">Awards & community</h2>
+        <ul className="rounded-xl border border-border bg-card divide-y divide-border">
           {accolades.map((item) => (
-            <span
+            <li
               key={item.title}
-              className="inline-flex flex-wrap items-baseline gap-x-2 px-3 py-1.5 rounded-full border border-border bg-card text-sm hover:border-primary/50 transition-colors"
+              className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-4 py-3"
             >
-              <span className="font-medium">{item.title}</span>
+              <span className="text-sm font-medium">{item.title}</span>
               <span className="text-xs text-muted-foreground">
                 {item.org}
                 {item.detail ? ` · ${item.detail}` : ""} · {item.period}
               </span>
-            </span>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   )
@@ -136,32 +136,33 @@ export function AcademicsSection() {
 
 function DegreeCard({ degree }: { degree: Degree }) {
   return (
-    <article className="rounded-xl border border-border bg-card p-5 md:p-6">
+    <article className="rounded-xl border border-border bg-card p-6">
       <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-2">
         <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2 mb-1.5">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
             {degree.current && (
-              <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span className="t-meta inline-flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-success" aria-hidden />
                 In progress
               </span>
             )}
             <span className="text-xs text-muted-foreground font-mono">{degree.period}</span>
           </div>
-          <h3 className="text-lg md:text-xl font-bold tracking-tight">{degree.title}</h3>
-          <p className="text-sm text-primary mt-0.5">{degree.school}</p>
+          <h3 className="t-h2">{degree.title}</h3>
+          <p className="text-sm text-primary mt-1">{degree.school}</p>
         </div>
 
         {/* GPA block, right-aligned on wide screens */}
         {degree.gpa && (
           <div className="flex items-start gap-3 flex-shrink-0">
             <div className="text-right">
-              <div className="text-2xl font-bold text-primary tracking-tight leading-none">{degree.gpa}</div>
-              <div className="text-[11px] text-muted-foreground mt-1">GPA</div>
+              <div className="text-2xl font-semibold tabular-nums text-foreground tracking-tight leading-none">{degree.gpa}</div>
+              <div className="text-xs text-muted-foreground mt-1">GPA</div>
             </div>
             {degree.rank && (
               <div className="text-right border-l border-border pl-3">
-                <div className="text-2xl font-bold tracking-tight leading-none">{degree.rank.value}</div>
-                <div className="text-[11px] text-muted-foreground mt-1">{degree.rank.label}</div>
+                <div className="text-2xl font-semibold tabular-nums text-foreground tracking-tight leading-none">{degree.rank.value}</div>
+                <div className="text-xs text-muted-foreground mt-1">{degree.rank.label}</div>
               </div>
             )}
           </div>
@@ -184,18 +185,9 @@ function DegreeCard({ degree }: { degree: Degree }) {
           <Expander label="coursework">
             <div className="space-y-3 mb-1">
               {degree.coursework.map((term) => (
-                <div key={term.label} className="grid md:grid-cols-[160px_1fr] gap-x-4 gap-y-1.5 items-baseline">
+                <div key={term.label} className="grid md:grid-cols-[160px_1fr] gap-x-4 gap-y-1 items-baseline">
                   <p className="text-xs font-mono text-muted-foreground">{term.label}</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {term.items.map((course) => (
-                      <span
-                        key={course}
-                        className="text-[11px] px-2 py-1 rounded-md bg-secondary text-secondary-foreground border border-border"
-                      >
-                        {course}
-                      </span>
-                    ))}
-                  </div>
+                  <p className="text-sm text-muted-foreground">{term.items.join(" · ")}</p>
                 </div>
               ))}
             </div>

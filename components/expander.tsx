@@ -34,9 +34,9 @@ export function Expander({
         type="button"
         aria-expanded={open}
         onClick={() => startTransition(() => setOpen((v) => !v))}
-        className="inline-flex items-center gap-1 mt-1 min-h-9 pr-3 text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
+        className="inline-flex items-center gap-1 mt-1 min-h-11 md:min-h-9 pr-3 text-xs font-medium text-muted-foreground hover:text-primary transition-colors duration-150"
       >
-        <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", open && "rotate-180")} />
+        <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-150", open && "rotate-180")} />
         {open ? "show less" : label}
       </button>
     </div>

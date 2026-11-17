@@ -1,18 +1,18 @@
 import { cn } from "@/lib/utils"
 
-/** Row of small mono chips for the numbers that would otherwise hide in prose. */
+/**
+ * The numbers that would otherwise hide in prose, set as a plain typographic
+ * row: static facts, so no pill background or border.
+ */
 export function MetricChips({ items, className }: { items: string[]; className?: string }) {
   if (items.length === 0) return null
   return (
-    <div className={cn("flex flex-wrap gap-1.5", className)}>
+    <ul className={cn("flex flex-wrap gap-x-6 gap-y-2", className)}>
       {items.map((item) => (
-        <span
-          key={item}
-          className="px-2 py-0.5 text-[11px] font-mono rounded-md bg-primary/10 text-primary border border-primary/20 whitespace-nowrap"
-        >
+        <li key={item} className="font-heading text-sm font-semibold tabular-nums">
           {item}
-        </span>
+        </li>
       ))}
-    </div>
+    </ul>
   )
 }

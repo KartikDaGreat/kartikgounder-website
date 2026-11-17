@@ -13,9 +13,9 @@ export const SITE_URL = "https://kartikgounder.com"
 
 export const basics = {
   name: "Kartik Gounder",
-  headline: "Software engineer building AI agent infrastructure and ML systems that survive contact with production",
+  headline: "Software engineer building AI agent infrastructure and ML systems that survive in production",
   summary:
-    "MS in Computer Science at Columbia, graduating December 2026. Forward deployed engineer intern at Rapidflare, research assistant with Prof. Tian Zheng, and TA for Policy for Privacy Technologies. Seven internships (Rapidflare, Vertex, Columbia aiX, SAP Labs, Samsung R&D, eNova twice), three peer-reviewed papers (ACM, Springer, IEEE), and two filed patent applications.",
+    "MS in Computer Science at Columbia, graduating December 2026. Forward deployed engineer at Rapidflare, where I have built 30+ customer setups, ship for 11 customers in production, and am building an auto-triaging system that automates internal workflows. Also a research assistant with Prof. Tian Zheng and TA for Policy for Privacy Technologies. Six internships before that (Vertex, Columbia aiX, SAP Labs, Samsung R&D, eNova twice), three peer-reviewed papers (ACM, Springer, IEEE), and two filed patent applications.",
   location: "New York, NY",
   availability:
     "Graduating December 2026 and open to full-time roles in agentic systems, developer tooling, and evaluation.",
@@ -63,8 +63,8 @@ export const now = [
     id: "rapidflare",
     kind: "Industry",
     org: "Rapidflare",
-    role: "Forward Deployed Engineer Intern",
-    detail: "Working directly with customers to get the product running on their real problems.",
+    role: "Forward Deployed Engineer",
+    detail: "Built 30+ customer setups and ship for 11 customers in production. Also building an auto-triaging system that automates internal workflows.",
   },
   {
     id: "research",
@@ -133,7 +133,7 @@ export const TYPE_LABEL: Record<Experience["type"], string> = {
 
 export const experiences: Experience[] = [
   {
-    title: "Forward Deployed Engineer Intern",
+    title: "Forward Deployed Engineer",
     company: "Rapidflare",
     nowId: "rapidflare",
     period: "September 2026 - Present",
@@ -144,8 +144,16 @@ export const experiences: Experience[] = [
     current: true,
     highlights: [
       {
-        lead: "Customer-facing",
-        text: "working directly with customers to get the product running on their real problems.",
+        lead: "30+ customer setups",
+        text: "built hands-on with customers, getting the product running on their real data and real problems.",
+      },
+      {
+        lead: "11 customers in production",
+        text: "that I build for and keep running, from first integration through live usage.",
+      },
+      {
+        lead: "Auto-triaging system",
+        text: "in progress beyond my client-facing work, automating Rapidflare's internal workflows.",
       },
     ],
   },

@@ -784,17 +784,17 @@ export function TerminalSection() {
 
   return (
     <section className="max-w-4xl">
-      <h1 className="text-3xl md:text-4xl font-bold mb-2">Terminal</h1>
-      <p className="text-muted-foreground mb-8">
+      <h1 className="t-page mb-4">Terminal</h1>
+      <p className="t-lede mb-12">
         A working shell, not a demo. Try <code className="text-xs font-mono bg-secondary px-1.5 py-0.5 rounded">help</code> for commands, <code className="text-xs font-mono bg-secondary px-1.5 py-0.5 rounded">game</code> to play hangman or rock-paper-scissors, or <code className="text-xs font-mono bg-secondary px-1.5 py-0.5 rounded">visitor</code> to see what this site knows about you (not much, by design).
       </p>
 
-      <div className="rounded-lg border border-border overflow-hidden bg-card">
+      <div className="rounded-xl border border-border overflow-hidden bg-card focus-within:outline-2 focus-within:outline-ring focus-within:outline-offset-2">
         <div className="flex items-center gap-2 px-4 py-2 bg-secondary border-b border-border">
           <div className="flex gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-red-500/80" />
-            <span className="w-3 h-3 rounded-full bg-yellow-500/80" />
-            <span className="w-3 h-3 rounded-full bg-green-500/80" />
+            <span className="w-3 h-3 rounded-full bg-border" />
+            <span className="w-3 h-3 rounded-full bg-border" />
+            <span className="w-3 h-3 rounded-full bg-border" />
           </div>
           <span className="text-xs text-muted-foreground font-mono ml-2">kartik@portfolio:~</span>
         </div>
@@ -839,18 +839,18 @@ export function TerminalSection() {
                 }}
                 onKeyDown={handleKeyDown}
                 /* 16px on mobile: iOS auto-zooms the page on any input below that. */
-                className="w-full bg-transparent outline-none caret-primary text-base sm:text-sm"
+                className="w-full bg-transparent focus-visible:outline-none caret-primary text-base sm:text-sm"
                 spellCheck={false}
                 autoComplete="off"
                 disabled={uploadingFile !== null}
               />
               {/* Autocomplete suggestions dropdown */}
               {suggestions.length > 0 && (
-                <div className="absolute top-full left-0 mt-1 w-full bg-secondary border border-border rounded shadow-lg z-10">
+                <div className="absolute top-full left-0 mt-1 w-full bg-secondary border border-border rounded-lg shadow-overlay z-10">
                   {suggestions.map((suggestion, idx) => (
                     <div
                       key={idx}
-                      className={`px-3 py-2 text-sm cursor-pointer ${
+                      className={`flex items-center min-h-11 px-3 py-2 text-sm cursor-pointer ${
                         idx === selectedSuggestion
                           ? "bg-primary text-primary-foreground"
                           : "text-muted-foreground hover:bg-secondary/80"
@@ -868,7 +868,6 @@ export function TerminalSection() {
                 </div>
               )}
             </div>
-            <span className="terminal-cursor w-2 h-5 bg-primary" />
           </div>
         </div>
       </div>
@@ -886,8 +885,8 @@ export function TerminalSection() {
           </div>
           <div className="w-full h-2 rounded bg-secondary overflow-hidden">
             <div
-              className="h-full bg-primary transition-all duration-200"
-              style={{ width: `${uploadProgress}%` }}
+              className="h-full w-full origin-left bg-primary transition-transform duration-200"
+              style={{ transform: `scaleX(${uploadProgress / 100})` }}
             />
           </div>
         </div>

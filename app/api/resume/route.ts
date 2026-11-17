@@ -53,7 +53,8 @@ function dates(period: string | undefined, fallbackYear?: number): { startDate?:
 const isCommunity = (title: string) => /volunteer|organizer/i.test(title)
 
 function buildResume() {
-  const internships = experiences.filter((e) => e.type === "internship")
+  // "internship" is the industry category; count only roles titled as internships.
+  const internships = experiences.filter((e) => e.type === "internship" && /\bintern\b/i.test(e.title))
 
   return {
     $schema: "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",

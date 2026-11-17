@@ -1,12 +1,20 @@
 "use client"
 
-import { useEffect, useState, useRef, useCallback } from "react"
+import type React from "react"
+import { useEffect, useState, useRef } from "react"
+import { useRouter } from "next/navigation"
 import {
   Home, GraduationCap, FlaskConical, Briefcase, FolderGit2, Mail, Terminal, Activity,
-  Github, Linkedin, Download, ExternalLink, Wrench, Search,
+  Github, Linkedin, FileText, ArrowUpRight, Wrench, Search,
 } from "lucide-react"
 import type { SectionId } from "@/app/page"
 import { projects } from "@/lib/projects"
+import { basics } from "@/lib/profile"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
+import { Kbd } from "@/components/ui/kbd"
+import { cn } from "@/lib/utils"
+
+type Category = "navigation" | "links" | "projects"
 
 interface CommandItem {
   id: string
@@ -14,19 +22,36 @@ interface CommandItem {
   description?: string
   icon: React.ElementType
   action: () => void
-  category: "navigation" | "links" | "projects"
+  category: Category
 }
 
+const GROUPS: { category: Category; label: string }[] = [
+  { category: "navigation", label: "Navigate" },
+  { category: "links", label: "Links" },
+  { category: "projects", label: "Projects" },
+]
+
 interface CommandPaletteProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
   onNavigate: (section: SectionId) => void
 }
 
-export function CommandPalette({ onNavigate }: CommandPaletteProps) {
-  const [open, setOpen] = useState(false)
+export function CommandPalette({ open, onOpenChange, onNavigate }: CommandPaletteProps) {
+  const router = useRouter()
   const [query, setQuery] = useState("")
   const [selectedIndex, setSelectedIndex] = useState(0)
-  const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
+
+  const setOpen = (next: boolean) => {
+    if (!next) {
+      setQuery("")
+      setSelectedIndex(0)
+    }
+    onOpenChange(next)
+  }
+
+  const openExternal = (url: string) => window.open(url, "_blank", "noopener,noreferrer")
 
   const commands: CommandItem[] = [
     { id: "home", label: "Hello", description: "About me", icon: Home, category: "navigation", action: () => onNavigate("home") },
@@ -38,204 +63,184 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
     { id: "terminal", label: "Terminal", description: "A working shell", icon: Terminal, category: "navigation", action: () => onNavigate("terminal") },
     { id: "lab", label: "Live Systems", description: "Real telemetry", icon: Activity, category: "navigation", action: () => onNavigate("lab") },
     { id: "setup", label: "Setup", description: "Uses / gear", icon: Wrench, category: "navigation", action: () => onNavigate("setup") },
-    { id: "github", label: "GitHub", description: "KartikDaGreat", icon: Github, category: "links", action: () => window.open("https://github.com/KartikDaGreat", "_blank") },
-    { id: "linkedin", label: "LinkedIn", description: "kartik-gounder", icon: Linkedin, category: "links", action: () => window.open("https://www.linkedin.com/in/kartik-gounder", "_blank") },
-    { id: "resume", label: "Resume", description: "Download PDF", icon: Download, category: "links", action: () => window.open("https://drive.google.com/file/d/1RDCJcs4V8BLVaDjqGEFXjoqk6KzF-AXi/view?usp=sharing", "_blank") },
-    ...projects.slice(0, 8).map((p) => ({
+    { id: "github", label: "GitHub", description: "KartikDaGreat", icon: Github, category: "links", action: () => openExternal(basics.github) },
+    { id: "linkedin", label: "LinkedIn", description: "kartik-gounder", icon: Linkedin, category: "links", action: () => openExternal(basics.linkedin) },
+    { id: "resume", label: "Resume", description: "Opens Google Drive", icon: FileText, category: "links", action: () => openExternal(basics.resume) },
+    ...projects.map((p) => ({
       id: `project-${p.slug}`,
       label: p.title,
       description: p.technologies.slice(0, 3).join(", "),
-      icon: ExternalLink,
+      icon: ArrowUpRight,
       category: "projects" as const,
-      action: () => window.open(`/projects/${p.slug}`, "_self"),
+      action: () => router.push(`/projects/${p.slug}`, { transitionTypes: ["nav-forward"] }),
     })),
   ]
 
-  const filtered = query.trim()
+  const q = query.trim().toLowerCase()
+  const filtered = q
     ? commands.filter(
         (c) =>
-          c.label.toLowerCase().includes(query.toLowerCase()) ||
-          c.description?.toLowerCase().includes(query.toLowerCase()) ||
-          c.category.toLowerCase().includes(query.toLowerCase())
+          c.label.toLowerCase().includes(q) ||
+          c.description?.toLowerCase().includes(q) ||
+          c.category.includes(q),
       )
     : commands
 
-  const grouped = {
-    navigation: filtered.filter((c) => c.category === "navigation"),
-    links: filtered.filter((c) => c.category === "links"),
-    projects: filtered.filter((c) => c.category === "projects"),
+  // One ordered list drives both the rendered groups and the arrow-key index.
+  const groups = GROUPS.map((g) => ({ ...g, items: filtered.filter((c) => c.category === g.category) })).filter(
+    (g) => g.items.length > 0,
+  )
+  const flat = groups.flatMap((g) => g.items)
+  const activeId = flat[selectedIndex] ? `cmd-opt-${selectedIndex}` : undefined
+
+  const execute = (item: CommandItem) => {
+    setOpen(false)
+    item.action()
   }
 
-  const flatFiltered = [...grouped.navigation, ...grouped.links, ...grouped.projects]
-
-  const execute = useCallback(
-    (item: CommandItem) => {
-      setOpen(false)
-      setQuery("")
-      item.action()
-    },
-    []
-  )
-
+  // Cmd/Ctrl+K toggles the palette from anywhere on the page.
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault()
-        setOpen((prev) => !prev)
+      if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== "k") return
+      // Don't stack on top of another dialog (shortcuts, lightbox).
+      if (!open && document.querySelector('[role="dialog"]')) return
+      e.preventDefault()
+      if (open) {
         setQuery("")
         setSelectedIndex(0)
       }
-      if (e.key === "Escape") {
-        setOpen(false)
-        setQuery("")
-      }
+      onOpenChange(!open)
     }
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [])
+  }, [open, onOpenChange])
 
+  // Keep the selected row in view as the arrow keys move it.
   useEffect(() => {
-    if (open) {
-      setTimeout(() => inputRef.current?.focus(), 50)
-    }
-  }, [open])
-
-  useEffect(() => {
-    setSelectedIndex(0)
-  }, [query])
-
-  // Scroll selected item into view
-  useEffect(() => {
-    if (listRef.current) {
-      const selected = listRef.current.querySelector(`[data-index="${selectedIndex}"]`)
-      if (selected) {
-        selected.scrollIntoView({ block: "nearest" })
-      }
-    }
-  }, [selectedIndex])
+    if (!activeId) return
+    listRef.current?.querySelector(`#${activeId}`)?.scrollIntoView({ block: "nearest" })
+  }, [activeId])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault()
-      setSelectedIndex((prev) => Math.min(prev + 1, flatFiltered.length - 1))
+      setSelectedIndex((prev) => Math.min(prev + 1, flat.length - 1))
     } else if (e.key === "ArrowUp") {
       e.preventDefault()
       setSelectedIndex((prev) => Math.max(prev - 1, 0))
     } else if (e.key === "Enter") {
       e.preventDefault()
-      if (flatFiltered[selectedIndex]) {
-        execute(flatFiltered[selectedIndex])
-      }
+      if (flat[selectedIndex]) execute(flat[selectedIndex])
     }
   }
 
-  if (!open) return null
+  let index = -1
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[20vh]">
-      <div
-        className="absolute inset-0 bg-background/70 backdrop-blur-sm"
-        onClick={() => { setOpen(false); setQuery("") }}
-      />
-      <div className="relative w-full max-w-lg mx-4 rounded-xl border border-border bg-card shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-        {/* Search input */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
-          <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent
+        showCloseButton={false}
+        aria-describedby={undefined}
+        className="top-[20vh] translate-y-0 gap-0 overflow-hidden rounded-xl bg-card p-0 shadow-(--shadow-overlay)"
+      >
+        <DialogTitle className="sr-only">Command palette</DialogTitle>
+
+        <div className="flex items-center gap-3 border-b border-border px-4 py-3">
+          <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden />
           <input
-            ref={inputRef}
             type="text"
-            placeholder="Search commands, sections, projects..."
+            role="combobox"
+            aria-expanded={flat.length > 0}
+            aria-controls="cmd-list"
+            aria-activedescendant={activeId}
+            aria-autocomplete="list"
+            aria-label="Search sections, links, and projects"
+            placeholder="Search sections, links, projects…"
+            autoComplete="off"
+            spellCheck={false}
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value)
+              setSelectedIndex(0)
+            }}
             onKeyDown={handleKeyDown}
-            className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
+            className="min-w-0 flex-1 bg-transparent text-base text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
           />
-          <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground bg-secondary rounded border border-border">
-            ESC
-          </kbd>
+          <Kbd className="hidden rounded-md font-mono sm:inline-flex">Esc</Kbd>
         </div>
 
-        {/* Results */}
-        <div ref={listRef} className="max-h-[300px] overflow-y-auto p-2">
-          {flatFiltered.length === 0 && (
-            <div className="py-8 text-center text-sm text-muted-foreground">No results found</div>
+        <div ref={listRef} role="listbox" id="cmd-list" aria-label="Results" className="max-h-80 overflow-y-auto p-2">
+          {flat.length === 0 && (
+            <p className="px-2 py-8 text-center text-sm text-muted-foreground">
+              No matches. Try &ldquo;projects&rdquo; or &ldquo;resume&rdquo;.
+            </p>
           )}
 
-          {grouped.navigation.length > 0 && (
-            <>
-              <div className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Navigate
+          {groups.map((group) => (
+            <div key={group.category} role="group" aria-labelledby={`cmd-group-${group.category}`} className="not-first:mt-2">
+              <div id={`cmd-group-${group.category}`} className="px-2 py-2 font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                {group.label}
               </div>
-              {grouped.navigation.map((item) => {
-                const globalIndex = flatFiltered.indexOf(item)
-                return <CommandRow key={item.id} item={item} selected={globalIndex === selectedIndex} index={globalIndex} onClick={() => execute(item)} />
+              {group.items.map((item) => {
+                index += 1
+                const i = index
+                return (
+                  <CommandRow
+                    key={item.id}
+                    item={item}
+                    id={`cmd-opt-${i}`}
+                    selected={i === selectedIndex}
+                    onSelect={() => execute(item)}
+                    onHover={() => setSelectedIndex(i)}
+                  />
+                )
               })}
-            </>
-          )}
-
-          {grouped.links.length > 0 && (
-            <>
-              <div className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mt-1">
-                Links
-              </div>
-              {grouped.links.map((item) => {
-                const globalIndex = flatFiltered.indexOf(item)
-                return <CommandRow key={item.id} item={item} selected={globalIndex === selectedIndex} index={globalIndex} onClick={() => execute(item)} />
-              })}
-            </>
-          )}
-
-          {grouped.projects.length > 0 && (
-            <>
-              <div className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mt-1">
-                Projects
-              </div>
-              {grouped.projects.map((item) => {
-                const globalIndex = flatFiltered.indexOf(item)
-                return <CommandRow key={item.id} item={item} selected={globalIndex === selectedIndex} index={globalIndex} onClick={() => execute(item)} />
-              })}
-            </>
-          )}
+            </div>
+          ))}
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between px-4 py-2 border-t border-border text-[10px] text-muted-foreground">
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1"><kbd className="px-1 py-0.5 bg-secondary rounded border border-border font-mono">↑↓</kbd> navigate</span>
-            <span className="flex items-center gap-1"><kbd className="px-1 py-0.5 bg-secondary rounded border border-border font-mono">↵</kbd> select</span>
+        <div className="flex items-center justify-between border-t border-border px-4 py-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-3" aria-hidden>
+            <span className="flex items-center gap-1"><Kbd className="rounded-md font-mono">↑↓</Kbd> navigate</span>
+            <span className="flex items-center gap-1"><Kbd className="rounded-md font-mono">↵</Kbd> select</span>
           </div>
-          <span>{flatFiltered.length} results</span>
+          <span aria-live="polite">{flat.length} results</span>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 
 function CommandRow({
   item,
+  id,
   selected,
-  index,
-  onClick,
+  onSelect,
+  onHover,
 }: {
   item: CommandItem
+  id: string
   selected: boolean
-  index: number
-  onClick: () => void
+  onSelect: () => void
+  onHover: () => void
 }) {
   const Icon = item.icon
   return (
-    <button
-      data-index={index}
-      onClick={onClick}
-      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-        selected ? "bg-secondary text-foreground" : "text-foreground/80 hover:bg-secondary/50"
-      }`}
-    >
-      <Icon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-      <span className="flex-1 text-left truncate">{item.label}</span>
-      {item.description && (
-        <span className="text-xs text-muted-foreground truncate max-w-[140px]">{item.description}</span>
+    <div
+      id={id}
+      role="option"
+      aria-selected={selected}
+      tabIndex={-1}
+      onClick={onSelect}
+      onMouseMove={selected ? undefined : onHover}
+      className={cn(
+        "flex min-h-11 w-full cursor-pointer items-center gap-3 rounded-lg px-3 text-sm transition-colors duration-150",
+        selected ? "bg-secondary text-foreground" : "text-foreground/80",
       )}
-    </button>
+    >
+      <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+      <span className="flex-1 truncate text-left">{item.label}</span>
+      {item.description && <span className="max-w-36 truncate text-xs text-muted-foreground">{item.description}</span>}
+    </div>
   )
 }
