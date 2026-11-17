@@ -29,16 +29,6 @@ const selectedProjects = selected.flatMap(({ slug, metric }) => {
   return [{ slug, name, tagline: tagline ?? project.description, metric: project.metrics?.[metric] }]
 })
 
-/**
- * The headline mask only needs to clip vertically (each line rises from below
- * its own baseline). `.intro-line` in globals.css sets `overflow: hidden`,
- * which also clips side bearings and any line wider than the column, so it is
- * relaxed to `overflow-x: visible; overflow-y: clip` here. `clip`, unlike
- * `hidden`, does not force the other axis to `auto`. The rule is unlayered,
- * so the utilities need `!` to win.
- */
-const introLine = "intro-line overflow-x-visible! overflow-y-clip!"
-
 const socials = [
   { href: basics.github, label: "GitHub", Icon: Github, external: true },
   { href: basics.linkedin, label: "LinkedIn", Icon: Linkedin, external: true },
@@ -108,16 +98,16 @@ export function AboutSection() {
             {/* Set as its four natural lines, each masked and rising from its
                 own baseline. A line too long for its column wraps, never clips. */}
             <h1 className="t-display mb-4">
-              <span className={introLine}>
+              <span className="intro-line">
                 <span style={stagger(0)}>I build systems</span>
               </span>
-              <span className={introLine}>
+              <span className="intro-line">
                 <span style={stagger(1)}>that survive</span>
               </span>
-              <span className={introLine}>
+              <span className="intro-line">
                 <span style={stagger(2)}>contact with</span>
               </span>
-              <span className={introLine}>
+              <span className="intro-line">
                 <span style={stagger(3)}>
                   <span className="text-primary">production</span>.
                 </span>

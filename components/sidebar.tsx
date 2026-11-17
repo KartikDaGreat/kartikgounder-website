@@ -98,10 +98,15 @@ export function Sidebar({ activeSection, onNavigate, onOpenPalette, onOpenShortc
     if (restoreFocus) menuButtonRef.current?.focus()
   }
 
-  // Opening the drawer moves focus to the first nav item.
+  // Opening the drawer moves focus to the first nav item. Wait a frame: the
+  // aside is still visibility:hidden when this effect runs, and hidden
+  // elements can't take focus.
   useEffect(() => {
     if (!mobileOpen) return
-    asideRef.current?.querySelector<HTMLElement>("nav button")?.focus()
+    const id = requestAnimationFrame(() => {
+      asideRef.current?.querySelector<HTMLElement>("nav button")?.focus()
+    })
+    return () => cancelAnimationFrame(id)
   }, [mobileOpen])
 
   // Escape closes the drawer from anywhere, not only from inside it.
@@ -196,10 +201,14 @@ export function Sidebar({ activeSection, onNavigate, onOpenPalette, onOpenShortc
         onKeyDown={trapFocus}
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-sidebar-border bg-sidebar md:z-30 md:w-16 lg:w-56",
-          "transition-[transform,visibility] duration-200",
+          "duration-200",
           // Closed on mobile: off-screen and invisible, which also removes it
           // from the tab order. From md up it is always shown as a rail.
-          mobileOpen ? "translate-x-0" : "invisible -translate-x-full md:visible md:translate-x-0",
+          // Visibility transitions only on close (so it stays visible while
+          // sliding out); on open it flips at once so focus can move in.
+          mobileOpen
+            ? "visible translate-x-0 transition-transform"
+            : "invisible -translate-x-full transition-[transform,visibility] md:visible md:translate-x-0",
         )}
       >
         {/* Brand */}

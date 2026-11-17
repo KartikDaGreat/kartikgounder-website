@@ -137,7 +137,7 @@ export default function RootLayout({
         </a>
         <ThemeProvider>
           <MotionRoot>
-            <div className="fixed top-0 right-0 z-30 flex h-14 items-center gap-1 px-2 md:top-4 md:right-4 md:h-auto md:gap-2 md:px-0">
+            <div className="fixed top-0 right-0 z-40 flex h-14 items-center gap-1 px-2 md:top-4 md:right-4 md:h-auto md:gap-2 md:px-0">
               <ThemeDice />
               <ThemeToggle />
             </div>
